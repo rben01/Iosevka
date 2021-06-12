@@ -1,8 +1,12 @@
 [buildPlans.iosevka-custom]
 family = "Iosevka RLTB"
 serifs = "sans"
-spacing = "normal"
-no-ligation = true
+spacing = "fixed"
+export-glyph-names = true
+# no-ligation = true
+
+[buildPlans.iosevka-custom.ligations]
+enables = ["kern-dotty"]
 
 [buildPlans.iosevka-custom.variants.design]
 capital-b = "standard-serifless"
@@ -47,7 +51,7 @@ four = "semi-open"
 five = "oblique-upper-left-bar"
 six = "open-contour"
 seven = "curly-serifless"
-eight = "two-circles"
+eight = "crossing-asymmetric"
 nine = "open-contour"
 asterisk = "penta-high"
 underscore = "high"
