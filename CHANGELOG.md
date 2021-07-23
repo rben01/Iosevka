@@ -1,5 +1,160 @@
 ## Modifications since version 2.x
 
+### 7.3.3
+
+ * Fix serif placement of Latin Small Letter Reversed R with Fishhook (`U+027F`) (#1163).
+
+
+### 7.3.2
+
+ * Fix anchor placement of:
+   - Latin Letter Small Capital R (`U+0280`) (#1159)
+   - Latin Letter Small Capital L (`U+029F`) (#1159)
+   - Cyrillic Small Letter Psi (`U+0471`) (#1159)
+   - Latin Letter Small Capital E (`U+1D07`) (#1159)
+   - Latin Letter Small Capital L with Stroke (`U+1D0C`) (#1159)
+   - Latin Letter Small Capital U (`U+1D1C`) (#1159)
+   - Modifier Letter Small Capital U (`U+1DB8`) (#1159)
+   - Turned Small F (`U+214E`) (#1159)
+   - Latin Letter Small Capital Turned E (`U+2C7B`) (#1159)
+   - Latin Small Letter Egyptological Alef (`U+A723`) (#1159)
+   - Latin Small Letter Egyptological Ain (`U+A725`) (#1159)
+   - Latin Letter Small Capital F (`U+A730`) (#1159)
+   - Latin Small Letter R Rotunda (`U+A75B`) (#1159)
+   - Combining Homothetic Above (`U+034B`) (#1162)
+   - Combining Almost Equal To Above (`U+034C`) (#1162)
+   - Combining Latin Small Letter Long S (`U+1DE5`) (with `cv51 = 5`) (#1162)
+   - Combining Cyrillic Letter De (`U+2DE3`) (#1162)
+
+
+### 7.3.1
+
+ * Fix placement of above marks over Cyrillic Small Ge, Te, and Ya (#1157).
+
+
+### 7.3.0
+
+ * Add Greek Upsilon with Hook Symbol (`U+03D2`).
+ * Add flat-topped lowercase Delta (#856).
+ * Add rounded lowercase Xi (#856).
+ * Fix Bulgarian Small Ka's variant assignment (#1147).
+ * Fix shape of Ruble Sign (#1155).
+
+
+### 7.2.8
+
+ * Fix broken shape of Cyrillic Small Letter Sha when `cv45 = 9` (#1154).
+
+
+### 7.2.7
+
+ * Fix incorrect shape of Proportional To (`U+221D`), Infinity (`U+221E`) and Inverted Lazy S (`U+223E`) under Italic/Oblique.
+ * Fix shape of `d` `serifed-tailed` (#1150).
+ * Make Latin Small Letter Dotless J with Stroke and Hook (`U+0284`) follow shape of `f` (#1151).
+ * Fix `cv44` application on phonetic letters (#1152).
+ * Fix shape of Combining Low Line (#1153).
+
+
+### 7.2.6
+
+ * Fixed shape of Bulgarian I with Breve, Yer, Yeri, De, Che and En (#1147).
+
+
+### 7.2.5
+
+ * Fix placement of overlay bar in Latin Small Letter D with Stroke (`U+0111`) (#1146).
+
+
+### 7.2.4
+
+ * Turn on square-dot punctuations in these stylistic sets:
+   - `ss02` Anonymous Pro;
+   - `ss04` Menlo;
+   - `ss06` Liberation Mono;
+   - `ss13` Lucida Grande Mono;
+   - `ss17` Recursive Mono.
+
+
+### 7.2.3
+
+ * Fix geometry of `y` (#1144).
+ * Make the Zero in SS13 more distinctive (#1141).
+
+
+### 7.2.2
+
+ * Fix broken geometry of Apl Functional Symbol Quad Question (`U+2370`) (#1138).
+ * Add Tugrik Sign (`U+20AE`) (#1139).
+
+
+### 7.2.1
+
+ * Fix missing variants of square dots of the following characters (#1136):
+   * Inverted Question Mark (`U+00BF`);
+   * Latin Capital Letter L with Middle Dot (`U+013F`);
+   * Latin Small Letter L with Middle Dot (`U+0140`);
+   * Reference Mark (`U+203B`);
+   * Questioned Equal To (`U+225F`);
+   * Multiset Multiplication (`U+228D`);
+   * Apl Functional Symbol Quad Divide (`U+2339`);
+   * Apl Functional Symbol Quad Colon (`U+2360`);
+   * Apl Functional Symbol Quad Question (`U+2370`);
+   * Line Integration with Rectangular Path Around Pole (`U+2A12`);
+   * Line Integration with Semicircular Path Around Pole (`U+2A13`);
+   * Line Integration Not Including the Pole (`U+2A14`);
+   * Integral Around a Point Operator (`U+2A15`);
+   * Intersection with Dot (`U+2A40`);
+   * Inverted Interrobang (`U+2E18`);
+   * Modifier Letter Colon (`U+A789`);
+   * Colon, Semicolon, Exclamation Mark and Question Mark in ligations.
+
+
+### 7.2.0
+
+ * Add square-dot variants for period, comma, colon, semicolon and all punctuations and symbols involving dot shape (diacritics are not included; #927).
+ * Refine geometry of Partial Differential Symbol (`U+2202`) (#862).
+ * Refine geometry of Cyrillic Small Be (`U+0431`), De (`U+0414`, `U+0434`), El (`U+041B`, `U+043B`), Ef (`U+0424`, `U+0444`), Che (`U+0247`, `U+0447`), E (`U+042D`, `U+044D`) and Ye (`U+0404`, `U+0454`) (#1128).
+
+
+### 7.1.1
+
+ * Add Greek Number Sign (`U+0374`).
+ * Fix Misplaced diacritics in `U+A7BA`, `U+A7BC`, and `U+A7BE` (#1125).
+ * Make Modifier Letter Colon (`U+A789`) smaller than Colon (#1126).
+
+
+### 7.1.0
+
+ * Add single-spacing TTC and Super TTC (#1112).
+ * Add Greek Beta Symbol (`U+03D0`), Greek Kai Symbol (`U+03D7`), Greek Letter Digamma (`U+03DC`), Greek Small Letter Digamma (`U+03DD`), Greek Kappa Symbol (`U+03F0`), Greek Rho Symbol (`U+03F1`), Greek Lunate Epsilon Symbol (`U+03F5`) and Greek Reversed Lunate Epsilon Symbol (`U+03F6`).
+ * Add Hryvnia sign (`U+20B4`) (#1117).
+ * Fix placement of diacritics over uppercase Greek (#1115).
+ * Adjust metrics of punctuations in Aile and Etoile (#1115).
+ * Fix placement of mathematical colon-like operators; Add Modifier Letter Colon (`U+A789`) (#1118).
+ * Improve handling of diacritics in [Kitty](https://sw.kovidgoyal.net/kitty/) (#1007, kovidgoyal/kitty#3716)).
+ * Fix variant application of `cv30` on derived letters of `e` (#1120).
+ * Make brailles always upright (#1124).
+ * Fix geometry of:
+   - Latin Capital Letter I with Ogonek (`U+012E`), Latin Small Letter with Ogonek (`U+012F`) (#1115).
+   - Latin Capital Letter L with Middle Dot (`U+013F`) (#1123).
+   - Latin Small Letter B with Stroke (`U+0180`) (#1115).
+   - Latin Capital Letter K with Hook (`U+0198`) (#1123).
+   - Latin Capital Letter Gha (`U+01A2`), Latin Small Letter Gha (`U+01A3`) (#1115).
+   - Latin Capital Letter V with Hook (`U+01B2`), Latim Small Letter V with Hook (`U+028B`).
+   - Latin Letter Inverted Glottal Stop with Stroke (`U+01BE`) (#1115).
+   - Latin Capital Letter Hwair (`U+01F6`), Latin Small Letter Hwair (`U+0195`) (#1115).
+   - Latin Capital Letter Y with Stroke (`U+024E`) (#1115).
+   - Greek Capital Letter Theta (`U+0398`) (#1115).
+   - Greek Capital Letter Xi (`U+039E`) (#1115).
+   - Greek Capital Letter Delta (`U+0394`), Increment Symbol (`U+2206`) under Slab (#1115).
+   - Greek Capital Letter Psi (`U+03A8`), Greek Small Letter Psi (`U+03C8`), Cyrillic Small Letter Psi (`U+0471`) (#1115).
+   - Greek Small Letter Upsilon (`U+03C5`) (#1115).
+   - Greek Small Letter Chi (`U+03C7`) (#1115).
+   - Latin Small Letter A With Right Half Ring (`U+1E9A`) (#1115).
+   - Latin Small Letter Y With Dot Below (`U+1EF5`) (#1115).
+   - Mathematical Double-struck Capital E (`U+1D53C`) (#1119).
+
+
 ### 7.0.4
 
  * Exported glyphs' names in production fonts, which enables ligatures in [Kitty](https://sw.kovidgoyal.net/kitty/) (#1007).

@@ -45,6 +45,35 @@ glyph-block Symbol-Currency : begin
 		include : HOverlayBar [mix SB RightSB 0.05] [mix SB RightSB 0.7] (CAP * 0.4)
 		include : HOverlayBar [mix SB RightSB 0.05] [mix SB RightSB 0.7] (CAP * 0.63)
 
+glyph-block Symbol-Currency-Letter-Derived : begin
+	glyph-block-import CommonShapes
+	glyph-block-import Common-Derivatives
+
+	create-glyph 'currency/overlay/NS' : glyph-proc
+		define sw : Math.min OverlayStroke : AdviceStroke2 2 4 CAP
+		define gap : Math.max (CAP / 8) (sw / 2)
+		include : HBarBottom [mix 0 SB 0.5] [mix Width RightSB 0.5] (CAP / 2 + gap / 2) sw
+		include : HBarTop    [mix 0 SB 0.5] [mix Width RightSB 0.5] (CAP / 2 - gap / 2) sw
+
+	create-glyph 'currency/overlay/W' : glyph-proc
+		local df : DivFrame para.diversityM 3
+		include : HOverlayBar [mix SB 0 0.7] [mix df.rightSB df.width 0.7] (CAP * 0.6)
+		include : HOverlayBar [mix SB 0 0.7] [mix df.rightSB df.width 0.7] (CAP * 0.35)
+
+	derive-composites 'currency/nairaSign' 0x20A6 'currency/nairaSignBase' 'currency/overlay/NS'
+	derive-composites 'currency/hryvniaSign' 0x20B4 'revS' 'currency/overlay/NS'
+	derive-composites 'currency/wonSign' 0x20A9 'W' 'currency/overlay/W'
+
+	create-glyph 'currency/tugrikOverride' : let
+		l : mix (Middle - HalfStroke * HVContrast) SB       0.75
+		r : mix (Middle + HalfStroke * HVContrast) RightSB  0.75
+		kSlope 0.05
+		intersection [Rect 0 CAP l r] : union
+			ExtLineCenter 4 OverlayStroke l (CAP * (0.6 - kSlope)) r (CAP * (0.6 + kSlope))
+			ExtLineCenter 4 OverlayStroke l (CAP * (0.35 - kSlope)) r (CAP * (0.35 + kSlope))
+
+	derive-composites 'currency/tugrikSign' 0x20AE 'T' 'currency/tugrikOverride'
+
 glyph-block Symbol-Letter : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
@@ -66,7 +95,7 @@ glyph-block Symbol-Letter : begin
 		include : dispiro
 			widths.center fine
 			g2   left [mix 0 CAP 0.33]
-			quadcontrols 1 0.6
+			quadControls 1 0.6
 			g2   right [mix 0 CAP 0.8]
 			arcvh
 			g2   [mix middle right 0.5] (CAP - O - fine / 2)
@@ -96,7 +125,7 @@ glyph-block Symbol-Letter : begin
 							Rect CAP (CAP * 0.5) (RightSB - thickBarWidth) RightSB
 				Rect (CAP * 0.5) (CAP * 0.208) Middle Width
 
-	turned 'turniota' 0x2129 'grek/iota' Middle (XH / 2)
+	turned 'turniota' 0x2129 'grek/iota' HalfAdvance (XH / 2)
 
 	create-glyph 'mathAleph' 0x2135 : glyph-proc
 		define p 0.3
@@ -141,6 +170,30 @@ glyph-block Symbol-Letter : begin
 		include : RightwardBottomSerif (Middle + sw / 2 * HVContrast) 0  (LongJut / 2)
 		include : DotAt Middle (XH + Accent) (DotRadius * sw / Stroke)
 
+	create-glyph 'partial' 0x2202 : glyph-proc
+		include : MarkSet.b
+		local fine : Stroke * CThin
+		local coFine : mix fine Stroke 0.5
+		local yMid : CAP * 0.6
+		local yMid2 : mix yMid [YSmoothMidR yMid 0 SmallSmoothA SmallSmoothB] 0.875
+		local yMockBarStart : yMid2 + Stroke * 0.3
+		local xTerminal : [mix SB RightSB 0.4] + 0.5 * Stroke * HVContrast
+		local pStraightBarStart : 0.75 - (Stroke / CAP)
+		include : intersection [MaskBelow CAP] : dispiro
+			g4.right.start (Middle + CorrectionOMidS - TanSlope * (Stroke - fine)) (O + Stroke - fine + 1/16) [widths.lhs fine]
+			straight.up.mid (RightSB - OX - (1 - CThin) * Stroke * HVContrast) [YSmoothMidR yMid 0 SmallSmoothA SmallSmoothB]
+			arcvh
+			g4 (Middle - CorrectionOMidS) (yMid - O) [widths.lhs]
+			archv
+			g4 (SB + OX) [YSmoothMidL yMid 0 SmallSmoothA SmallSmoothB]
+			arcvh
+			g4 (Middle + CorrectionOMidS) O
+			archv
+			flat (RightSB - OX) [YSmoothMidR yMid 0 SmallSmoothA SmallSmoothB] [widths.lhs coFine]
+			curl (RightSB - OX) yMid2
+			flat [mix Width xTerminal pStraightBarStart] [mix yMockBarStart CAP pStraightBarStart] [widths.lhs]
+			curl [mix Width xTerminal 2]                 [mix yMockBarStart CAP 2]
+
 glyph-block Symbol-Cyrl-Thousands : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
@@ -149,3 +202,16 @@ glyph-block Symbol-Cyrl-Thousands : begin
 		include : ExtLineCenter (-0.1) fine SB Descender RightSB XH
 		include : ExtLineCenter (-0.1) fine [mix SB RightSB 0.1] [mix Descender XH 0.8] [mix SB RightSB 1.1] [mix Descender XH 0.5]
 		include : ExtLineCenter (-0.1) fine [mix SB RightSB (-0.1)] [mix Descender XH 0.5] [mix SB RightSB 0.9] [mix Descender XH 0.2]
+
+glyph-block Symbol-Letter-Punctuation-Composite : begin
+	glyph-block-import CommonShapes
+	glyph-block-import Common-Derivatives
+	glyph-block-import Shared-Symbol-Shapes : WithDotVariants
+
+	WithDotVariants 'LDotDot' null : function [DrawAt kdr overshoot] : glyph-proc
+		set-width 0
+		include : DrawAt 0 0 (DotRadius * kdr - overshoot)
+		set-mark-anchor 'cvDecompose' 0 0
+
+	create-two-part-glyph 'LDot' 0x13F 'L' 'LDotDot'
+	create-two-part-glyph 'lDot' 0x140 'lDotBase' 'LDotDot'

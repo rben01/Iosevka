@@ -2,7 +2,6 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
 
 glyph-module
 
@@ -21,13 +20,13 @@ glyph-block Symbol-Punctuation-Guillemet : begin
 		include : dispiro
 			widths.center sw
 			g4 [mix Middle RightSB extension] top
-			quadcontrols 0.4 0.75
+			quadControls 0.4 0.75
 			g4 [mix Middle SB extension] [mix top bot 0.5] [widths.center.heading (cor * sw) Leftward]
 
 		include : dispiro
 			widths.center (sw * cor)
 			g4 [mix Middle SB extension] [mix top bot 0.5] [heading Rightward]
-			quadcontrols (1 - 0.4) (1 - 0.75)
+			quadControls (1 - 0.4) (1 - 0.75)
 			g4 [mix Middle RightSB extension] bot [widths.center sw]
 
 		include : Translate (-(RightSB - SB) * 0.05) 0

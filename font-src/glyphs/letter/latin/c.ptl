@@ -1,7 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
 import [Dotless CvDecompose MathSansSerif] from "../../../support/gr"
 
 glyph-module
@@ -192,6 +191,7 @@ glyph-block Letter-Latin-C : begin
 
 		create-glyph "c.\(suffix)" : glyph-proc
 			include : MarkSet.e
+			set-base-anchor 'cvDecompose' 0 0
 			include : cShape [DivFrame 1] XH 0 SmallSmoothA SmallSmoothB Stroke
 			include : AutoStartSerifR [DivFrame 1] sty XH
 			include : AutoStartSerifRB [DivFrame 1] styBot 0
@@ -298,37 +298,38 @@ glyph-block Letter-Latin-C : begin
 
 	create-glyph 'currency/centSignBar.open' : glyph-proc
 		set-width 0
+		set-mark-anchor 'cvDecompose' 0 0
 		include : dispiro
 			widths.center
-			flat (Middle - Width) (XH - HalfStroke)
-			curl (Middle - Width) (XH - Descender / 2) [heading Upward]
+			flat Middle (XH - HalfStroke)
+			curl Middle (XH - Descender / 2) [heading Upward]
 		include : dispiro
 			widths.center
-			flat (Middle - Width) (Descender / 2) [heading Upward]
-			curl (Middle - Width) HalfStroke
+			flat Middle (Descender / 2) [heading Upward]
+			curl Middle HalfStroke
 
 	create-glyph 'currency/centSignBar.through' : glyph-proc
 		define fine : AdviceStroke 4
 		include [refer-glyph 'currency/centSignBar.open'] AS_BASE ALSO_METRICS
-		include : VBar (Middle - Width) (XH - HalfStroke) (0 + HalfStroke) fine
+		include : VBar Middle (XH - HalfStroke) (0 + HalfStroke) fine
 
 	create-glyph 'currency/centSignBar.barInterrupted' : glyph-proc
 		set-width 0
+		set-mark-anchor 'cvDecompose' 0 0
 		define fine : AdviceStroke 4
 		define gap : Math.max (XH / 8) [AdviceStroke2 6 6 XH]
 		include : dispiro
-			flat (Middle - Width) (XH - Descender / 2) [widths.center.heading Stroke Downward]
-			curl (Middle - Width) (XH / 2 + gap / 2) [widths.center.heading fine Downward]
+			flat Middle (XH - Descender / 2) [widths.center.heading Stroke Downward]
+			curl Middle (XH / 2 + gap / 2) [widths.center.heading fine Downward]
 		include : dispiro
-			flat (Middle - Width) (Descender / 2) [widths.center.heading Stroke Upward]
-			curl (Middle - Width) (XH / 2 - gap / 2) [widths.center.heading fine Upward]
+			flat Middle (Descender / 2) [widths.center.heading Stroke Upward]
+			curl Middle (XH / 2 - gap / 2) [widths.center.heading fine Upward]
 
 	select-variant 'currency/centSignBar' (follow -- 'cent')
 
 	create-glyph 'currency/centSign' 0xA2 : glyph-proc
-		include : union
-			refer-glyph 'c'
-			WithTransform [Translate Width 0] [refer-glyph 'currency/centSignBar']
+		include [refer-glyph 'c'] AS_BASE ALSO_METRICS
+		include [refer-glyph 'currency/centSignBar']
 		CvDecompose.set currentGlyph { 'c' 'currency/centSignBar' }
 
 	turned 'turnC' 0x186 'C' Middle (CAP / 2)
@@ -373,19 +374,19 @@ glyph-block Letter-Latin-C : begin
 
 	derive-glyphs 'cyrl/E' 0x42D 'revC' : lambda [src sel] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
-		include : HBar [mix SB RightSB 0.25] RightSB (CAP / 2)
+		include : HBar [mix SB RightSB 0.35] RightSB (CAP / 2)
 
 	derive-glyphs 'cyrl/e' 0x44D 'revSmallC' : lambda [src sel] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
-		include : HBar [mix SB RightSB 0.25] RightSB (XH / 2)
+		include : HBar [mix SB RightSB 0.35] RightSB (XH / 2)
 
 	derive-glyphs 'cyrl/Ye' 0x404 'C' : lambda [src sel] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
-		include : HBar SB [mix RightSB SB 0.25] (CAP / 2) [AdviceStroke2 2 4 CAP]
+		include : HBar SB [mix RightSB SB 0.35] (CAP / 2) [AdviceStroke2 2 4 CAP]
 
 	derive-glyphs 'cyrl/ye' 0x454 'c' : lambda [src sel] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
-		include : HBar SB [mix RightSB SB 0.25] (XH / 2) [AdviceStroke2 2 4 XH]
+		include : HBar SB [mix RightSB SB 0.35] (XH / 2) [AdviceStroke2 2 4 XH]
 
 	derive-glyphs 'cyrl/Koppa' 0x480 'CTopSerifOnly' : lambda [src sel] : glyph-proc
 		include : MarkSet.if

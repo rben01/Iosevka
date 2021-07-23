@@ -1,7 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
 import [Dotless CvDecompose MathSansSerif] from "../../../support/gr"
 
 glyph-module
@@ -10,6 +9,7 @@ glyph-block Letter-Latin-Upper-H : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
 	glyph-block-import Letter-Blackboard : BBS BBD
+	glyph-block-import Letter-Shared : SetGrekUpperTonos
 	glyph-block-import Letter-Shared-Shapes : SerifFrame RightwardTailedBar
 	glyph-block-import Letter-Shared-Shapes : CyrDescender CyrTailDescender
 
@@ -18,6 +18,8 @@ glyph-block Letter-Latin-Upper-H : begin
 	define SLAB-TOP-LEFT-BOTTOM-RIGHT  2
 	define SLAB-TAILED-CYRILLIC        3
 	define SLAB-ALL                    4
+	define SLAB-ALL-BGR                5
+	define SLAB-TAILED-CYRILLIC-BGR    6
 
 	define [HSerifs slabType t b l r sw] : begin
 		local sf : SerifFrame t b l r (sw -- [fallback sw Stroke])
@@ -27,6 +29,8 @@ glyph-block Letter-Latin-Upper-H : begin
 			[Just SLAB-TOP-LEFT-BOTTOM-RIGHT] : composite-proc sf.lt.outer sf.rb.outer
 			[Just SLAB-TAILED-CYRILLIC] : composite-proc sf.lt.full sf.rt.full sf.lb.full
 			[Just SLAB-ALL] : composite-proc sf.lt.full sf.rt.full sf.lb.full sf.rb.full
+			[Just SLAB-ALL-BGR] : composite-proc sf.lt.outer sf.rt.inner sf.lb.full sf.rb.full
+			[Just SLAB-TAILED-CYRILLIC-BGR] : composite-proc sf.lt.outer sf.rt.inner sf.lb.full
 
 	define [HShape l r top sw] : glyph-proc
 		include : tagged 'strokeL' : VBarLeft l 0 top [fallback sw Stroke]
@@ -63,6 +67,9 @@ glyph-block Letter-Latin-Upper-H : begin
 			curl df.rightSB XH [heading Upward]
 		include : HSerifs slabType top 0 df.leftSB (df.middle + 0.5 * df.mvs * HVContrast) df.mvs
 
+		local sf2 : SerifFrame XH 0 (df.middle - df.mvs * 0.5 * HVContrast) df.rightSB df.mvs
+		if (slabType === SLAB-ALL || slabType === SLAB-TAILED-CYRILLIC) : include sf2.rt.full
+
 	define HConfig : object
 		serifless                        { HShape       SLAB-NONE                  false }
 		tailed                           { TailedHShape SLAB-NONE                  false }
@@ -72,12 +79,18 @@ glyph-block Letter-Latin-Upper-H : begin
 		serifed                          { HShape       SLAB-ALL                   true  }
 		tailedSerifed                    { TailedHShape SLAB-TAILED-CYRILLIC       true  }
 		serifedExceptBottomRight         { HShape       SLAB-TAILED-CYRILLIC       true  }
+		serifedBGR                       { HShape       SLAB-ALL-BGR               true  }
+		tailedSerifedBGR                 { TailedHShape SLAB-TAILED-CYRILLIC-BGR   true  }
 
 	foreach { suffix { Body slabType enGheVSlab } } [Object.entries HConfig] : do
 		create-glyph "H.\(suffix)" : glyph-proc
 			include : MarkSet.capital
 			include : Body SB RightSB CAP
 			include : HSerifs slabType CAP 0 SB RightSB
+
+		create-glyph "grek/Eta.\(suffix)" : glyph-proc
+			include [refer-glyph "H.\(suffix)"] AS_BASE ALSO_METRICS
+			include : SetGrekUpperTonos [if (slabType === SLAB-NONE) 0 (-SideJut)]
 
 		create-glyph "smcpH.\(suffix)" : glyph-proc
 			include : MarkSet.e
@@ -116,8 +129,8 @@ glyph-block Letter-Latin-Upper-H : begin
 
 	select-variant 'H' 'H'
 	link-reduced-variant 'H/sansSerif' 'H' MathSansSerif
-	alias 'grek/Eta' 0x397 'H'
-	alias-reduced-variant 'grek/Eta/sansSerif' 'grek/Eta' 'H/sansSerif' MathSansSerif
+	select-variant 'grek/Eta' 0x397 (follow -- 'H')
+	link-reduced-variant 'grek/Eta/sansSerif' 'grek/Eta' MathSansSerif (follow -- 'H/sansSerif')
 	alias 'cyrl/En' 0x41D 'H'
 	select-variant 'halfH' 0x2C75
 
@@ -125,6 +138,7 @@ glyph-block Letter-Latin-Upper-H : begin
 	select-variant 'halfSmcpH' 0x2C76 (follow -- 'halfH')
 	select-variant 'cyrl/en' 0x43D (shapeFrom -- 'smcpH')
 	select-variant 'cyrl/en/descenderBase' (shapeFrom -- 'smcpH')
+	select-variant 'cyrl/en.BGR' (shapeFrom -- 'smcpH')
 
 	derive-composites 'cyrl/EnDescender' 0x4A2 'cyrl/En' [CyrDescender RightSB]
 	derive-composites 'cyrl/enDescender' 0x4A3 'cyrl/en/descenderBase' [CyrDescender RightSB]

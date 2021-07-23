@@ -1,8 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix barmixL linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
-import '../../../support/point' as Point
 
 glyph-module
 
@@ -71,7 +69,6 @@ glyph-block Letter-Cyrillic-Sha : begin
 		local df : DivFrame para.diversityM 3
 		set-width df.width
 		include [refer-glyph 'm.topLeftAndBottomRightSerifed'] AS_BASE
-		eject-contour 'barL'
 		eject-contour 'serifRB'
 		include : FlipAround df.middle (XH / 2)
 

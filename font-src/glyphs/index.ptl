@@ -1,9 +1,8 @@
-import '../support/glyph' as Glyph
+import '../support/glyph/index' as Glyph
 import '../support/glyph-store' as GlyphStore
 import '../support/glyph-block' as GlyphBlock
-import '../support/point' as Point
-import '../support/anchor' as Anchor
-import '../kits/spiro-kit' as spirokit
+import '../support/gr' as Gr
+import '../kits/spiro-kit' as SpiroKit
 import '../kits/boole-kit' as BooleKit
 import [ DesignParameters ] from "../meta/aesthetics"
 
@@ -21,7 +20,7 @@ define [$NamedParameterPair$ l r] : begin
 
 define [$donothing$] nothing
 
-export all : define [buildGlyphs para recursive recursiveCodes] : begin
+export : define [buildGlyphs para recursive recursiveCodes] : begin
 	local glyphStore : new GlyphStore
 
 	define metrics : calculateMetrics para
@@ -104,8 +103,8 @@ export all : define [buildGlyphs para recursive recursiveCodes] : begin
 
 	### Spiro constructions
 	# Basic knots
-	define spirofns : spirokit.SetupBuilders : object GlobalTransform Contrast Stroke Glyph para [superness DesignParameters.superness]
-	define booleFns : BooleKit.SetupBuilders : object GlobalTransform Glyph
+	define SpiroFns : SpiroKit.SetupBuilders : object GlobalTransform Contrast Stroke [Superness DesignParameters.superness]
+	define BooleFns : BooleKit.SetupBuilders : object GlobalTransform Glyph
 
 	# Meta
 	define [tagged tag component] : function [ca cw] : begin
@@ -116,7 +115,7 @@ export all : define [buildGlyphs para recursive recursiveCodes] : begin
 		return ret
 
 	# IDKY, but wrapping "metrics" prevents Node.js on Arch modifying it.
-	define $$Capture$$ : object [metrics : Object.create metrics] $NamedParameterPair$ $donothing$ para recursive recursiveCodes glyphStore $createAndSaveGlyphImpl$ spirofns booleFns MarkSet AS_BASE ALSO_METRICS pickHash buildGlyphs tagged DivFrame fontMetrics $assignUnicodeImpl$ $defineGlyphBlockImpl$
+	define $$Capture$$ : object [metrics : Object.create metrics] $NamedParameterPair$ $donothing$ para recursive recursiveCodes glyphStore $createAndSaveGlyphImpl$ SpiroFns BooleFns MarkSet AS_BASE ALSO_METRICS pickHash buildGlyphs tagged DivFrame fontMetrics $assignUnicodeImpl$ $defineGlyphBlockImpl$
 
 	### HERE WE GO
 	run-glyph-module './common/shapes.js'
@@ -155,5 +154,7 @@ export all : define [buildGlyphs para recursive recursiveCodes] : begin
 
 	foreach [gb : items-of $$Capture$$.$pendingGlyphBlocks$] : gb.resolve
 
-	return : object glyphStore fontMetrics
+	Gr.linkSuffixPairGr glyphStore 'NWID' 'WWID' Gr.Nwid Gr.Wwid
+	Gr.linkSuffixPairGr glyphStore 'lnum' 'onum' Gr.Lnum Gr.Onum
 
+	return : object glyphStore fontMetrics

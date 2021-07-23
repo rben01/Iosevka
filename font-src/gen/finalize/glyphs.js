@@ -1,10 +1,10 @@
 "use strict";
 
 const TypoGeom = require("typo-geom");
-const Geom = require("../../support/geometry");
-const Point = require("../../support/point");
-const Transform = require("../../support/transform");
-const CurveUtil = require("../../support/curve-util");
+const Geom = require("../../support/geometry/index");
+const Point = require("../../support/geometry/point");
+const Transform = require("../../support/geometry/transform");
+const CurveUtil = require("../../support/geometry/curve-util");
 
 module.exports = finalizeGlyphs;
 function finalizeGlyphs(cache, para, glyphStore) {
@@ -42,7 +42,7 @@ function regulateCompositeGlyph(glyphStore, memo, g) {
 
 	for (const sr of refs) {
 		const gn = glyphStore.queryNameOf(sr.glyph);
-		if (!gn || sr.glyph.autoRefPriority < 0) return memoSet(memo, g, false);
+		if (!gn) return memoSet(memo, g, false);
 	}
 
 	// De-doppelganger

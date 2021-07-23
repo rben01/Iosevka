@@ -1,10 +1,7 @@
 $$include '../../meta/macros.ptl'
 
-import '../../support/transform' as Transform
-
 import [mix linreg clamp fallback] from '../../support/utils'
-import [Cv AnyCv AnyDerivingCv Dotless SvInheritableRelations] from '../../support/gr'
-import [DesignParameters] from '../../meta/aesthetics'
+import [Cv AnyCv AnyDerivingCv Dotless SvInheritableRelations CvDecompose] from '../../support/gr'
 
 extern Map
 
@@ -102,10 +99,9 @@ glyph-block Common-Derivatives : begin
 				define x : if (_x <@ Function) [_x.call currentGlyph] _x
 				define y : if (_y <@ Function) [_y.call currentGlyph] _y
 				include : FlipAround x y
-				set currentGlyph.autoRefPriority [query-glyph src].autoRefPriority
 
-	define [link-reduced-variant dstGid srcGid gr] : begin
-		if [not : query-glyph dstGid] : select-variant dstGid (shapeFrom -- srcGid)
+	define [link-reduced-variant] : params [dstGid srcGid gr follow] : begin
+		if [not : query-glyph dstGid] : select-variant dstGid (shapeFrom -- srcGid) (follow -- [fallback follow dstGid])
 		if (gr && [query-glyph srcGid]) : gr.set [query-glyph srcGid] dstGid
 
 	define [alias-reduced-variant dstGid srcGid shapeGid gr] : begin
@@ -144,10 +140,18 @@ glyph-block Common-Derivatives : begin
 		if [not newid] : throw : new Error "Target ID not specified"
 		return : VCombine newid unicode id id spacing
 
+	# Two-art glyphs
+	define [create-two-part-glyph newid unicode id1 id2] : begin
+		create-glyph newid unicode : glyph-proc
+			include [refer-glyph id1] AS_BASE ALSO_METRICS
+			include [refer-glyph id2]
+			CvDecompose.set currentGlyph { id1 id2 }
+
+
 	glyph-block-export select-variant orthographic-italic refer-glyph query-glyph
 	glyph-block-export derive-glyphs derive-composites link-reduced-variant alias-reduced-variant
 	glyph-block-export alias turned HDual HCombine VDual VCombine glyph-is-needed
-	glyph-block-export HalfAdvance TurnMarks
+	glyph-block-export HalfAdvance TurnMarks create-two-part-glyph
 
 glyph-block Recursive-Build : begin
 	define [Fork gs ps] : begin
@@ -181,13 +185,15 @@ glyph-block Recursive-Build : begin
 		local gs : buildGlyphs p shouldBuildList shouldBuildUnicodes
 		return gs.glyphStore
 
-	define [MiniatureParaT] : params [pp crowd scale [sbscale (Width / UPM)] [mono false] [mono2 false]] : begin
+	define [MiniatureParaT] : params [pp crowd scale [sbscale (Width / UPM)] [mono false] [mono2 false] [forceUpright false]] : begin
 		local forkedPara : Object.create pp
 		forkedPara.stroke = [AdviceStroke crowd : Math.pow [clamp 0 1 (HalfUPM / Width)] 0.5] / scale
 		forkedPara.ess = pp.ess * forkedPara.stroke / pp.stroke
 		forkedPara.dotsize = pp.dotsize * forkedPara.stroke / pp.stroke
 		forkedPara.periodsize = pp.periodsize * forkedPara.stroke / pp.stroke
 		forkedPara.sb = SB * sbscale
+		if forceUpright : begin
+			forkedPara.slopeAngle  = 0
 		if mono : begin
 			forkedPara.diversityM  = 1
 		if mono2 : begin

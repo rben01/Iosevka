@@ -2,13 +2,13 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
 
 glyph-module
 
 glyph-block Symbol-Punctuation-Percentages : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
+	glyph-block-import Shared-Symbol-Shapes : WithDotVariants
 
 	define [NarrowUnicode u] : if (para.spacing <  1) u null
 	define [WideUnicode   u] : if (para.spacing >= 1) u null
@@ -28,10 +28,11 @@ glyph-block Symbol-Punctuation-Percentages : begin
 		include : VBarLeft SB [mix CAP 0 0.3] CAP dotwidth
 		include : VBarRight RightSB 0 [mix 0 CAP 0.3] dotwidth
 
-	create-glyph 'commercialMinusSign' 0x2052 : glyph-proc
+	WithDotVariants "commercialMinusSign" 0x2052 : function [DrawAt kdr overshoot] : glyph-proc
 		include : PercentBarShape [DivFrame 1] Stroke
-		include : DotAt (SB      + PeriodRadius) (CAP - PeriodRadius) PeriodRadius
-		include : DotAt (RightSB - PeriodRadius) (0   + PeriodRadius) PeriodRadius
+		local r : PeriodRadius * kdr
+		include : DrawAt (SB      + r) (CAP - r) (r - overshoot)
+		include : DrawAt (RightSB - r) (0   + r) (r - overshoot)
 
 	create-glyph 'permille.NWID.dots' : glyph-proc
 		define df : DivFrame para.diversityM

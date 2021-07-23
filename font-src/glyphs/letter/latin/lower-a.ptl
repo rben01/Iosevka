@@ -1,7 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../../support/utils'
-import [DesignParameters] from '../../../meta/aesthetics'
 import [Dotless CvDecompose MathSansSerif] from "../../../support/gr"
 
 glyph-module
@@ -232,3 +231,4 @@ glyph-block Letter-Latin-Lower-A : begin
 
 	CreateAccentedComposition 'aDieresis' 0xE4 'a' 'dieresisAbove'
 	CreateAccentedComposition 'aSbRsbUnderlineBelow' null 'a' 'sbRsbUnderlineBelow'
+	CreateAccentedComposition 'aRightHalfRingTR' 0x1E9A 'a' 'rightHalfCircleTR'

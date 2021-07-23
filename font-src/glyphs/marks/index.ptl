@@ -1,10 +1,11 @@
 $$include '../../meta/macros.ptl'
 
 import [Arcs Quadify ShapeConv] from "typo-geom"
-import [OffsetCurve BezToContoursSink GEOMETRY_PRECISION] from '../../support/curve-util'
+import [OffsetCurve BezToContoursSink GEOMETRY_PRECISION] from '../../support/geometry/curve-util'
 import [mix linreg clamp fallback] from '../../support/utils'
 import [DesignParameters] from '../../meta/aesthetics'
 import [TieMark TieGlyph] from "../../support/gr"
+import [Box] from '../../support/geometry/box'
 
 glyph-module
 
@@ -91,9 +92,11 @@ glyph-block Marks : begin
 			curl (markMiddle - markExtend) aboveMarkTop [widths markStress markStress]
 
 	create-glyph 'asciiGrave.straight' : glyph-proc
+		local df : DivFrame para.diversityF
+		set-width df.width
 		include : dispiro
-			flat (Middle + HalfStroke * 1.1 * asciiMarkZoom) [mix (XH + Accent) aboveMarkBot asciiMarkZoom] [widths.center : Stroke * 0.9]
-			curl (Middle - markExtend * asciiMarkZoom) [mix (XH + Accent) aboveMarkTop asciiMarkZoom] [widths.center : Stroke * 1.1]
+			flat (df.middle + HalfStroke * 1.1 * asciiMarkZoom * [Math.sqrt df.div]) [mix (XH + Accent) aboveMarkBot asciiMarkZoom] [widths.center : Stroke * 0.9]
+			curl (df.middle - markExtend * asciiMarkZoom * [Math.sqrt df.div]) [mix (XH + Accent) aboveMarkTop asciiMarkZoom] [widths.center : Stroke * 1.1]
 
 	create-glyph 'acuteAbove' 0x301 : glyph-proc
 		set-width 0
@@ -106,9 +109,11 @@ glyph-block Marks : begin
 			curl (markMiddle + markExtend) aboveMarkTop [widths markStress markStress]
 
 	create-glyph 'latin1acute' 0xB4 : glyph-proc
+		local df : DivFrame para.diversityF
+		set-width df.width
 		include : dispiro
-			flat (Middle - HalfStroke * 1.1 * asciiMarkZoom) [mix (XH + Accent) aboveMarkBot asciiMarkZoom] [widths.center : Stroke * 0.9]
-			curl (Middle + markExtend * asciiMarkZoom) [mix (XH + Accent) aboveMarkTop asciiMarkZoom] [widths.center : Stroke * 1.1]
+			flat (df.middle - HalfStroke * 1.1 * asciiMarkZoom * [Math.sqrt df.div]) [mix (XH + Accent) aboveMarkBot asciiMarkZoom] [widths.center : Stroke * 0.9]
+			curl (df.middle + markExtend * asciiMarkZoom * [Math.sqrt df.div]) [mix (XH + Accent) aboveMarkTop asciiMarkZoom] [widths.center : Stroke * 1.1]
 
 	create-glyph 'circumflexAbove' 0x302 : glyph-proc
 		set-width 0
@@ -290,13 +295,14 @@ glyph-block Marks : begin
 				curl (markMiddle - markExtend * 0.2) [mix ttop tbot 1.5]
 
 		create-forked-glyph 'tildedotdotAbove' 0x34B : glyph-proc
+			set-mark-anchor 'above' markMiddle (XH - AccentStackOffset / 4) markMiddle (aboveMarkTop + AccentStackOffset / 4)
 			local r : 0.75 * DotRadius * fine / HalfStroke
 			include : DotAt markMiddle [mix tbot ttop 1.5] r
 			include : DotAt markMiddle [mix ttop tbot 1.5] r
 
 	create-glyph 'dblTildeAbove' 0x34C : glyph-proc
 		set-width 0
-		set-mark-anchor 'above' markMiddle XH markMiddle aboveMarkTop
+		set-mark-anchor 'above' markMiddle (XH - AccentStackOffset / 4) markMiddle (aboveMarkTop + AccentStackOffset / 4)
 		set-base-anchor 'aboveBrace' markMiddle aboveMarkMid
 
 		local m aboveMarkBot
@@ -470,9 +476,14 @@ glyph-block Marks : begin
 		include : dispiro
 			widths.rhs : Math.min radius (markFine * [linreg 16 2 90 1.75 (markHalfStroke * 2)])
 			straight.down.start (markMiddle + radius) (aboveMarkTop - radius + commaOvershoot)
-			quadcontrols 0 0.6
+			quadControls 0 0.6
 			g4   [mix markMiddle (markMiddle - radius) 0.2] (aboveMarkBot - radius - commaOvershoot2)
 		include : ApparentTranslate 0 (DotRadius * 0.3)
+
+	create-glyph 'commaGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'commaAbove'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
 
 	create-glyph 'turnCommaAbove' 0x312 : glyph-proc
 		set-width 0
@@ -493,9 +504,14 @@ glyph-block Marks : begin
 		include : dispiro
 			widths.lhs : Math.min radius (markFine * [linreg 16 2 90 1.75 (markHalfStroke * 2)])
 			straight.down.start (markMiddle - radius) (aboveMarkTop - radius + commaOvershoot)
-			quadcontrols 0 0.6
+			quadControls 0 0.6
 			g4   [mix markMiddle (markMiddle + radius) 0.2] (aboveMarkBot - radius - commaOvershoot2)
 		include : ApparentTranslate 0 (DotRadius * 0.3)
+
+	create-glyph 'revCommaGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'revCommaAbove'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
 
 	create-glyph 'barAbove' 0x30D : glyph-proc
 		set-width 0
@@ -567,6 +583,11 @@ glyph-block Marks : begin
 			flat (markMiddle + markStress) (aboveMarkBot - markFine * 0.5) [widths markFine markFine]
 			curl (markMiddle - markExtend * 0.5) (aboveMarkTop + markStress * 0.25) [widths markStress markStress]
 
+	create-glyph 'variaGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'variaAbove'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
+
 	create-glyph 'oxiaAbove' 0x341 : glyph-proc
 		set-width 0
 		set-mark-anchor 'above' markMiddle XH markMiddle aboveMarkTop
@@ -575,6 +596,11 @@ glyph-block Marks : begin
 		include : dispiro
 			flat (markMiddle - markStress) (aboveMarkBot - markFine * 0.5) [widths markFine markFine]
 			curl (markMiddle + markExtend * 0.5) (aboveMarkTop + markStress * 0.25) [widths markStress markStress]
+
+	create-glyph 'oxiaGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'oxiaAbove'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
 
 	create-glyph 'perispomeniAbove' 0x342 : glyph-proc
 		set-width 0
@@ -770,7 +796,6 @@ glyph-block Marks : begin
 			alsoThru.g2 0.5 0.5
 			g2.right.end rightEnd ([mix aboveMarkBot aboveMarkTop 0.5] - markHalfStroke) [heading Rightward]
 
-
 	create-glyph 'cyrlTitloAbove' 0x483 : glyph-proc
 		set-width 0
 		set-mark-anchor 'above' markMiddle XH markMiddle aboveMarkTop
@@ -779,6 +804,20 @@ glyph-block Marks : begin
 		include : VBar (markMiddle - markExtend) aboveMarkBot (aboveMarkMid + markFine) (markFine * 2)
 		include : VBar (markMiddle + markExtend) (aboveMarkMid - markFine) aboveMarkTop (markFine * 2)
 		include : HBar (markMiddle - markExtend) (markMiddle + markExtend)aboveMarkMid (markFine * 2)
+
+	create-glyph 'zigzagAbove' 0x35B : glyph-proc
+		set-width 0
+		set-mark-anchor 'above' markMiddle XH markMiddle aboveMarkTop
+		set-base-anchor 'aboveBrace' markMiddle aboveMarkMid
+
+		local ext : 0.625 * markExtend + markFine
+		local coSlope  0.2
+		local fr : new Box aboveMarkTop aboveMarkBot (markMiddle - ext) (markMiddle + ext)
+		include : HBar fr.left fr.right fr.yMid (markFine * 2)
+		include : intersection [MaskBelow fr.top] [MaskAbove (fr.yMid - markFine)]
+			ExtLineLhs 4 (markFine * 2) (fr.left + coSlope * (fr.top - fr.yMid - markFine)) fr.top (fr.left - 2 * markFine * coSlope) (fr.yMid - markFine)
+		include : intersection [MaskAbove fr.bot] [MaskBelow (fr.yMid + markFine)]
+			ExtLineLhs 4 (markFine * 2) (fr.right - coSlope * (fr.yMid - fr.bot - markFine)) fr.bot (fr.right + 2 * markFine * coSlope) (fr.yMid + markFine)
 
 	### Below marks
 	create-glyph 'blankBelow' : glyph-proc
@@ -1024,6 +1063,12 @@ glyph-block Marks : begin
 		include : refer-glyph "leftHalfCircleBelow"
 		include : FlipAround markMiddle (XH / 2)
 
+	create-glyph 'rightHalfCircleTR' : glyph-proc
+		set-width 0
+		set-mark-anchor 'topright' markMiddle XH markMiddle aboveMarkTop
+		include : refer-glyph "leftHalfCircleBelow"
+		include : FlipAround markMiddle (XH / 2)
+
 	# Turned below marks
 	define [TurnAboveMarkToBelow gnBelowMark unicodeBelowMark gnAboveMark] : begin
 		create-glyph gnBelowMark unicodeBelowMark : glyph-proc
@@ -1068,7 +1113,7 @@ glyph-block Marks : begin
 	TurnAboveMarkToBelow 'dblRingBelow' 0x35a 'dblRingAbove'
 	TurnAboveMarkToBelow 'lrArrowBelow' 0x34D 'lrArrowAbove'
 	TurnAboveMarkToBelow 'upArrowBelow' 0x34E 'downArrowAbove'
-	TurnAboveMarkToBelow 'sbRsbUnderlineBelow' 0x332 'sbRsbOverlineAbove'
+	TurnAboveMarkToBelow 'sbRsbUnderlineBelow' null 'sbRsbOverlineAbove'
 
 	create-glyph 'greaterAndUpArrowheadBelow' 0x0356 : glyph-proc
 		set-width 0
@@ -1126,7 +1171,7 @@ glyph-block Marks : begin
 				g4 (startX - radius) (startY + radius) [widths.rhs (hornFine / 2)]
 				archv
 				g4 startX startY [widths.rhs hornFine]
-				quadcontrols.g4 0 0.75 16 : object : blend : lambda [t]
+				quadControls 0 0.75 16 : object : blend : lambda [t]
 					widths.rhs [mix hornFine hornStroke t]
 				g4 (attX - overshootX - HalfStroke * HVContrast) (attY - overshootY - Stroke) [widths.rhs hornStroke]
 
@@ -1167,7 +1212,6 @@ glyph-block Marks : begin
 			flat 0 (-O) [heading Downward]
 			curl 0 0 [heading Downward]
 			straight.right.end (HookX - HalfStroke * HVContrast) (-Hook + HalfStroke)
-		set currentGlyph.autoRefPriority (-2)
 
 	create-glyph 'rRetroflexTailBR' : glyph-proc
 		set-width 0
@@ -1179,7 +1223,6 @@ glyph-block Marks : begin
 			flat (SideJut) Stroke [heading Downward]
 			curl (SideJut) 0 [heading Downward]
 			straight.right.end (HookX - HalfStroke * HVContrast) (-Hook + HalfStroke)
-		set currentGlyph.autoRefPriority (-2)
 
 	create-glyph 'ltailBR' 0x321 : glyph-proc
 		set-width 0
@@ -1190,7 +1233,6 @@ glyph-block Marks : begin
 			flat 0 (-O) [heading Downward]
 			curl 0 0 [heading Downward]
 			straight.left.end (-HookX - HalfStroke * HVContrast) (-Hook - HalfStroke)
-		set currentGlyph.autoRefPriority (-2)
 
 	# Overlay Marks
 	create-glyph 'tildeOver' 0x334 : glyph-proc
@@ -1312,9 +1354,9 @@ glyph-block Marks : begin
 		include : dispiro
 			widths.center (markHalfStroke * 2)
 			g4 tieLeft aboveTieBottom
-			quadcontrols  0.5 1
+			quadControls  0.5 1
 			g4.right.mid  0 aboveTieTop [heading Rightward]
-			quadcontrols  0.5 0
+			quadControls  0.5 0
 			g4 tieRight aboveTieBottom
 
 	create-glyph 'turnTieAbove' 0x35D : glyph-proc
@@ -1324,9 +1366,9 @@ glyph-block Marks : begin
 		include : dispiro
 			widths.center (markHalfStroke * 2)
 			g4 tieLeft aboveTieTop
-			quadcontrols  0.5 1
+			quadControls  0.5 1
 			g4.right.mid  0 aboveTieBottom [heading Rightward]
-			quadcontrols  0.5 0
+			quadControls  0.5 0
 			g4 tieRight aboveTieTop
 
 	create-glyph 'tieBelow' 0x35C : glyph-proc
@@ -1384,9 +1426,9 @@ glyph-block Marks : begin
 			hs -- markHalfStroke
 
 	define [GreekLRDoubleMark id unicode leftGlyph rightGlyph] : begin
+		local k : -Width * 0.15
 		create-glyph id : glyph-proc
 			set-width 0
-			local k : -Width * 0.15
 
 			include leftGlyph
 			include : Translate (2 * k) 0
@@ -1394,21 +1436,25 @@ glyph-block Marks : begin
 			include : Translate (0 - k) 0
 
 			set-mark-anchor 'above' markMiddle XH markMiddle aboveMarkTop
-			set currentGlyph.autoRefPriority 50
 
-		create-glyph ('spaced' + id) unicode : glyph-proc
+		create-glyph "\(id)GrekUpperTonos" : glyph-proc
+			set-width 0
+			include [refer-glyph id]
+			set-mark-anchor 'grekUpperTonos' (markMiddle - k) XH
+
+		if unicode : create-glyph ('spaced' + id) unicode : glyph-proc
 			include [refer-glyph 'markBaseSpace'] AS_BASE
 			set-width [query-glyph 'markBaseSpace'].advanceWidth
 			include [refer-glyph id]
 
-	GreekLRDoubleMark 'psilivaria' 0x1FCD [refer-glyph 'commaAbove'] [refer-glyph 'variaAbove']
-	GreekLRDoubleMark 'psilioxia'  0x1FCE [refer-glyph 'commaAbove'] [refer-glyph 'oxiaAbove']
-	GreekLRDoubleMark 'dasiavaria' 0x1FDD [refer-glyph 'revCommaAbove'] [refer-glyph 'variaAbove']
-	GreekLRDoubleMark 'dasiaoxia'  0x1FDE [refer-glyph 'revCommaAbove'] [refer-glyph 'oxiaAbove']
+	GreekLRDoubleMark 'psiliVaria' 0x1FCD [refer-glyph 'commaAbove'] [refer-glyph 'variaAbove']
+	GreekLRDoubleMark 'psiliOxia'  0x1FCE [refer-glyph 'commaAbove'] [refer-glyph 'oxiaAbove']
+	GreekLRDoubleMark 'dasiaVaria' 0x1FDD [refer-glyph 'revCommaAbove'] [refer-glyph 'variaAbove']
+	GreekLRDoubleMark 'dasiaOxia'  0x1FDE [refer-glyph 'revCommaAbove'] [refer-glyph 'oxiaAbove']
 
 	local yc : aboveMarkTop - commaAboveRadius + DotRadius * 0.3 + commaOvershoot
 
-	create-glyph 'psiliperispomeni' : glyph-proc
+	create-glyph 'psiliPerispomeni' : glyph-proc
 		set-width 0
 		include : refer-glyph "commaAbove"
 		local radius : Math.max (markExtend - commaAboveRadius) (commaAboveRadius * 1.25)
@@ -1420,7 +1466,34 @@ glyph-block Marks : begin
 			archv
 			g4.down.end (markMiddle + radius) yc [heading Downward]
 		set-mark-anchor 'above' markMiddle XH markMiddle (aboveMarkTop + markHalfStroke * 2)
-		set currentGlyph.autoRefPriority 50
+
+	create-glyph 'psiliPerispomeniGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'psiliPerispomeni'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
+
+	create-glyph 'spaced_psiliPerispomeni' 0x1FCF : glyph-proc
+		include [refer-glyph 'markBaseSpace'] AS_BASE
+		set-width [query-glyph 'markBaseSpace'].advanceWidth
+		include : refer-glyph "psiliPerispomeni"
+
+	create-glyph 'dasiaPerispomeni' : glyph-proc
+		set-width 0
+		include : refer-glyph "revCommaAbove"
+		local radius : Math.max (markExtend - commaAboveRadius) (commaAboveRadius * 1.25)
+		include : dispiro
+			widths.lhs : Math.min (markHalfStroke * 2) ([AdviceStroke 6.5] * 1.25)
+			g4.up.start (markMiddle - radius) yc [heading Upward]
+			arcvh
+			g4.right.mid markMiddle (yc + radius)
+			archv
+			g4.down.end (markMiddle + radius) yc [heading Downward]
+		set-mark-anchor 'above' markMiddle XH markMiddle (aboveMarkTop + markHalfStroke * 2)
+
+	create-glyph 'dasiaPerispomeniGrekUpperTonos' : glyph-proc
+		set-width 0
+		include : refer-glyph 'dasiaPerispomeni'
+		set-mark-anchor 'grekUpperTonos' markMiddle XH
 
 	create-glyph 'cyrlPsiliPokrytieAbove' : glyph-proc
 		set-width 0
@@ -1435,31 +1508,11 @@ glyph-block Marks : begin
 			alsoThru.g2 0.5 0.5
 			g2.right.end (markMiddle + [Math.max radius (markExtend * 2)]) yc [heading Rightward]
 		set-mark-anchor 'above' markMiddle XH markMiddle (aboveMarkTop + markHalfStroke * 2)
-		set currentGlyph.autoRefPriority 50
 
-	create-glyph 'spaced_psiliperispomeni' 0x1FCF : glyph-proc
+	create-glyph 'spaced_dasiaPerispomeni' 0x1FDF : glyph-proc
 		include [refer-glyph 'markBaseSpace'] AS_BASE
 		set-width [query-glyph 'markBaseSpace'].advanceWidth
-		include : refer-glyph "psiliperispomeni"
-
-	create-glyph 'dasiaperispomeni' : glyph-proc
-		set-width 0
-		include : refer-glyph "revCommaAbove"
-		local radius : Math.max (markExtend - commaAboveRadius) (commaAboveRadius * 1.25)
-		include : dispiro
-			widths.lhs : Math.min (markHalfStroke * 2) ([AdviceStroke 6.5] * 1.25)
-			g4.up.start (markMiddle - radius) yc [heading Upward]
-			arcvh
-			g4.right.mid markMiddle (yc + radius)
-			archv
-			g4.down.end (markMiddle + radius) yc [heading Downward]
-		set-mark-anchor 'above' markMiddle XH markMiddle (aboveMarkTop + markHalfStroke * 2)
-		set currentGlyph.autoRefPriority 50
-
-	create-glyph 'spaced_dasiaperispomeni' 0x1FDF : glyph-proc
-		include [refer-glyph 'markBaseSpace'] AS_BASE
-		set-width [query-glyph 'markBaseSpace'].advanceWidth
-		include : refer-glyph "dasiaperispomeni"
+		include : refer-glyph "dasiaPerispomeni"
 
 	if [not recursive] : begin
 		define AnchorMap : list

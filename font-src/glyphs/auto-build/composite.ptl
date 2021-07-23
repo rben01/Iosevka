@@ -2,7 +2,7 @@
 $$include '../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from '../../support/utils'
-import [getGrMesh AnyCv CvDecompose] from "../../support/gr"
+import [getGrMesh AnyCv CvDecompose Joining] from "../../support/gr"
 extern Map
 extern Set
 
@@ -128,6 +128,7 @@ glyph-block AutoBuild-Enclosure : begin
 			enclosureInnerPartActualWidth.set gniPart (subGlyph.advanceWidth * dscale * xCompress)
 			create-glyph gniPart : glyph-proc
 				set-width 0
+				set-mark-anchor 'compositeInner' 0 0
 				include   subGlyph
 				include : subGlyph.gizmo.inverse
 				include : Scale (dscale * xCompress) (dscale * yCompress)
@@ -521,11 +522,11 @@ glyph-block AutoBuild-Enclosure : begin
 
 	define [DottedCrowd digits width] : 2 + [AdjustDigitCount digits width]
 	define [DottedScale digits width] : 1 / [Math.pow [AdjustDigitCount digits width] 0.5]
-	define [createDottedGlyphs digits gidDot demands] : begin
+	define [createDottedGlyphs digits demands] : begin
 		foreach {suffix ww} [items-of circleWidthClasses] : do
 			define jobs : CollectJobs DECOMPOSABLE NOT-CENTERED ALLOW-PROPORTIONAL ('dotted' + digits) suffix demands
 
-			local miniatureFont : CreateDerivedFontFromJobs jobs {gidDot} : lambda [gs]: Miniature gs
+			local miniatureFont : CreateDerivedFontFromJobs jobs {} : lambda [gs]: Miniature gs
 				crowd   -- [DottedCrowd digits ww]
 				scale   -- [DottedScale digits ww]
 				sbscale -- 1
@@ -535,6 +536,7 @@ glyph-block AutoBuild-Enclosure : begin
 				if [query-glyph gniPart] : return gniPart
 				create-glyph gniPart : glyph-proc
 					set-width 0
+					set-mark-anchor 'compositeInner' 0 0
 					include : miniatureFont.queryByNameEnsured gidPart
 					include : Upright
 					include : Translate offset 0
@@ -544,12 +546,11 @@ glyph-block AutoBuild-Enclosure : begin
 				return gniPart
 
 			define [createDottedGlyphImpl job jobDecomposable] : begin
-				local {gn unicode parts w} job
+				local {gn unicode partsWithDot w} job
 				define [object width dscale pscale sw l r] : bracedDottdeDimens 1 ww
 
 				local totalWidth 0
 				local offsets    { }
-				local partsWithDot : parts.concat { gidDot }
 				foreach [j : range 0 partsWithDot.length] : begin
 					local gidPart partsWithDot.(j)
 					if j : set totalWidth : totalWidth - SB
@@ -569,8 +570,6 @@ glyph-block AutoBuild-Enclosure : begin
 						ps.push p
 					include : Translate width 0
 					if jobDecomposable : CvDecompose.set currentGlyph ps
-					set currentGlyph.autoRefPriority 11
-
 
 			define gnSpace : '.dotted-space.' + [{ digits suffix }.join '/']
 			if [not : query-glyph gnSpace] : create-glyph gnSpace : glyph-proc
@@ -719,7 +718,7 @@ glyph-block AutoBuild-Enclosure : begin
 
 	do "inset diamond"
 		createInsetDiamondGlyphs 1 : list
-			list 0xFFFD { 'question.corner' } WideWidth2
+			list 0xFFFD { 'question' } WideWidth2
 
 	do "double-digit inset boxed"
 		createInsetBoxedGlyphs 2 : list
@@ -778,28 +777,28 @@ glyph-block AutoBuild-Enclosure : begin
 
 	do "Single-digit dotted"
 		local compositions : list
-			list 0x1F100 {'zero.lnum'} WideWidth1
+			list 0x1F100 {'zero.lnum' 'period'} WideWidth1
 		foreach [j : range 1 till 9] : compositions.push : list
 			0x2488 + j - 1
-			digitGlyphNames j
+			[digitGlyphNames j].concat {'period'}
 			begin WideWidth1
-		createDottedGlyphs 1 'period' compositions
+		createDottedGlyphs 1 compositions
 
 	do "Single-digit comma"
 		local compositions {}
 		foreach [j : range 0 till 9] : compositions.push : list
 			0x1F101 + j
-			digitGlyphNames j
+			[digitGlyphNames j].concat {'comma'}
 			begin WideWidth1
-		createDottedGlyphs 1 'comma' compositions
+		createDottedGlyphs 1 compositions
 
 	do "Double-digit dotted"
 		local compositions : list
 		foreach [j : range 10 till 20] : compositions.push : list
 			0x2488 + j - 1
-			digitGlyphNames j
+			[digitGlyphNames j].concat {'period'}
 			begin WideWidth1
-		createDottedGlyphs 2 'period' compositions
+		createDottedGlyphs 2 compositions
 
 glyph-block Autobuild-Fractions : begin
 	glyph-block-import CommonShapes
@@ -822,6 +821,7 @@ glyph-block Autobuild-Fractions : begin
 				define mfNumGlyph : miniatureFont.queryByNameEnsured numid
 
 				set-width 0
+				set-mark-anchor 'compositeInner' 0 0
 				include mfNumGlyph
 				include : Upright
 				include : Translate (- mfNumGlyph.advanceWidth / 2) 0
@@ -837,6 +837,7 @@ glyph-block Autobuild-Fractions : begin
 				define mfDenGlyph : miniatureFont.queryByNameEnsured denid
 
 				set-width 0
+				set-mark-anchor 'compositeInner' 0 0
 				include mfDenGlyph
 				include : Upright
 				include : Translate offset 0
@@ -931,6 +932,7 @@ glyph-block AutoBuild-Accented-Equal : begin
 			if [query-glyph gni] : return gni
 			create-glyph gni : glyph-proc
 				set-width 0
+				set-mark-anchor 'compositeInner' 0 0
 				include : dFont.queryByNameEnsured gidPart
 				include : Upright
 				include : Translate (-totalWidth / 2 + offset) 0
@@ -968,7 +970,7 @@ glyph-block AutoBuild-Accented-Equal : begin
 	createAccentedOp 'equal' 7 0.4 0 aboveMarkBot : list
 		list 0x2257 {"o"}
 		list 0x225e {"m"}
-		list 0x225F {"question"}
+		list 0x225F {"question/hookPart" "question/dotPart"}
 	createAccentedOp 'equal' 5 0.8 0 aboveMarkBot : list
 		list 0x2258 {"symbolMidTie"}
 	createAccentedOp 'equal' 7 0.5 0 (aboveMarkBot - (SymbolMid - XH / 2)) : list
@@ -1048,6 +1050,7 @@ glyph-block Autobuild-Ligatures : begin
 			if [query-glyph gni] : return gni
 			create-glyph gni : glyph-proc
 				set-width aw
+				if [not aw] : set-mark-anchor 'compositeInner' 0 0
 				include : df.queryByNameEnsured gidPart
 				include : Upright
 				include : Translate offset1 0
@@ -1125,10 +1128,6 @@ glyph-block Autobuild-Ligatures : begin
 		list 0x20A7 { 'P' 't.flatHook' }
 		list 0x20A8 { 'R' 's' }
 		list 0x20AF { 'D' 'grek/rho' }
-		list 0x203c { 'exclam' 'exclam' }
-		list 0x2047 { 'question' 'question' }
-		list 0x2048 { 'question' 'exclam' }
-		list 0x2049 { 'exclam' 'question' }
 		list 0x2116 { 'N' 'numeroRightHalf' }
 		list 0x1F190 { 'D' 'J' } WideWidth1
 	createLigatures 'temperature' 0.7 0.8 0.75 0.9 : list
@@ -1194,22 +1193,73 @@ glyph-block Autobuild-Pnonetic-Ligatures : begin
 
 	define stdShrink : clamp 0.75 0.9 : StrokeWidthBlend 0.78 0.9
 	createPhoneticLigatures 'phonetic' para.diversityM stdShrink stdShrink 1 1 : list
-		list 0x02A3 { 'd/phoneticLeft' 'z'                 } 'b'
-		list 0x02A4 { 'd/phoneticLeft' 'ezh'               } 'if'
-		list 0x02A5 { 'd/phoneticLeft' 'zCurlyTail'        } 'if'
-		list 0x02A6 { 't.phoneticLeft' 's/phoneticRight'   } 'b'
-		list 0x02A7 { 't/teshLeft'     'esh'               } 'if'
-		list 0x02A8 { 't.phoneticLeft' 'cCurlyTail'        } 'b'
-		list 0x02A9 { 'f/phoneticLeft' 'eng/phoneticRight' } 'if'
-		list 0x02AA { 'l/phoneticLeft' 's/phoneticRight'   } 'b'
-		list 0x02AB { 'l/phoneticLeft' 'z'                 } 'b'
-		list 0xAB66 { 'd/phoneticLeft' 'zRTailBR'          } 'if'
-		list 0xAB67 { 't.phoneticLeft' 'sRTail'            } null
+		list 0x02A3 { 'd/phoneticLeft'  'z'                 } 'b'
+		list 0x02A4 { 'd/phoneticLeft'  'ezh'               } 'if'
+		list 0x02A5 { 'd/phoneticLeft'  'zCurlyTail'        } 'if'
+		list 0x02A6 { 't/phoneticLeft2' 's/phoneticRight'   } 'b'
+		list 0x02A7 { 't/teshLeft'      'esh'               } 'if'
+		list 0x02A8 { 't/phoneticLeft1' 'cCurlyTail'        } 'b'
+		list 0x02A9 { 'f/phoneticLeft'  'eng/phoneticRight' } 'if'
+		list 0x02AA { 'l/phoneticLeft'  's/phoneticRight'   } 'b'
+		list 0x02AB { 'l/phoneticLeft'  'z'                 } 'b'
+		list 0xAB66 { 'd/phoneticLeft'  'zRTailBR'          } 'if'
+		list 0xAB67 { 't/phoneticLeft1' 'sRTail'            } null
 
 	define compatLigShrink : clamp 0.75 1 : StrokeWidthBlend 0.78 1
 	createPhoneticLigatures 'compatLig' 1 compatLigShrink compatLigShrink 1 1 : list
 		list 0xFB01 { 'f/compLigLeft1'          'dotlessi/compLigRight' } null
 		list 0xFB02 { 'f/compLigLeft2'          'l/compLigRight'        } null
+
+glyph-block Autobuild-Double-Emotions : begin
+	glyph-block-import CommonShapes
+	glyph-block-import Common-Derivatives
+	glyph-block-import Recursive-Build : Thinner
+	glyph-block-import Autobuild-Enclosure-Shared : CollectJobs CreateDerivedFontFromJobs EnsureComponentGlyphT applyRelations
+
+	define [createDoubleEmotions prefix div _shrink1 _shrink2 wadj1 wadj2 demands] : for-width-kinds WideWidth2
+		define CWidth : if FMosaicWide MosaicWidth (Width * div)
+		define jobs : CollectJobs NON-DECOMPOSABLE NOT-CENTERED ALLOW-PROPORTIONAL prefix MosaicNameSuffix demands
+		local shrink1 : clamp 0 1 _shrink1
+		local shrink2 : clamp 0 1 _shrink2
+		local kern : SB * shrink1 + SB * shrink2 + 0.5 * Stroke * [mix shrink1 shrink2 0.5] - OX * 2
+		define antiScale : (CWidth * shrink1 + CWidth * shrink2 - kern) / CWidth
+		foreach [cycle : range 0 4] : begin
+			set kern : SB * shrink1 + SB * shrink2 + 0.5 * Stroke * [mix shrink1 shrink2 0.5] - OX * 2
+			local tmp-shrink1 : (shrink1 * CWidth + kern * shrink1 / (shrink1 + shrink2)) / (CWidth * shrink1 + CWidth * shrink2 - kern) * antiScale
+			local tmp-shrink2 : (shrink2 * CWidth + kern * shrink2 / (shrink1 + shrink2)) / (CWidth * shrink1 + CWidth * shrink2 - kern) * antiScale
+			set shrink1 : clamp 0 1 tmp-shrink1
+			set shrink2 : clamp 0 1 tmp-shrink2
+
+		local df1 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink1 true
+		local df2 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink2 true
+
+		foreach [{gn unicode { c1 m1 c2 m2 } mak} : items-of jobs.nonDecomposable] : if [not : query-glyph gn] : begin
+			create-glyph gn [MangleUnicode unicode] : glyph-proc
+				set-width CWidth
+				if mak : include : [DivFrame (CWidth / Width)].markSet.(mak)
+				define dfg1 : df1.queryByNameEnsured c1
+				define dfm1 : df1.queryByNameEnsured m1
+				define dfg2 : df2.queryByNameEnsured c2
+				define dfm2 : df2.queryByNameEnsured m2
+				local sumChildrenWidth : dfg1.advanceWidth * wadj1 + dfg2.advanceWidth * wadj2
+				local refW : sumChildrenWidth - kern
+				include : union dfg2 [WithTransform [Translate (dfg2.advanceWidth) 0] dfm2]
+				include : Translate (dfg1.advanceWidth * wadj1 - kern) 0
+				include : union dfg1 [WithTransform [Translate (dfg1.advanceWidth) 0] dfm1]
+				include : Upright
+				include : Translate (-refW / 2) 0
+				include : Scale [clamp 0 1 ((CWidth - SB * 1.25) / (CWidth - SB * 2) * CWidth / refW)] 1
+				include : Translate (CWidth / 2) 0
+				include : Italify
+
+		applyRelations jobs.relApplications
+
+	define stdShrink : clamp 0.75 0.9 : StrokeWidthBlend 0.78 0.9
+	createDoubleEmotions 'doubleemotion' para.diversityM stdShrink stdShrink 1 1 : list
+		list 0x203c { 'exclam' 'zwsp' 'exclam' 'zwsp' }
+		list 0x2047 { 'question/hookPart' 'question/dotPart' 'question/hookPart' 'question/dotPart' }
+		list 0x2048 { 'question/hookPart' 'question/dotPart' 'exclam' 'zwsp' }
+		list 0x2049 { 'exclam' 'zwsp' 'question/hookPart' 'question/dotPart' }
 
 glyph-block Autobuild-Grouped-Digits : begin
 	glyph-block-import CommonShapes
@@ -1217,13 +1267,14 @@ glyph-block Autobuild-Grouped-Digits : begin
 
 	define [createGroupedDigits shrink crowd numberGlyphIDs] : begin
 		create-glyph '.nd-shade' : glyph-proc
+			set-width 0
+			set-mark-anchor 'compositeInner' 0 0
 			include : intersection
 				HBarBottom 0 Width (Descender * 0.75) [AdviceStroke 4]
 				glyph-proc
 					include : refer-glyph "denseShade.WWID"
 					include : Translate (-Width / 2) 0
 			include : Translate (-Width) 0
-			set-width 0
 
 		foreach [gid : items-of numberGlyphIDs] : foreach [nd : items-of {0 1 2 3 4 5 6}]
 			create-glyph (gid + ".nd" + nd) : glyph-proc
