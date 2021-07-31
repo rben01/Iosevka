@@ -8,15 +8,16 @@ const { encode } = require("@msgpack/msgpack");
 const { FontIo } = require("ot-builder");
 const Toml = require("@iarna/toml");
 
-const BuildFont = require("./gen/build-font.js");
+const { buildFont } = require("./gen/build-font.js");
 const Parameters = require("./support/parameters");
+const { applyMetricOverride } = require("./support/metric-override");
 const VariantData = require("./support/variant-data");
-const ApplyLigationData = require("./support/ligation-data");
+const { applyLigationData } = require("./support/ligation-data");
 const { createGrDisplaySheet } = require("./support/gr");
 
 module.exports = async function main(argv) {
 	const paraT = await getParameters();
-	const { font, glyphStore } = await BuildFont(argv, paraT(argv));
+	const { font, glyphStore } = await buildFont(argv, paraT(argv));
 	if (argv.oCharMap) await saveCharMap(argv, glyphStore);
 	if (argv.o) await saveTTF(argv, font);
 };
@@ -26,6 +27,7 @@ async function getParameters() {
 	const PARAMETERS_TOML = path.resolve(__dirname, "../params/parameters.toml");
 	const WEIGHTS_TOML = path.resolve(__dirname, "../params/shape-weight.toml");
 	const WIDTHS_TOML = path.resolve(__dirname, "../params/shape-width.toml");
+	const SLOPES_TOML = path.resolve(__dirname, "../params/shape-slope.toml");
 	const PRIVATE_TOML = path.resolve(__dirname, "../params/private-parameters.toml");
 	const VARIANTS_TOML = path.resolve(__dirname, "../params/variants.toml");
 	const LIGATIONS_TOML = path.resolve(__dirname, "../params/ligation-set.toml");
@@ -35,6 +37,7 @@ async function getParameters() {
 		await tryParseToml(PARAMETERS_TOML),
 		await tryParseToml(WEIGHTS_TOML),
 		await tryParseToml(WIDTHS_TOML),
+		await tryParseToml(SLOPES_TOML),
 		fs.existsSync(PRIVATE_TOML) ? await tryParseToml(PRIVATE_TOML) : {}
 	);
 	const rawVariantsData = await tryParseToml(VARIANTS_TOML);
@@ -43,11 +46,11 @@ async function getParameters() {
 	function createParaImpl(argv) {
 		let para = Parameters.init(deepClone(parametersData), argv);
 		VariantData.apply(deepClone(rawVariantsData), para, argv);
-		ApplyLigationData(deepClone(rawLigationData), para, argv);
+		applyLigationData(deepClone(rawLigationData), para, argv);
 
 		if (argv.excludedCharRanges) para.excludedCharRanges = argv.excludedCharRanges;
 		if (argv.compatibilityLigatures) para.compLig = argv.compatibilityLigatures;
-		if (argv.metricOverride) Parameters.applyMetricOverride(para, argv.metricOverride);
+		if (argv.metricOverride) applyMetricOverride(para, argv.metricOverride, argv);
 
 		para.naming = {
 			...para.naming,

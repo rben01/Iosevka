@@ -1,5 +1,55 @@
 ## Modifications since version 2.x
 
+### 9.0.0
+
+ * \[**Breaking**\]: Add support for expression-style metric override. The old `[metric-override.multiplies]` and `[metric-override.adds]` are no longer supported (#1181).
+ * Fix motion-serifed N's broken shape (#1170).
+ * Fix bar-serif overlapping in Latin Small H-bar (`U+0127`) and Cyrillic Small Dje (`U+0452`) in Sans subfamily's with-serif variants (#1171).
+ * Add flat-boundary brace shape (#1172).
+ * Apply variants of `I`/`i` and `J`/`j` to Dutch letters `U+0132` and `U+0133` (#1174).
+ * Make dot size, period size and accent size / placement configurable (#1169, #1176).
+ * Make variants of `0` apply to APL Functional Symbol Zilde (`U+236C`) and Circled Zero with Slash (`U+1F10D`) (#1178).
+ * Add enclosed sans-serif digits.
+ * Fix italic derived letters regression in 8.0.
+
+
+### 8.0.2
+
+ * Fix TTC grouping (#1167).
+
+
+### 8.0.1
+
+ * Fix filenames in 9-file TTC (#1167).
+ * Fix gap in Bulgarian De (#1168).
+
+
+### 8.0.0
+
+ * \[**Breaking**\] Add support for slope customization (#599, #1165).
+   - Slope customization format has a major change, giving ability to customize slope grade used for variant selection, as well as slope angle.
+   - The format will look like this:
+     ``` toml
+     [buildPlans.iosevka-custom.slopes.upright]
+     angle = 0             # Angle in degrees. Valid range [0, 15]
+     shape = "upright"     # Slope grade used for shape selection.  `upright` | `oblique` | `italic`
+     menu  = "upright"     # Slope grade used for naming.           `upright` | `oblique` | `italic`
+     css   = "normal"      # Slope grade used for webfont CSS.      `normal`  | `oblique` | `italic`
+
+     [buildPlans.iosevka-custom.slopes.oblique]
+     angle = 9.4
+     shape = "oblique"
+     menu  = "oblique"
+     css   = "oblique"
+
+     [buildPlans.iosevka-custom.slopes.italic]
+     angle = 9.4
+     shape = "italic"
+     menu  = "italic"
+     css   = "italic"
+     ```
+
+
 ### 7.3.3
 
  * Fix serif placement of Latin Small Letter Reversed R with Fishhook (`U+027F`) (#1163).

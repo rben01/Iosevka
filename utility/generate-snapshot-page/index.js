@@ -3,24 +3,16 @@
 const ejs = require("ejs");
 const fs = require("fs-extra");
 const path = require("path");
-const parseVariantsData = require("../export-data/variants-data");
-const getLigationData = require("../export-data/ligation-data");
-const execMain = require("../shared/execMain");
-const variantsData = require("../export-data/variants-data");
+const { parseVariantsData } = require("../export-data/variants-data");
+const { parseLigationData } = require("../export-data/ligation-data");
 
-const inputPath = process.argv[2];
-const outputPath = process.argv[3];
-const outputDataPath = process.argv[4];
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-execMain(main);
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-async function main() {
+module.exports = async function main(argv) {
 	const weightGrades = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-	const templatePath = path.join(inputPath, "index.ejs");
+	const templatePath = path.join(argv.inputPath, "index.ejs");
 	const variationData = await await parseVariantsData();
-	const ligationData = await getLigationData();
+	const ligationData = await parseLigationData();
 	const html = await ejs.renderFile(templatePath, {
 		...variationData,
 		ligation: ligationData,
@@ -33,7 +25,7 @@ async function main() {
 				.replace(/\n/g, "<br/>");
 		}
 	});
-	await fs.writeFile(outputPath, html);
+	await fs.writeFile(argv.outputPath, html);
 
 	let readmeSnapshotTasks = [
 		{ el: "#languages", name: "languages" },
@@ -107,9 +99,14 @@ async function main() {
 			});
 		}
 	}
+
 	await fs.writeJson(
-		outputDataPath,
-		{ readmeSnapshotTasks, ligationSamples: ligationData.samples },
+		argv.outputDataPath,
+		{
+			readmeSnapshotTasks,
+			ligationSamples: ligationData.samples,
+			ligationCherry: ligationData.cherry
+		},
 		{ spaces: "  " }
 	);
-}
+};
