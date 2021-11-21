@@ -161,6 +161,7 @@ description = "Serifless `C`"
 selector.C = "serifless"
 selector."C/sansSerif" = "serifless"
 selector.CHookTop = "unilateralSerifed"
+selector.romanSixLateForm = "unilateralSerifed"
 selector.CTopSerifOnly = "serifless"
 
 [prime.capital-c.variants.unilateral-serifed]
@@ -169,6 +170,7 @@ description = "`C` with serif at top"
 selector.C = "unilateralSerifed"
 selector."C/sansSerif" = "serifless"
 selector.CHookTop = "unilateralSerifed"
+selector.romanSixLateForm = "bilateralSerifed"
 selector.CTopSerifOnly = "unilateralSerifed"
 
 [prime.capital-c.variants.bilateral-serifed]
@@ -177,6 +179,7 @@ description = "`C` with serifs at both top and bottom"
 selector.C = "bilateralSerifed"
 selector."C/sansSerif" = "serifless"
 selector.CHookTop = "bilateralSerifed"
+selector.romanSixLateForm = "bilateralSerifed"
 selector.CTopSerifOnly = "unilateralSerifed"
 
 [prime.capital-c.variants.unilateral-inward-serifed]
@@ -185,6 +188,7 @@ description = "`C` with inward serif at top"
 selector.C = "unilateralInwardSerifed"
 selector."C/sansSerif" = "serifless"
 selector.CHookTop = "unilateralInwardSerifed"
+selector.romanSixLateForm = "bilateralInwardSerifed"
 selector.CTopSerifOnly = "unilateralInwardSerifed"
 
 [prime.capital-c.variants.bilateral-inward-serifed]
@@ -193,6 +197,7 @@ description = "`C` with inward serif at both top and bottom"
 selector.C = "bilateralInwardSerifed"
 selector."C/sansSerif" = "serifless"
 selector.CHookTop = "bilateralInwardSerifed"
+selector.romanSixLateForm = "bilateralInwardSerifed"
 selector.CTopSerifOnly = "unilateralInwardSerifed"
 
 
@@ -5258,32 +5263,32 @@ tag = "cv67"
 [prime.cyrl-capital-ya.variants.straight]
 rank = 1
 description = "Standard, straight-leg Cyrillic Capital Ya (`Я`)"
-selector."cyrl/Ya" = "straightSmallCyrl"
+selector."cyrl/Ya" = "straight"
 
 [prime.cyrl-capital-ya.variants.curly]
 rank = 2
 description = "Slightly curly-legged Cyrillic Capital Ya (`Я`), like Iosevka 2.x"
-selector."cyrl/Ya" = "curlySmallCyrl"
+selector."cyrl/Ya" = "curly"
 
 [prime.cyrl-capital-ya.variants.standing]
 rank = 3
 description = "Cyrillic Capital Ya (`Я`) with near-vertical standing leg"
-selector."cyrl/Ya" = "standingSmallCyrl"
+selector."cyrl/Ya" = "standing"
 
 [prime.cyrl-capital-ya.variants.straight-open]
 rank = 4
 description = "Standard, straight-leg Cyrillic Capital Ya (`Я`), with open contour at bottom"
-selector."cyrl/Ya" = "straightOpenSmallCyrl"
+selector."cyrl/Ya" = "straightOpen"
 
 [prime.cyrl-capital-ya.variants.curly-open]
 rank = 5
 description = " Slightly curly-legged Cyrillic Capital Ya (`Я`), like Iosevka 2.x, with open contour at bottom"
-selector."cyrl/Ya" = "curlyOpenSmallCyrl"
+selector."cyrl/Ya" = "curlyOpen"
 
 [prime.cyrl-capital-ya.variants.standing-open]
 rank = 6
 description = "Cyrillic Capital Ya (`Я`) with near-vertical standing leg, with open contour at bottom"
-selector."cyrl/Ya" = "standingOpenSmallCyrl"
+selector."cyrl/Ya" = "standingOpen"
 
 
 
@@ -6000,6 +6005,26 @@ selector.numberSign = "uprightOpen"
 rank = 4
 description = "Number sign with slanted bars and open inner"
 selector.numberSign = "slantedOpen"
+
+[prime.number-sign.variants.upright-tall]
+rank = 5
+description = "Number sign with vertical bars and taller than digits"
+selector.numberSign = "uprightTall"
+
+[prime.number-sign.variants.slanted-tall]
+rank = 6
+description = "Number sign with slanted bars and taller than digits"
+selector.numberSign = "slantedTall"
+
+[prime.number-sign.variants.upright-open-tall]
+rank = 7
+description = "Number sign with vertical bars, open inner, and taller than digits"
+selector.numberSign = "uprightOpenTall"
+
+[prime.number-sign.variants.slanted-open-tall]
+rank = 8
+description = "Number sign with slanted bars, open inner, and taller than digits"
+selector.numberSign = "slantedOpenTall"
 
 
 
@@ -7265,6 +7290,7 @@ u = "toothed"
 w = "straight-flat-top"
 y = "straight-turn"
 eszet = "traditional-flat-hook"
+long-s = "flat-hook"
 lower-lambda = "straight-turn"
 cyrl-capital-u = "straight-turn"
 zero = "dotted"
@@ -7298,6 +7324,7 @@ w = "cursive"
 x = "cursive"
 y = "cursive"
 z = "cursive"
+long-s = "flat-hook-tailed"
 cyrl-capital-u = "cursive-flat-hook"
 ampersand = "closed"
 

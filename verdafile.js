@@ -455,6 +455,13 @@ function fnStandardTtc(fIsGlyfTtc, prefix, suffixMapping, sfi) {
 //////               Font Collection                 //////
 ///////////////////////////////////////////////////////////
 
+const SpecificTtc = task.group(`ttc`, async (target, cgr) => {
+	const outputDir = `dist/.ttc/${cgr}`;
+	const [cPlan] = await target.need(CollectPlans, de(outputDir));
+	const ttcFiles = Array.from(Object.keys(cPlan[cgr].ttcComposition));
+	const [files] = await target.need(ttcFiles.map(pt => CollectedTtcFile(cgr, pt)));
+	for (const file of files) await cp(file.full, `${outputDir}/${file.base}`);
+});
 const SpecificSuperTtc = task.group(`super-ttc`, async (target, cgr) => {
 	await target.need(CollectedSuperTtcFile(cgr));
 });
@@ -506,8 +513,8 @@ async function buildGlyphSharingTtc(target, parts, out) {
 const TtcArchiveFile = file.make(
 	(cgr, version) => `${ARCHIVE_DIR}/ttc-${cgr}-${version}.zip`,
 	async (target, out, cgr) => {
-		const [cp] = await target.need(CollectPlans, de`${out.dir}`);
-		const ttcFiles = Array.from(Object.keys(cp[cgr].ttcComposition));
+		const [cPlan] = await target.need(CollectPlans, de`${out.dir}`);
+		const ttcFiles = Array.from(Object.keys(cPlan[cgr].ttcComposition));
 		await target.need(ttcFiles.map(pt => CollectedTtcFile(cgr, pt)));
 
 		// Packaging
@@ -695,12 +702,21 @@ const SnapShotHtml = file(`${SNAPSHOT_TMP}/index.html`, async (target, out) => {
 		outputPath: out.full,
 		outputDataPath: `${out.dir}/${out.name}.data.json`
 	});
-	await node(`utility/amend-readme/index`, {
+	await amendReadmeFor("README.md", cm, cmi, cmo);
+	await amendReadmeFor("doc/stylistic-sets.md", cm, cmi, cmo);
+	await amendReadmeFor("doc/character-variants.md", cm, cmi, cmo);
+	await amendReadmeFor("doc/custom-build.md", cm, cmi, cmo);
+	await amendReadmeFor("doc/language-specific-ligation-sets.md", cm, cmi, cmo);
+});
+async function amendReadmeFor(md, cm, cmi, cmo) {
+	return node(`utility/amend-readme/index`, {
+		mdFilePath: md,
 		charMapPath: cm.full,
 		charMapItalicPath: cmi.full,
 		charMapObliquePath: cmo.full
 	});
-});
+}
+
 const SnapShotStatic = file.make(
 	x => `${SNAPSHOT_TMP}/${x}`,
 	async (target, out) => {
@@ -735,7 +751,7 @@ const ReleaseNotes = task(`release:release-note`, async t => {
 const ReleaseNotesFile = file.make(
 	version => `${ARCHIVE_DIR}/release-notes-${version}.md`,
 	async (t, out, version) => {
-		await t.need(UtilScripts, de(ARCHIVE_DIR));
+		await t.need(Version, UtilScripts, de(ARCHIVE_DIR));
 		const [changeFiles, rpFiles] = await t.need(ChangeFileList(), ReleaseNotePackagesFile);
 		await t.need(changeFiles.map(fu));
 		await node("utility/generate-release-note/index", {
@@ -745,16 +761,16 @@ const ReleaseNotesFile = file.make(
 		});
 	}
 );
-const ReleaseNotesPackageListMD = task.make(
-	version => `release:package-list-md:${version}`,
-	async (t, version) => {
-		await t.need(UtilScripts, de(ARCHIVE_DIR));
+const ReleaseNotesPackageListMD = file.make(
+	version => `doc/PACKAGE-LIST.md`,
+	async (t, out, version) => {
+		await t.need(Version, UtilScripts, de(ARCHIVE_DIR));
 		const [changeFiles, rpFiles] = await t.need(ChangeFileList(), ReleaseNotePackagesFile);
 		await t.need(changeFiles.map(fu));
 		await node("utility/generate-release-note/package-list", {
 			version,
 			releasePackagesJsonPath: rpFiles.full,
-			outputPath: "PACKAGE-LIST.md"
+			outputPath: out.full
 		});
 	}
 );
