@@ -1,5 +1,24 @@
 ## Modifications since version 2.x
 
+### 11.2.5
+
+ * Add split-slash variants of `0` (#1270).
+ * Add ligation set for Dafny (#1271).
+
+
+### 11.2.4
+
+ * Add spacing grade `quasi-proportional-extension-only`.
+ * Fix broken geometry of `a.double-storey-tailed` under heavy weights.
+ * Fix broken geometry of Cyrillic Iotified Es under heavy weights.
+
+
+### 11.2.3
+
+ * Make webfont formats customizable (#1266).
+ * Fix localization of Macedonian GJE (#1267).
+
+
 ### 11.2.2
 
  * Add open-swash Q (#1264).
