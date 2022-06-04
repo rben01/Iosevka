@@ -1,5 +1,7 @@
 "use strict";
 
+const crypto = require("crypto");
+
 const Dotless = {
 	tag: "dtls",
 	get(glyph) {
@@ -31,9 +33,32 @@ function SimpleProp(key) {
 }
 
 const LowerYDotAtBelow = SimpleProp("LowerYDotAtBelow");
-const DollarShrinkKernel = SimpleProp("DollarShrinkKernel");
-const DollarShorterBar = SimpleProp("DollarShorterBar");
+const RightDependentTrigger = SimpleProp("RightDependentTrigger");
 const MathSansSerif = SimpleProp("MathSansSerif");
+
+function DependentLinkProp(key) {
+	return {
+		get(glyph, subKey) {
+			if (glyph && glyph.related && glyph.related[key]) {
+				return glyph.related[key][subKey];
+			} else {
+				return null;
+			}
+		},
+		getAll(glyph) {
+			if (glyph && glyph.related) return glyph.related[key];
+			else return null;
+		},
+		set(glyph, subKey, toGid) {
+			if (typeof toGid !== "string") throw new Error("Must supply a GID instead of a glyph");
+			if (!glyph.related) glyph.related = {};
+			if (!glyph.related[key]) glyph.related[key] = {};
+			glyph.related[key][subKey] = toGid;
+		}
+	};
+}
+
+const RightDependentLink = DependentLinkProp("RightDependentLink");
 
 function OtlTaggedProp(key, otlTag) {
 	return { ...SimpleProp(key), otlTag };
@@ -47,29 +72,23 @@ const AplForm = OtlTaggedProp("AplForm", "APLF");
 const NumeratorForm = OtlTaggedProp("Numerator", "numr");
 const DenominatorForm = OtlTaggedProp("Denominator", "dnom");
 
-const CvDecompose = {
-	get(glyph) {
-		if (glyph && glyph.related) return glyph.related.CvDecompose;
-		else return null;
-	},
-	set(glyph, composition) {
-		if (!Array.isArray(composition)) throw new Error("Must supply a GID array");
-		if (!glyph.related) glyph.related = {};
-		glyph.related.CvDecompose = composition;
-	}
-};
+function DecompositionProp(key) {
+	return {
+		get(glyph) {
+			if (glyph && glyph.related) return glyph.related[key];
+			else return null;
+		},
+		set(glyph, composition) {
+			if (!Array.isArray(composition)) throw new Error("Must supply a GID array");
+			if (!glyph.related) glyph.related = {};
+			glyph.related[key] = composition;
+		}
+	};
+}
 
-const CcmpDecompose = {
-	get(glyph) {
-		if (glyph && glyph.related) return glyph.related.CcmpDecompose;
-		else return null;
-	},
-	set(glyph, composition) {
-		if (!Array.isArray(composition)) throw new Error("Must supply a GID array");
-		if (!glyph.related) glyph.related = {};
-		glyph.related.CcmpDecompose = composition;
-	}
-};
+const CvDecompose = DecompositionProp("CvDecompose");
+const PseudoCvDecompose = DecompositionProp("PseudoCvDecompose");
+const CcmpDecompose = DecompositionProp("CcmpDecompose");
 
 const TieMark = {
 	tag: "TMRK",
@@ -196,7 +215,6 @@ function Cv(tag, rank) {
 }
 
 const DotlessOrNot = {
-	optional: true,
 	query(glyph) {
 		if (Dotless.get(glyph)) return [Dotless];
 		return null;
@@ -204,7 +222,6 @@ const DotlessOrNot = {
 };
 
 const AnyCv = {
-	optional: false,
 	query(glyph) {
 		let ret = [];
 		if (glyph && glyph.related && glyph.related.cv) {
@@ -220,7 +237,6 @@ const AnyCv = {
 };
 
 const AnyDerivingCv = {
-	optional: false,
 	query(glyph) {
 		let ret = [];
 		if (glyph && glyph.related && glyph.related.cv) {
@@ -250,17 +266,14 @@ function getGrTreeImpl(gid, grSetList, fnGidToGlyph, sink) {
 	if (!grSetList.length) return;
 	const g = fnGidToGlyph(gid);
 	if (!g) return;
-	const grq = grSetList[0];
-	const grs = grq.query(g);
-	if ((!grs || !grs.length) && grq.optional) {
-		getGrTreeImpl(gid, grSetList.slice(1), fnGidToGlyph, sink);
-	} else if (grs && grs.length) {
-		if (grq.optional) {
-			getGrTreeImpl(gid, grSetList.slice(1), fnGidToGlyph, sink);
-		}
+
+	const grs = grSetList[0].query(g);
+
+	getGrTreeImpl(gid, grSetList.slice(1), fnGidToGlyph, sink);
+	if (grs && grs.length) {
 		for (const gr of grs) {
 			sink.push([gr, gid, gr.get(g)]);
-			getGrTreeImpl(gr.get(g), grSetList.slice(1), fnGidToGlyph, sink);
+			getGrTreeImpl(gr.get(g), grSetList, fnGidToGlyph, sink);
 		}
 	}
 }
@@ -344,7 +357,7 @@ function createGrDisplaySheet(glyphStore, gid) {
 	displayQuerySingleFeature(glyphStore, gid, AplForm, typographicFeatures);
 
 	let charVariantFeatures = [];
-	const decomposition = CvDecompose.get(glyph);
+	const decomposition = CvDecompose.get(glyph) || PseudoCvDecompose.get(glyph);
 	if (decomposition) {
 		const variantAssignmentSet = new Set();
 		for (const componentGn of decomposition) {
@@ -436,6 +449,14 @@ function linkSuffixPairGr(gs, tagCis, tagTrans, grCis, grTrans) {
 	}
 }
 
+function hashCv(g) {
+	const hasher = crypto.createHash("sha256");
+	for (const gr of AnyCv.query(g)) {
+		hasher.update(`${gr.tag}/${gr.rank}:${gr.get(g)}\n`);
+	}
+	return hasher.digest("hex");
+}
+
 exports.Dotless = Dotless;
 exports.LowerYDotAtBelow = LowerYDotAtBelow;
 exports.Cv = Cv;
@@ -451,8 +472,9 @@ exports.Joining = Joining;
 exports.AnyDerivingCv = AnyDerivingCv;
 exports.CcmpDecompose = CcmpDecompose;
 exports.CvDecompose = CvDecompose;
-exports.DollarShrinkKernel = DollarShrinkKernel;
-exports.DollarShorterBar = DollarShorterBar;
+exports.PseudoCvDecompose = PseudoCvDecompose;
+exports.RightDependentLink = RightDependentLink;
+exports.RightDependentTrigger = RightDependentTrigger;
 exports.MathSansSerif = MathSansSerif;
 exports.Nwid = Nwid;
 exports.Wwid = Wwid;
@@ -461,9 +483,10 @@ exports.Onum = Onum;
 exports.AplForm = AplForm;
 exports.NumeratorForm = NumeratorForm;
 exports.DenominatorForm = DenominatorForm;
+exports.hashCv = hashCv;
 
 exports.createGrDisplaySheet = createGrDisplaySheet;
 exports.linkSuffixGr = linkSuffixGr;
 exports.linkSuffixPairGr = linkSuffixPairGr;
 
-exports.SvInheritableRelations = [DollarShrinkKernel, DollarShorterBar, Joining];
+exports.SvInheritableRelations = [RightDependentLink, RightDependentTrigger, Joining];

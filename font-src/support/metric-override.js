@@ -25,7 +25,8 @@ function applyMetricOverride(para, mo, argv) {
 
 const validMetricOverrideFields = new Set([
 	"cap",
-	"xheight",
+	"ascender",
+	"xHeight",
 	"sb",
 	"accentWidth",
 	"accentClearance",
@@ -46,7 +47,9 @@ const validMetricOverrideFields = new Set([
 	"essRatioUpper",
 	"essRatioLower",
 	"essRatioQuestion",
-	"essRatio"
+	"essRatio",
+	"archDepth",
+	"smallArchDepth"
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

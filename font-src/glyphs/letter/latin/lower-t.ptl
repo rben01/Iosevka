@@ -8,7 +8,7 @@ glyph-module
 glyph-block Letter-Latin-Lower-T : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
-	glyph-block-import Letter-Shared : CreateCommaCaronComposition
+	glyph-block-import Letter-Shared : CreateAccentedComposition CreateCommaCaronComposition
 	glyph-block-import Letter-Shared-Shapes : CurlyTail FlatHookDepth ConnectedCedilla
 	glyph-block-import Letter-Shared-Shapes : DiagonalTailR DiagonalTailStdDepth
 	glyph-block-import Letter-Shared-Shapes : DToothlessRise SerifedArcEnd_RtlRhs
@@ -21,25 +21,25 @@ glyph-block Letter-Latin-Lower-T : begin
 	define xSmallTBarLeft : xSmallTBarLeftT : DivFrame 1
 
 	define yCrossBar     XH
-	define yShortNeck1 : Math.max [mix XH CAP 0.5] ([mix XH CAP 0.875] - Stroke * 0.125)
-	define yShortNeck2 : Math.max [mix XH CAP 0.5] ([mix XH CAP 0.75]  - Stroke * 0.125)
+	define yShortNeck1 : Math.max [mix XH Ascender 0.5] ([mix XH Ascender 0.875] - Stroke * 0.125)
+	define yShortNeck2 : Math.max [mix XH Ascender 0.5] ([mix XH Ascender 0.75]  - Stroke * 0.125)
 
 	define [SmallTHookShapeT sink offset top bot sw] : begin
-		local hookx : xSmallTBarLeft + (Width - SB * 2) * 0.8 + Stroke * 0.25 * HVContrast
+		local hookx : xSmallTBarLeft + [Math.max ((Width - SB * 2) * 0.75 + Stroke * 0.25 * HVContrast) (Stroke * HVContrast * 2.25)]
 		local turn : [mix xSmallTBarLeft hookx 0.5] + CorrectionOMidS
-		local smb  : Math.max Hook ((turn - xSmallTBarLeft) * 1.2)
+		local adb  : Math.max Hook ((turn - xSmallTBarLeft) * 1.2)
 
 		return : sink
 			widths.lhs sw
 			[if (sink == spiro-outline) corner flat] (offset + xSmallTBarLeft) top [heading Downward]
-			curl (offset + xSmallTBarLeft) (bot + smb)
+			curl (offset + xSmallTBarLeft) (bot + adb)
 			hookend (bot + O + offset) (tight -- !para.isItalic)
 			g4 (hookx - offset) (bot + Hook)
 			if (sink == spiro-outline) {[corner (hookx - offset) top]} {}
 
-	define [SmallTCorssBar] : HCrossBar.top
-		xSmallTBarLeft + HalfStroke - LongJut + TBalance2
-		xSmallTBarLeft + HalfStroke + LongJut + TBalance2
+	define [SmallTCrossBar] : HCrossBar.top
+		xSmallTBarLeft + HalfStroke * HVContrast - 1.0625 * LongJut + TBalance2
+		xSmallTBarLeft + HalfStroke * HVContrast + 1.0625 * LongJut + TBalance2
 		begin yCrossBar
 
 	define [StandardBody __ top bot] : glyph-proc
@@ -49,7 +49,7 @@ glyph-block Letter-Latin-Lower-T : begin
 		set-base-anchor 'below' [mix xSmallTBarLeft g.knots.(g.knots.length - 1).x : StrokeWidthBlend 0.375 0.5] bot
 		set-base-anchor 'overlay' (g.knots.0.x + 0.625 * Stroke * HVContrast) (XH * 0.58)
 
-		include : SmallTCorssBar
+		include : SmallTCrossBar
 
 	define [DiagTailedSmallTHookShape df top bot sw] : begin
 		local xMid : [xSmallTBarLeftT df] + HalfStroke * HVContrast
@@ -87,7 +87,7 @@ glyph-block Letter-Latin-Lower-T : begin
 				flat xBarLeft [if fRetroflex (bot + Hook + HalfStroke) hd.y]
 				curl xBarLeft top [heading Upward]
 		set-base-anchor 'above' (xBarLeft + 0.5 * Stroke * HVContrast) top
-		set-base-anchor 'topright' xCrossRight  CAP
+		set-base-anchor 'topright' xCrossRight  Ascender
 		set-base-anchor 'overlay' (xBarLeft + 0.625 * Stroke * HVContrast) (XH * 0.58)
 		set-base-anchor 'below' (HalfStroke * HVContrast + [Math.min (xBarLeft + hd.x / 2) (xCrossRight - 1)]) bot
 
@@ -120,15 +120,15 @@ glyph-block Letter-Latin-Lower-T : begin
 		include : TFlatShapeImpl false df top bot 1 0
 
 	define SmallTConfig : object
-		standard                       { [DivFrame  1] StandardBody             CAP         }
-		diagonalTailed                 {  dfNarrowT    DiagTailBody             CAP         }
-		flatHook                       {  dfNarrowT    FlatBody                 CAP         }
-		phoneticLeft                   {  dfNarrowT    FlatBody                 CAP         }
-		retroflexHookBase              {  dfNarrowT    RetroflexHookBody        CAP         }
-		cross                          {  dfNarrowT    CrossBody                CAP         }
-		hooklessAsymmetric             {  dfNarrowT    HooklessAsymmetricBody   CAP         }
-		crossPL                        {  dfNarrowT    CrossPLBody              CAP         }
-		hooklessAsymmetricPL           {  dfNarrowT    HooklessAsymmetricPLBody CAP         }
+		standard                       { [DivFrame  1] StandardBody             Ascender    }
+		diagonalTailed                 {  dfNarrowT    DiagTailBody             Ascender    }
+		flatHook                       {  dfNarrowT    FlatBody                 Ascender    }
+		phoneticLeft                   {  dfNarrowT    FlatBody                 Ascender    }
+		retroflexHookBase              {  dfNarrowT    RetroflexHookBody        Ascender    }
+		cross                          {  dfNarrowT    CrossBody                Ascender    }
+		hooklessAsymmetric             {  dfNarrowT    HooklessAsymmetricBody   Ascender    }
+		crossPL                        {  dfNarrowT    CrossPLBody              Ascender    }
+		hooklessAsymmetricPL           {  dfNarrowT    HooklessAsymmetricPLBody Ascender    }
 
 		standardShortNeck              { [DivFrame  1] StandardBody             yShortNeck1 }
 		diagonalTailedShortNeck        {  dfNarrowT    DiagTailBody             yShortNeck1 }
@@ -203,7 +203,7 @@ glyph-block Letter-Latin-Lower-T : begin
 	select-variant 't/phoneticLeft1' (shapeFrom -- 't')
 	select-variant 't/phoneticLeft2' (shapeFrom -- 't')
 	select-variant 'turnt' 0x287 (follow -- 't')
-	CreateCommaCaronComposition 't' 'tcaron' 0x165
+	CreateCommaCaronComposition 'tcaron' 0x165 't'
 	derive-glyphs 'tCedilla' 0x163 't' ConnectedCedilla
 
 	select-variant "tHookTop" 0x1AD
@@ -211,18 +211,20 @@ glyph-block Letter-Latin-Lower-T : begin
 	select-variant 'tRTail' 0x288
 	select-variant 'tCurlyTal' 0x236 (follow -- 'tLTail')
 
+	CreateAccentedComposition 'tTildeOver' 0x1D75 't' 'tildeOver'
+
 	# U+01BE is catually "t" and "s" combined together
 	define SLAB-NONE        0
 	define SLAB-CLASSICAL   1
 	define SLAB-INWARD      2
 	define [TsLigStrokeShape stroke top sb] : begin
-		define smooth : adviceSSmooth (XH + 0.5 * Smooth) (-1) stroke
+		define archDepth : adviceSSmooth (XH + 0.5 * ArchDepth) (-1) stroke
 		return : dispiro
 			widths.lhs stroke
 			flat xSmallTBarLeft top [heading Downward]
 			curl xSmallTBarLeft XH [heading Downward]
 			alsoThru.g2 0.5 0.5 [widths.center stroke]
-			g4   RightSB (smooth) [widths.rhs stroke]
+			g4   RightSB (archDepth) [widths.rhs stroke]
 			match sb
 				[Just SLAB-CLASSICAL] : SerifedArcEnd_RtlRhs SB Middle 0 stroke SHook
 				[Just SLAB-INWARD] : list
@@ -234,7 +236,7 @@ glyph-block Letter-Latin-Lower-T : begin
 					g4      SB SHook
 
 	define TSUpperConfig : object
-		standard            { CAP         }
+		standard            { Ascender    }
 		standardShortNeck   { yShortNeck1 }
 		standardShortNeck2  { yShortNeck2 }
 
@@ -244,7 +246,7 @@ glyph-block Letter-Latin-Lower-T : begin
 			include : difference
 				TsLigStrokeShape Stroke top false
 				MaskBelow XH
-			include : SmallTCorssBar
+			include : SmallTCrossBar
 
 	define TSLowerConfig : object
 		serifless               { SLAB-NONE      }
@@ -256,7 +258,7 @@ glyph-block Letter-Latin-Lower-T : begin
 			include : MarkSet.b
 			set-mark-anchor 'cvDecompose' 0 0
 			include : intersection
-				TsLigStrokeShape Stroke CAP doBS
+				TsLigStrokeShape Stroke Ascender doBS
 				MaskBelow XH
 			include : SAutoSlabEnd   doBS 0  Stroke Hook
 
@@ -269,15 +271,15 @@ glyph-block Letter-Latin-Lower-T : begin
 		CvDecompose.set currentGlyph { 'tsLig/upperHalf' 'tsLig/lowerHalf' }
 
 	create-glyph 'mathbb/t' 0x1D565 : glyph-proc
-		include : HBarTop xSmallTBarLeft (xSmallTBarLeft + BBD) CAP BBS
-		include : SmallTHookShapeT dispiro 0 CAP 0 BBS
+		include : HBarTop xSmallTBarLeft (xSmallTBarLeft + BBD) Ascender BBS
+		include : SmallTHookShapeT dispiro 0 Ascender 0 BBS
 		include : intersection
-			VBarLeft (xSmallTBarLeft + BBD) 0 CAP BBS
-			SmallTHookShapeT spiro-outline 1 CAP 0 BBS
+			VBarLeft (xSmallTBarLeft + BBD) 0 Ascender BBS
+			SmallTHookShapeT spiro-outline 1 Ascender 0 BBS
 		include : difference
 			HCrossBar.top
 				xSmallTBarLeft + (BBD / 2) - LongJut + TBalance2
 				xSmallTBarLeft + (BBD / 2) + LongJut + TBalance2
 				begin yCrossBar
 				begin BBS
-			Rect CAP 0 xSmallTBarLeft (xSmallTBarLeft + BBD)
+			Rect Ascender 0 xSmallTBarLeft (xSmallTBarLeft + BBD)

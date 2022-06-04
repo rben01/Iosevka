@@ -38,10 +38,12 @@ async function processSsOt(dirs) {
 			md.log(`</tr>`);
 		}
 		{
-			md.log(`<tr>`);
-			md.log(`<td><img src="${dirs.images}/stylistic-set-u-${ss.tag}-${ss.rank}.png"/></td>`);
-			md.log(`<td><img src="${dirs.images}/stylistic-set-i-${ss.tag}-${ss.rank}.png"/></td>`);
-			md.log(`</tr>`);
+			md.log(
+				`<tr>`,
+				`<td>${ImgX(`${dirs.images}/stylistic-set-u-${ss.tag}-${ss.rank}`)}</td>`,
+				`<td>${ImgX(`${dirs.images}/stylistic-set-i-${ss.tag}-${ss.rank}`)}</td>`,
+				`</tr>`
+			);
 		}
 	}
 	md.log(`</table>`);
@@ -76,8 +78,9 @@ async function processCvOt(dirs) {
 				const iCvv = rid * entriesPerRow + cid;
 				if (iCvv >= effVariants.length) continue;
 				const cvv = effVariants[iCvv];
-				const imageUrl = `${dirs.images}/character-variant-${cv.tag}-${cvv.rank}.png`;
-				md.log(`<td${itemColSpanHtml}><img src="${imageUrl}" width="${imgWidth}"/></td>`);
+				const imageID = `${dirs.images}/character-variant-${cv.key}-${cvv.key}`;
+				const image = ImgX(imageID, imgWidth);
+				md.log(`<td${itemColSpanHtml}>${image}</td>`);
 			}
 			if (tailBlankColumnsCount > 0) md.log(`<td colspan="${tailBlankColumnsCount}"> </td>`);
 			md.log(`</tr>`);
@@ -116,60 +119,35 @@ async function processCherryPickingStyles(dirs) {
 	const headerPath = path.resolve(__dirname, "fragments/description-cheery-picking-styles.md");
 	md.log(await fs.readFile(headerPath, "utf-8"));
 
-	formatCv(md, dirs, {
-		introMD: `Default digit form`,
-		sampleImageCountEm: 10,
-		alternatives: [
-			{
-				imageId: "lnum",
-				selectors: [`digit-form = 'lining'`],
-				description: `Lining (default)`
-			},
-			{
-				imageId: "onum",
-				selectors: [`digit-form = 'old-style'`],
-				description: `Old-style`
-			}
-		]
-	});
-
-	formatCv(md, dirs, {
-		introMD: `APL form`,
-		sampleImageCountEm: 7,
-		alternatives: [
-			{
-				imageId: "APLF-off",
-				selectors: [`apl-form = 'none'`],
-				description: `Disable APL-specific forms`
-			},
-			{
-				imageId: "APLF-on",
-				selectors: [`apl-form = 'enable'`],
-				description: `Enable APL-specific forms for operators used in APL to harmonize APL operators`
-			}
-		]
-	});
-
-	for (const cv of variantsData.primes) {
-		if (!cv.tag) continue;
+	for (const cv of [...variantsData.specials, ...variantsData.primes]) {
+		if (!cv.tag && !cv.isSpecial) continue;
 		const sampleText = cv.descSampleText
 			.map(c => (c === "`" ? "`` ` ``" : `\`${c}\``))
 			.join(", ");
 		const explainText = cv.samplerExplain ? ` (${cv.samplerExplain})` : ``;
 		const info = {
-			introMD: `Styles for ${sampleText}${explainText}`,
+			introMD: cv.description || `Styles for ${sampleText + explainText}`,
 			sampleImageCountEm: sampleImageCountEmOfCv(cv),
 			alternatives: []
 		};
 		const defaults = figureOutDefaults(variantsData, cv);
 		for (const cvv of cv.variants) {
-			if (!cvv.rank) continue;
-
-			info.alternatives.push({
-				imageId: `${cv.tag}-${cvv.rank}`,
-				selectors: [`${cv.key} = '${cvv.key}'`, `${cv.tag} = ${cvv.rank}`],
-				description: formatDescription(cvv.description) + formatDefaults(cvv.key, defaults)
-			});
+			if (!cvv.rank && !cv.isSpecial) continue;
+			if (cv.tag) {
+				info.alternatives.push({
+					imageId: `${cv.key}-${cvv.key}`,
+					selectors: [`${cv.key} = '${cvv.key}'`, `${cv.tag} = ${cvv.rank}`],
+					description:
+						formatDescription(cvv.description) + formatDefaults(cvv.key, defaults)
+				});
+			} else {
+				info.alternatives.push({
+					imageId: `${cv.key}-${cvv.key}`,
+					selectors: [`${cv.key} = '${cvv.key}'`],
+					description:
+						formatDescription(cvv.description) + formatDefaults(cvv.key, defaults)
+				});
+			}
 		}
 		formatCv(md, dirs, info);
 	}
@@ -185,8 +163,8 @@ function formatCv(md, dirs, info) {
 	const imgWidth = 32 * info.sampleImageCountEm;
 	let sTable = "     <table>";
 	for (const alt of info.alternatives) {
-		const imageUrl = `${dirs.images}/character-variant-${alt.imageId}.png`;
-		const image = `<img src="${imageUrl}" width="${imgWidth}"/>`;
+		const imageId = `${dirs.images}/character-variant-${alt.imageId}`;
+		const image = ImgX(imageId, imgWidth);
 		const selectorText = alt.selectors.map(x => `<code>${x}</code>`).join(", ");
 		sTable +=
 			`<tr><td rowspan="2" width="${2 * 14 + imgWidth}">${image}</td>` +
@@ -238,25 +216,25 @@ function figureOutDefaults(variantsData, gr) {
 			desc: "Sans Upright",
 			mask: 1,
 			result: null,
-			composition: { ...variantsData.defaults.sansUpright }
+			composition: { ...variantsData.defaults.sans.upright }
 		},
 		{
 			desc: "Sans Italic",
 			mask: 2,
 			result: null,
-			composition: { ...variantsData.defaults.sansItalic }
+			composition: { ...variantsData.defaults.sans.italic }
 		},
 		{
 			desc: "Slab Upright",
 			mask: 4,
 			result: null,
-			composition: { ...variantsData.defaults.slabUpright }
+			composition: { ...variantsData.defaults.slab.upright }
 		},
 		{
 			desc: "Slab Italic",
 			mask: 8,
 			result: null,
-			composition: { ...variantsData.defaults.slabItalic }
+			composition: { ...variantsData.defaults.slab.italic }
 		}
 	];
 
@@ -312,10 +290,9 @@ async function processLigSetOt(dirs, index, fn) {
 			md.log(`</tr>`);
 		}
 		{
+			const imageId = `${dirs.images}/ligset-${ls.tag}-${ls.rank}`;
 			md.log(`<tr>`);
-			md.log(
-				`<td colspan="2"><img src="${dirs.images}/ligset-${ls.tag}-${ls.rank}.png"/></td>`
-			);
+			md.log(`<td colspan="2">${ImgX(imageId)}</td>`);
 			md.log(`</tr>`);
 		}
 	}
@@ -359,4 +336,12 @@ class MdCol {
 			).replace(/^/gm, $1);
 		});
 	}
+}
+
+function ImgX(path, w) {
+	const widthProp = w ? ` width=${w}` : ``;
+	return (
+		`<img src="${path}.light.png#gh-light-mode-only"${widthProp}/>` +
+		`<img src="${path}.dark.png#gh-dark-mode-only"${widthProp}/>`
+	);
 }

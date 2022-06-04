@@ -6,6 +6,7 @@ const which = require("which");
 const Path = require("path");
 const toml = require("@iarna/toml");
 const semver = require("semver");
+const uuid = require("uuid");
 
 ///////////////////////////////////////////////////////////
 
@@ -158,6 +159,18 @@ const GroupFontsOf = computed.group("metadata:group-fonts-of", async (target, gi
 	return plan.targets;
 });
 
+const CompositesFromBuildPlan = computed(`metadata:composites-from-build-plan`, async target => {
+	const [{ buildPlans }] = await target.need(BuildPlans);
+	let data = {};
+	for (const bpn in buildPlans) {
+		let bp = buildPlans[bpn];
+		if (bp.variants) {
+			data[bpn] = bp.variants;
+		}
+	}
+	return data;
+});
+
 const FontInfoOf = computed.group("metadata:font-info-of", async (target, fileName) => {
 	const [{ fileNameToBpMap, buildPlans }] = await target.need(BuildPlans);
 	const [version] = await target.need(Version);
@@ -168,7 +181,9 @@ const FontInfoOf = computed.group("metadata:font-info-of", async (target, fileNa
 	const bp = buildPlans[fi0.prefix];
 	if (!bp) fail(`Build plan for '${fileName}' not found.` + whyBuildPlanIsnNotThere(fileName));
 
-	const sfi = getSuffixMapping(bp.weights, bp.slopes, bp.widths)[fi0.suffix];
+	const sfm = getSuffixMapping(bp.weights, bp.slopes, bp.widths);
+	const sfi = sfm[fi0.suffix];
+	const hintReferenceSuffix = fetchHintReferenceSuffix(sfm);
 
 	return {
 		name: fileName,
@@ -205,11 +220,37 @@ const FontInfoOf = computed.group("metadata:font-info-of", async (target, fileNa
 			style: sfi.cssStyle
 		},
 		hintParams: bp.hintParams || [],
+		hintReference:
+			!bp["metric-override"] && hintReferenceSuffix !== fi0.suffix
+				? makeFileName(fi0.prefix, hintReferenceSuffix)
+				: null,
 		compatibilityLigatures: bp["compatibility-ligatures"] || null,
 		metricOverride: bp["metric-override"] || null,
-		excludedCharRanges: bp["exclude-chars"] ? bp["exclude-chars"].ranges || null : null
+		excludedCharRanges: bp["exclude-chars"]?.ranges
 	};
 });
+
+function fetchHintReferenceSuffix(sfm) {
+	if (sfm["regular"]) return "regular";
+
+	let bestSuffix = null,
+		bestSfi = null;
+	for (const [suffix, sfi] of Object.entries(sfm)) {
+		if (
+			!bestSfi ||
+			Math.abs(sfi.shapeWeight - 400) < Math.abs(bestSfi.shapeWeight - 400) ||
+			(Math.abs(sfi.shapeWeight - 400) === Math.abs(bestSfi.shapeWeight - 400) &&
+				Math.abs(sfi.shapeSlopeAngle) < Math.abs(bestSfi.shapeSlopeAngle)) ||
+			(Math.abs(sfi.shapeWeight - 400) === Math.abs(bestSfi.shapeWeight - 400) &&
+				Math.abs(sfi.shapeSlopeAngle) === Math.abs(bestSfi.shapeSlopeAngle) &&
+				Math.abs(sfi.shapeWidth - 500) < Math.abs(bestSfi.shapeWidth - 500))
+		) {
+			bestSuffix = suffix;
+			bestSfi = sfi;
+		}
+	}
+	return bestSuffix;
+}
 
 function getSuffixMapping(weights, slopes, widths) {
 	const mapping = {};
@@ -272,22 +313,43 @@ function whyBuildPlanIsnNotThere(gid) {
 //////                Font Building                  //////
 ///////////////////////////////////////////////////////////
 
+const ageKey = uuid.v4();
 const DistUnhintedTTF = file.make(
 	(gr, fn) => `${DIST}/${gr}/ttf-unhinted/${fn}.ttf`,
 	async (target, out, gr, fn) => {
-		await target.need(Scripts, Parameters, Dependencies);
+		await target.need(Scripts, Parameters, Dependencies, de(`${BUILD}/caches`));
+		const [compositesFromBuildPlan] = await target.need(CompositesFromBuildPlan);
 		const charMapDir = `${BUILD}/ttf/${gr}`;
 		const charMapPath = `${charMapDir}/${fn}.charmap.mpz`;
-		const cachePath = `${charMapDir}/${fn}.cache.mpz`;
 
 		const [fi] = await target.need(FontInfoOf(fn), de(out.dir), de(charMapDir));
+		const cacheFileName =
+			`${Math.round(1000 * fi.shape.weight)}-${Math.round(1000 * fi.shape.width)}-` +
+			`${Math.round(3600 * fi.shape.slopeAngle)}-${fi.shape.slope}`;
+		const cachePath = `${BUILD}/caches/${cacheFileName}.mpz`;
+		const cacheDiffPath = `${charMapDir}/${fn}.cache.mpz`;
+
 		echo.action(echo.hl.command(`Create TTF`), fn, echo.hl.operator("->"), out.full);
-		await silently.node("font-src/index", {
+		const { cacheUpdated } = await silently.node("font-src/index", {
 			o: out.full,
 			oCharMap: charMapPath,
-			oCache: cachePath,
+			cacheFreshAgeKey: ageKey,
+			iCache: cachePath,
+			oCache: cacheDiffPath,
+			compositesFromBuildPlan,
 			...fi
 		});
+		if (cacheUpdated) {
+			const lock = build.locks.alloc(cacheFileName);
+			await lock.acquire();
+			await silently.node(`font-src/merge-cache`, {
+				base: cachePath,
+				diff: cacheDiffPath,
+				version: fi.menu.version,
+				freshAgeKey: ageKey
+			});
+			lock.release();
+		}
 	}
 );
 
@@ -359,9 +421,9 @@ const GroupFonts = task.group("fonts", async (target, gr) => {
 // Per group file
 const DistHintedTTF = file.make(
 	(gr, fn) => `${DIST}/${gr}/ttf/${fn}.ttf`,
-	async (target, out, gr, f) => {
-		const [{ hintParams }, hint] = await target.need(FontInfoOf(f), CheckTtfAutoHintExists);
-		const [from] = await target.need(DistUnhintedTTF(gr, f), de`${out.dir}`);
+	async (target, out, gr, fn) => {
+		const [{ hintParams }, hint] = await target.need(FontInfoOf(fn), CheckTtfAutoHintExists);
+		const [from] = await target.need(DistUnhintedTTF(gr, fn), de`${out.dir}`);
 		echo.action(echo.hl.command(`Hint TTF`), from.full, echo.hl.operator("->"), out.full);
 		await silently.run(hint, hintParams, from.full, out.full);
 	}
@@ -630,8 +692,14 @@ const PagesFastFontExport = task.group(`pages:fast-font-export`, async (target, 
 	const [pagesDir] = await target.need(PagesDir);
 	if (!pagesDir) return;
 	const outDir = Path.resolve(pagesDir, "shared/fonts", gr);
-	await target.need(GroupTTFs(gr), de(outDir));
-	await cp(`${DIST}/${gr}/ttf`, Path.resolve(outDir, "ttf"));
+	await target.need(GroupUnhintedTTFs(gr), de(outDir));
+
+	// Next.js 12 has some problem about refreshing fonts, so write an empty CSS first
+	await createWebFontCssImpl(target, Path.resolve(outDir, `${gr}.css`), gr, null);
+	await Delay(2000);
+
+	// Then do the copy
+	await cp(`${DIST}/${gr}/ttf-unhinted`, Path.resolve(outDir, "ttf"));
 	await createWebFontCssImpl(target, Path.resolve(outDir, `${gr}.css`), gr, webfontFormatsFast);
 	await rm(Path.resolve(outDir, "woff2"));
 });
@@ -639,12 +707,17 @@ const PagesFastFontExport = task.group(`pages:fast-font-export`, async (target, 
 ///////////////////////////////////////////////////////////
 // Sample Images
 
+const SnapshotParallel = 8;
 const SampleImages = task(`sample-images`, async target => {
 	const [cfgP, sh] = await target.need(PackageSnapshotConfig, SnapShotHtml, TakeSampleImages);
-	const de = JSON.parse(fs.readFileSync(`${sh.dir}/${sh.name}.data.json`));
+	let snapshotFiles = [...cfgP];
+	for (let i = 0; i < SnapshotParallel; i++) {
+		const de = JSON.parse(fs.readFileSync(`${sh.dir}/readme-tasks-${i}.json`));
+		for (const x of de) snapshotFiles.push(x);
+	}
 	await target.need(
-		cfgP.map(opt => ScreenShot(opt.name)),
-		de.readmeSnapshotTasks.map(opt => ScreenShot(opt.name))
+		snapshotFiles.map(opt => ScreenShot(opt.name + ".dark")),
+		snapshotFiles.map(opt => ScreenShot(opt.name + ".light"))
 	);
 });
 
@@ -691,16 +764,22 @@ const SnapShotJson = file(`${SNAPSHOT_TMP}/packaging-tasks.json`, async (target,
 });
 const SnapShotHtml = file(`${SNAPSHOT_TMP}/index.html`, async (target, out) => {
 	await target.need(Parameters, UtilScripts, SnapshotTemplates, de(out.dir));
+	await node(`utility/generate-snapshot-page/index`, {
+		inputPath: "snapshot-src/templates",
+		outputPath: out.full,
+		outputDataPath: `${out.dir}/${out.name}.data.json`,
+		outputTaskFilePrefix: `${out.dir}/readme-tasks`,
+		parallel: SnapshotParallel
+	});
+});
+
+const AmendReadme = task("amend-readme", async target => {
+	await target.need(Parameters, UtilScripts);
 	const [cm, cmi, cmo] = await target.need(
 		BuildCM("iosevka", "iosevka-regular"),
 		BuildCM("iosevka", "iosevka-italic"),
 		BuildCM("iosevka", "iosevka-oblique")
 	);
-	await node(`utility/generate-snapshot-page/index`, {
-		inputPath: "snapshot-src/templates",
-		outputPath: out.full,
-		outputDataPath: `${out.dir}/${out.name}.data.json`
-	});
 	await amendReadmeFor("README.md", cm, cmi, cmo);
 	await amendReadmeFor("doc/stylistic-sets.md", cm, cmi, cmo);
 	await amendReadmeFor("doc/character-variants.md", cm, cmi, cmo);
@@ -730,13 +809,34 @@ const SnapShotCSS = file(`${SNAPSHOT_TMP}/index.css`, async (target, out) => {
 });
 const TakeSampleImages = task(`sample-images:take`, async target => {
 	await target.need(SampleImagesPre);
-	await cd(SNAPSHOT_TMP).run("npx", "electron", "get-snap.js", "../../images");
+
+	await run("npm", "install", "--no-save", "electron");
+
+	let taskLists = [`packaging-tasks.json`];
+	for (let i = 0; i < SnapshotParallel; i++) taskLists.push(`readme-tasks-${i}.json`);
+	await Promise.all(
+		taskLists.map((file, i) =>
+			Delay(i * 4000).then(() =>
+				cd(SNAPSHOT_TMP).run("npx", "electron", "get-snap.js", "../../images", file)
+			)
+		)
+	);
 });
 const ScreenShot = file.make(
 	img => `images/${img}.png`,
-	async (target, { full }) => {
+	async (target, out) => {
 		await target.need(TakeSampleImages);
-		await run("optipng", ["--strip", "all"], full);
+		await run(
+			"magick",
+			...[`${out.dir}/${out.name}.black.png`, `${out.dir}/${out.name}.white.png`],
+			..."( -clone 0-1 -fx u-v+1 )".split(" "),
+			..."( -clone 0,2 -compose DivideSrc -composite )".split(" "),
+			..."( -clone 3,2 -alpha Off -compose CopyOpacity -composite )".split(" "),
+			...["-delete", "0-3", out.full]
+		);
+		await rm(`${out.dir}/${out.name}.black.png`);
+		await rm(`${out.dir}/${out.name}.white.png`);
+		await run("optipng", ["--strip", "all"], out.full);
 	}
 );
 
@@ -823,27 +923,25 @@ phony(`clean`, async () => {
 	build.deleteJournal();
 });
 phony(`release`, async target => {
-	const [collectPlans] = await target.need(CollectPlans);
+	const [version, collectPlans] = await target.need(Version, CollectPlans);
 	let goals = [];
 	for (const [cgr, plan] of Object.entries(collectPlans)) {
 		if (!plan.inRelease) continue;
-		goals.push(ReleaseGroup(cgr));
+		const subGroups = collectPlans[cgr].groupDecomposition;
+		goals.push(TtcArchiveFile(cgr, version));
+		goals.push(SuperTtcArchiveFile(cgr, version));
+		for (const gr of subGroups) {
+			goals.push(GroupTtfArchiveFile(gr, version));
+			goals.push(GroupTtfUnhintedArchiveFile(gr, version));
+			goals.push(GroupWebArchiveFile(gr, version));
+		}
 	}
-	await target.need(goals);
-	await target.need(SampleImages, Pages, ReleaseNotes, ChangeLog);
-});
-const ReleaseGroup = phony.group("release-group", async (target, cgr) => {
-	const [version, collectPlans] = await target.need(Version, CollectPlans);
-	const subGroups = collectPlans[cgr].groupDecomposition;
-
-	let goals = [TtcArchiveFile(cgr, version), SuperTtcArchiveFile(cgr, version)];
-	for (const gr of subGroups) {
-		goals.push(GroupTtfArchiveFile(gr, version));
-		goals.push(GroupTtfUnhintedArchiveFile(gr, version));
-		goals.push(GroupWebArchiveFile(gr, version));
-	}
-
-	await target.need(goals);
+	const [archiveFiles] = await target.need(goals);
+	// Create hash of packages
+	await target.need(fu`utility/create-sha-file.js`);
+	await node("utility/create-sha-file.js", "doc/packages-sha.txt", archiveFiles);
+	// Images and release notes
+	await target.need(SampleImages, Pages, AmendReadme, ReleaseNotes, ChangeLog);
 });
 
 ///////////////////////////////////////////////////////////
@@ -1049,3 +1147,9 @@ const VlCssFontStretch = {
 		x == "extra-expanded" ||
 		x == "ultra-expanded"
 };
+
+// Utilities
+
+function Delay(t) {
+	return new Promise(resolve => setTimeout(resolve, t));
+}

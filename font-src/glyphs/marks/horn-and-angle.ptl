@@ -55,15 +55,42 @@ glyph-block Mark-Horn-And-Angle : begin
 					widths.rhs [mix hornFine hornStroke t]
 				g4 (attX - overshootX - HalfStroke * HVContrast) (attY - overshootY - Stroke) [widths.rhs hornStroke]
 
-	create-glyph 'horn' 0x31B : glyph-proc
+	define [SquareHornShape attX attY overshootX overshootY yrP] : glyph-proc
+		local [object [radius r] hornFine hornStroke startX startY] : HornDim attX attY overshootX overshootY yrP
+		local radius : r * DesignParameters.squareDotScalar
+		include : union
+			SquareAt (startX - radius) startY radius
+			dispiro
+				flat startX (startY + radius) [widths.rhs.heading hornFine Downward]
+				curl startX (startY - radius)
+				quadControls 0 0.8 8 : object : blend : lambda [t]
+					widths.rhs [mix hornFine hornStroke t]
+				g4 (attX - overshootX - HalfStroke * HVContrast) (attY - overshootY - Stroke) [widths.rhs hornStroke]
+
+	create-glyph 'horn.round' : glyph-proc
 		set-width 0
 		include : HornShape 0 XH 0 0 0.5
 		include : HornMarkAnchor 0 XH 0 0 0.5
 
-	create-glyph 'longHorn' : glyph-proc
+	create-glyph 'horn.square' : glyph-proc
 		set-width 0
-		include : HornShape 0 XH (Width / 2) (SmoothB) 0.5
-		include : HornMarkAnchor 0 XH (Width / 2) (SmoothB) 0.5
+		include : SquareHornShape 0 XH 0 0 0.5
+		include : HornMarkAnchor 0 XH 0 0 0.5
+
+	select-variant 'horn' 0x31B (follow -- 'diacriticDot')
+
+
+	create-glyph 'longHorn.round' : glyph-proc
+		set-width 0
+		include : HornShape 0 XH (Width / 2) (ArchDepthB) 0.5
+		include : HornMarkAnchor 0 XH (Width / 2) (ArchDepthB) 0.5
+
+	create-glyph 'longHorn.square' : glyph-proc
+		set-width 0
+		include : SquareHornShape 0 XH (Width / 2) (ArchDepthB) 0.5
+		include : HornMarkAnchor 0 XH (Width / 2) (ArchDepthB) 0.5
+
+	select-variant 'longHorn' null (follow -- 'diacriticDot')
 
 	create-glyph 'leftangleTR' 0x31A : glyph-proc
 		set-width 0
@@ -71,21 +98,24 @@ glyph-block Mark-Horn-And-Angle : begin
 		include : HBarTop (-markExtend * 1.5) 0 aboveMarkTop (markFine * 2)
 		set-mark-anchor 'topright' 0 XH 0 aboveMarkTop
 
-	create-glyph 'dotTR' 0x358 : glyph-proc
-		set-width 0
-		include : refer-glyph "dotAbove"
-		include : ApparentTranslate (RightSB - Middle + DotRadius) 0
-		set-mark-anchor 'topright' 0 XH 0 aboveMarkTop
+	foreach { suffix { DrawAt kdr } } [Object.entries DotVariants] : do
+		create-glyph "dotTR.\(suffix)" 0x358 : glyph-proc
+			set-width 0
+			include : HornMarkAnchor 0 XH 0 0 0.5
+			local [object radius startX startY] : HornDim 0 XH 0 0 0.5
+			local r : mix radius DotRadius 0.5
+			include : DrawAt (startX - r) startY (r * kdr)
 
-	create-glyph 'commaTR' 0x315 : glyph-proc
+	select-variant "dotTR" 0x358 (follow -- "diacriticDot")
+
+	derive-glyphs 'commaTR' 0x315 'commaAbove' : function [src gr] : glyph-proc
 		set-width 0
-		include : refer-glyph "commaAbove"
+		include : refer-glyph src
 		include : ApparentTranslate (RightSB - Middle + DotRadius) 0
 		set-mark-anchor 'topright' 0 XH 0 aboveMarkTop
 
 	create-glyph 'rtailBR' 0x322 : glyph-proc
 		set-width 0
-
 		set-mark-anchor 'bottomright' 0 0 0 belowMarkBot
 		include : dispiro
 			widths.rhs

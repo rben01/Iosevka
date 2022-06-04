@@ -219,25 +219,25 @@ selector."D/sansSerif" = "moreRoundedSerifless"
 
 [prime.capital-d.variants.standard-unilateral-serifed]
 rank = 3
-description = "Standard `B` with serifs at top"
+description = "Standard `D` with serifs at top"
 selector.D = "standardUnilateralSerifed"
 selector."D/sansSerif" = "standardSerifless"
 
 [prime.capital-d.variants.more-rounded-unilateral-serifed]
 rank = 4
-description = "More rounded `B` to differentiate with `O` with motion serifs at top"
+description = "More rounded `D` to differentiate with `O` with motion serifs at top"
 selector.D = "moreRoundedUnilateralSerifed"
 selector."D/sansSerif" = "moreRoundedSerifless"
 
 [prime.capital-d.variants.standard-bilateral-serifed]
 rank = 5
-description = "Standard `B` with serifs at both top and bottom"
+description = "Standard `D` with serifs at both top and bottom"
 selector.D = "standardBilateralSerifed"
 selector."D/sansSerif" = "standardSerifless"
 
 [prime.capital-d.variants.more-rounded-bilateral-serifed]
 rank = 6
-description = "More rounded `B` to differentiate with `O` with serifs at both top and bottom"
+description = "More rounded `D` to differentiate with `O` with serifs at both top and bottom"
 selector.D = "moreRoundedBilateralSerifed"
 selector."D/sansSerif" = "moreRoundedSerifless"
 
@@ -500,8 +500,7 @@ selector.H = "serifless"
 selector.halfH = "serifless"
 selector."H/sansSerif" = "serifless"
 selector.Hwair = "serifless"
-selector."cyrl/Nje/leftHalf/full" = "serifless"
-selector."cyrl/Nje/leftHalf/reduced" = "serifless"
+selector."cyrl/Nje/leftHalf" = "serifless"
 
 [prime.capital-h.variants.top-left-serifed]
 rank = 2
@@ -510,8 +509,7 @@ selector.H = "topLeftSerifed"
 selector.halfH = "topLeftSerifed"
 selector."H/sansSerif" = "serifless"
 selector.Hwair = "topLeftSerifed"
-selector."cyrl/Nje/leftHalf/full" = "topLeftSerifed"
-selector."cyrl/Nje/leftHalf/reduced" = "topLeftSerifed"
+selector."cyrl/Nje/leftHalf" = "topLeftSerifed"
 
 [prime.capital-h.variants.top-left-bottom-right-serifed]
 rank = 3
@@ -520,8 +518,7 @@ selector.H = "topLeftBottomRightSerifed"
 selector.halfH = "topLeftSerifed"
 selector."H/sansSerif" = "serifless"
 selector.Hwair = "topLeftSerifed"
-selector."cyrl/Nje/leftHalf/full" = "topLeftSerifed"
-selector."cyrl/Nje/leftHalf/reduced" = "topLeftSerifed"
+selector."cyrl/Nje/leftHalf" = "topLeftSerifed"
 
 [prime.capital-h.variants.serifed]
 rank = 4
@@ -530,8 +527,7 @@ selector.H = "serifed"
 selector.halfH = "serifed"
 selector."H/sansSerif" = "serifless"
 selector.Hwair = "serifedExceptBottomRight"
-selector."cyrl/Nje/leftHalf/full" = "serifed"
-selector."cyrl/Nje/leftHalf/reduced" = "serifedExceptBottomRight"
+selector."cyrl/Nje/leftHalf" = "serifed"
 
 
 
@@ -567,84 +563,98 @@ tag = "cv10"
 rank = 1
 description = "J without top serif"
 selector.J = "serifless"
+selector."J/noDescend" = "serifless"
 selector."J/sansSerif" = "serifless"
 
 [prime.capital-j.variants.serifed]
 rank = 2
 description = "J with top serif at left side"
 selector.J = "serifed"
+selector."J/noDescend" = "serifed"
 selector."J/sansSerif" = "serifless"
 
 [prime.capital-j.variants.serifed-both-sides]
 rank = 3
 description = "J with top serif at both sides (asymmetric)"
 selector.J = "serifedBothSides"
+selector."J/noDescend" = "serifedBothSides"
 selector."J/sansSerif" = "serifless"
 
 [prime.capital-j.variants.serifed-symmetric]
 rank = 4
 description = "J with top serif at both sides (symmetric)"
 selector.J = "serifedSymmetric"
+selector."J/noDescend" = "serifedSymmetric"
 selector."J/sansSerif" = "serifless"
 
 [prime.capital-j.variants.flat-hook-serifless]
 rank = 5
 description = "J with flat hook and without top serif"
 selector.J  = "flatHookSerifless"
+selector."J/noDescend"  = "flatHookSerifless"
 selector."J/sansSerif"  = "flatHookSerifless"
 
 [prime.capital-j.variants.flat-hook-serifed]
 rank = 6
 description = "J with flat hook and top serif at left side"
 selector.J  = "flatHookSerifed"
+selector."J/noDescend"  = "flatHookSerifed"
 selector."J/sansSerif"  = "flatHookSerifless"
 
 [prime.capital-j.variants.flat-hook-serifed-both-sides]
 rank = 7
 description = "J with flat hook and top serif at both sides (asymmetric)"
 selector.J  = "flatHookSeriflessBothSides"
+selector."J/noDescend"  = "flatHookSeriflessBothSides"
 selector."J/sansSerif"  = "flatHookSerifless"
 
 [prime.capital-j.variants.flat-hook-serifed-symmetric]
 rank = 8
 description = "J with flat hook and top serif at both sides (symmetric)"
 selector.J  = "flatHookSerifedSymmetric"
+selector."J/noDescend"  = "flatHookSerifedSymmetric"
 selector."J/sansSerif"  = "flatHookSerifless"
 
 [prime.capital-j.variants.descending-serifless]
 rank = 9
 description = "J with hook goes below descender and without serif"
 selector.J  = "descendingSerifless"
+selector."J/noDescend"  = "serifless"
 selector."J/sansSerif"  = "descendingSerifless"
 
 [prime.capital-j.variants.descending-serifed]
 rank = 10
 description = "J with hook goes below descender and top serif at left side"
 selector.J  = "descendingSerifed"
+selector."J/noDescend"  = "serifed"
 selector."J/sansSerif"  = "descendingSerifless"
 
 [prime.capital-j.variants.descending-serifed-both-sides]
 rank = 11
 description = "J with hook goes below descender and top serif at both sides (asymmetric)"
 selector.J  = "descendingSerifedBothSides"
+selector."J/noDescend"  = "serifedBothSides"
 selector."J/sansSerif"  = "descendingSerifless"
 
 [prime.capital-j.variants.descending-serifed-symmetric]
 rank = 12
 description = "J with hook goes below descender and top serif at both sides (symmetric)"
 selector.J  = "descendingSerifedSymmetric"
+selector."J/noDescend"  = "serifedSymmetric"
 selector."J/sansSerif"  = "descendingSerifless"
 
 [prime.capital-j.variants.descending-flat-hook-serifless]
 rank = 13
 description = "J with flat hook goes below descender and without serif"
 selector.J  = "descendingFlatHookSerifless"
+selector."J/noDescend"  = "flatHookSerifless"
 selector."J/sansSerif"  = "descendingFlatHookSerifless"
 
 [prime.capital-j.variants.descending-flat-hook-serifed]
 rank = 14
 description = "J with flat hook goes below descender and top serif at left side"
 selector.J  = "descendingFlatHookSerifed"
+selector."J/noDescend"  = "flatHookSerifed"
 selector."J/sansSerif"  = "descendingFlatHookSerifless"
 
 
@@ -3732,8 +3742,8 @@ tag = "cv44"
 rank = 1
 description = "Standard `t` shape"
 selector.t = "standard"
-selector."t/phoneticLeft1" = "phoneticLeftShortNeck"
-selector."t/phoneticLeft2" = "phoneticLeftShortNeck"
+selector."t/phoneticLeft1" = "phoneticLeft"
+selector."t/phoneticLeft2" = "phoneticLeft"
 selector.tHookTop = "standard"
 selector.tRTail = "retroflexHookBase"
 selector.tLTail = "standard"
@@ -3743,8 +3753,8 @@ selector."tsLig/upperHalf" = "standard"
 rank = 2
 description = "`t` with flat hook"
 selector.t = "flatHook"
-selector."t/phoneticLeft1" = "phoneticLeftShortNeck"
-selector."t/phoneticLeft2" = "phoneticLeftShortNeck"
+selector."t/phoneticLeft1" = "phoneticLeft"
+selector."t/phoneticLeft2" = "phoneticLeft"
 selector.tHookTop = "flatHook"
 selector.tRTail = "retroflexHookBase"
 selector.tLTail = "standard"
@@ -3754,8 +3764,8 @@ selector."tsLig/upperHalf" = "standard"
 rank = 3
 description = "`t` with diagonal tail"
 selector.t = "diagonalTailed"
-selector."t/phoneticLeft1" = "phoneticLeftShortNeck"
-selector."t/phoneticLeft2" = "phoneticLeftShortNeck"
+selector."t/phoneticLeft1" = "phoneticLeft"
+selector."t/phoneticLeft2" = "phoneticLeft"
 selector.tHookTop = "diagonalTailed"
 selector.tRTail = "retroflexHookBase"
 selector.tLTail = "standard"
@@ -5299,8 +5309,7 @@ description = "Cyrillic Lower En (`н`) with standard shape"
 selector."cyrl/en" = "serifless"
 selector."cyrl/en.BGR" = "serifless"
 selector."cyrl/en/descenderBase" = "serifless"
-selector."cyrl/nje/leftHalf/full" = "serifless"
-selector."cyrl/nje/leftHalf/reduced" = "serifless"
+selector."cyrl/nje/leftHalf" = "serifless"
 
 [prime.cyrl-en.variants.tailed-serifless]
 rank = 2
@@ -5308,8 +5317,7 @@ description = "Cyrillic Lower En (`н`) with tail"
 selector."cyrl/en" = "tailed"
 selector."cyrl/en.BGR" = "tailed"
 selector."cyrl/en/descenderBase" = "serifless"
-selector."cyrl/nje/leftHalf/full" = "serifless"
-selector."cyrl/nje/leftHalf/reduced" = "serifless"
+selector."cyrl/nje/leftHalf" = "serifless"
 
 [prime.cyrl-en.variants.top-left-serifed]
 rank = 3
@@ -5317,8 +5325,7 @@ description = "Cyrillic Lower En (`н`) with outward serifs only at top left"
 selector."cyrl/en" = "topLeftSerifed"
 selector."cyrl/en.BGR" = "topLeftSerifed"
 selector."cyrl/en/descenderBase" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/full" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/reduced" = "topLeftSerifed"
+selector."cyrl/nje/leftHalf" = "topLeftSerifed"
 
 [prime.cyrl-en.variants.tailed-top-left-serifed]
 rank = 4
@@ -5326,8 +5333,7 @@ description = "Cyrillic Lower En (`н`) with tail and outward serifs only at top
 selector."cyrl/en" = "tailedTopLeftSerifed"
 selector."cyrl/en.BGR" = "tailedTopLeftSerifed"
 selector."cyrl/en/descenderBase" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/full" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/reduced" = "topLeftSerifed"
+selector."cyrl/nje/leftHalf" = "topLeftSerifed"
 
 [prime.cyrl-en.variants.top-left-bottom-right-serifed]
 rank = 5
@@ -5335,8 +5341,7 @@ description = "Cyrillic Lower En (`н`) with outward serifs only at top left and
 selector."cyrl/en" = "topLeftBottomRightSerifed"
 selector."cyrl/en.BGR" = "topLeftBottomRightSerifed"
 selector."cyrl/en/descenderBase" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/full" = "topLeftSerifed"
-selector."cyrl/nje/leftHalf/reduced" = "topLeftSerifed"
+selector."cyrl/nje/leftHalf" = "topLeftSerifed"
 
 [prime.cyrl-en.variants.serifed]
 rank = 6
@@ -5344,8 +5349,7 @@ description = "Cyrillic Lower En (`н`) with full serifs"
 selector."cyrl/en" = "serifed"
 selector."cyrl/en.BGR" = "serifedBGR"
 selector."cyrl/en/descenderBase" = "serifed"
-selector."cyrl/nje/leftHalf/full" = "serifed"
-selector."cyrl/nje/leftHalf/reduced" = "serifedExceptBottomRight"
+selector."cyrl/nje/leftHalf" = "serifed"
 
 [prime.cyrl-en.variants.tailed-serifed]
 rank = 7
@@ -5353,8 +5357,7 @@ description = "Cyrillic Lower En (`н`) with tail and full serifs"
 selector."cyrl/en" = "tailedSerifed"
 selector."cyrl/en.BGR" = "tailedSerifedBGR"
 selector."cyrl/en/descenderBase" = "serifed"
-selector."cyrl/nje/leftHalf/full" = "serifed"
-selector."cyrl/nje/leftHalf/reduced" = "serifedExceptBottomRight"
+selector."cyrl/nje/leftHalf" = "serifed"
 
 
 
@@ -5705,54 +5708,54 @@ selector.zero = "longDotted"
 selector."zero/forceSlashed" = "slashed"
 selector."zero/forceUnslashed" = "unslashed"
 
-[prime.zero.variants.unslashed-oval]
-rank = 6
-description = "O-like Zero (`0`) but more round"
-selector.zero = "unslashedOval"
-selector."zero/forceSlashed" = "slashedOval"
-selector."zero/forceUnslashed" = "unslashedOval"
-
-[prime.zero.variants.slashed-oval]
-rank = 7
-description = "Slashed Zero (`0`) but more round"
-selector.zero = "slashedOval"
-selector."zero/forceSlashed" = "slashedOval"
-selector."zero/forceUnslashed" = "unslashedOval"
-
-[prime.zero.variants.reverse-slashed-oval]
-rank = 8
-description = "Reverse-slashed Zero (`0`) but more round"
-selector.zero = "reverseSlashedOval"
-selector."zero/forceSlashed" = "slashedOval"
-selector."zero/forceUnslashed" = "unslashedOval"
-
-[prime.zero.variants.dotted-oval]
-rank = 9
-description = "Dotted Zero (`0`) but more round"
-selector.zero = "dottedOval"
-selector."zero/forceSlashed" = "slashedOval"
-selector."zero/forceUnslashed" = "unslashedOval"
-
-[prime.zero.variants.long-dotted-oval]
-rank = 10
-description = "Long-dotted Zero (`0`) like Hack but more round"
-selector.zero = "longDottedOval"
-selector."zero/forceSlashed" = "slashedOval"
-selector."zero/forceUnslashed" = "unslashedOval"
-
 [prime.zero.variants.slashed-split]
-rank = 11
+rank = 6
 description = "Slashed Zero (`0`) with slash separated from the outline"
 selector.zero = "slashedSplit"
 selector."zero/forceSlashed" = "slashedSplit"
 selector."zero/forceUnslashed" = "unslashed"
 
 [prime.zero.variants.reverse-slashed-split]
-rank = 12
+rank = 7
 description = "Reverse-slashed Zero (`0`) with slash separated from the outline"
 selector.zero = "reverseSlashedSplit"
 selector."zero/forceSlashed" = "slashedSplit"
 selector."zero/forceUnslashed" = "unslashed"
+
+[prime.zero.variants.unslashed-oval]
+rank = 8
+description = "O-like Zero (`0`) but more round"
+selector.zero = "unslashedOval"
+selector."zero/forceSlashed" = "slashedOval"
+selector."zero/forceUnslashed" = "unslashedOval"
+
+[prime.zero.variants.slashed-oval]
+rank = 9
+description = "Slashed Zero (`0`) but more round"
+selector.zero = "slashedOval"
+selector."zero/forceSlashed" = "slashedOval"
+selector."zero/forceUnslashed" = "unslashedOval"
+
+[prime.zero.variants.reverse-slashed-oval]
+rank = 10
+description = "Reverse-slashed Zero (`0`) but more round"
+selector.zero = "reverseSlashedOval"
+selector."zero/forceSlashed" = "slashedOval"
+selector."zero/forceUnslashed" = "unslashedOval"
+
+[prime.zero.variants.dotted-oval]
+rank = 11
+description = "Dotted Zero (`0`) but more round"
+selector.zero = "dottedOval"
+selector."zero/forceSlashed" = "slashedOval"
+selector."zero/forceUnslashed" = "unslashedOval"
+
+[prime.zero.variants.long-dotted-oval]
+rank = 12
+description = "Long-dotted Zero (`0`) like Hack but more round"
+selector.zero = "longDottedOval"
+selector."zero/forceSlashed" = "slashedOval"
+selector."zero/forceUnslashed" = "unslashedOval"
 
 [prime.zero.variants.slashed-split-oval]
 rank = 13
@@ -5774,20 +5777,20 @@ selector."zero/forceUnslashed" = "unslashedOval"
 sampler = "1"
 tag = "cv72"
 
-[prime.one.variants.no-base]
+[prime.one.variants.line]
 rank = 1
+description = "`1` drawn just like a straight line"
+selector.one = "line"
+
+[prime.one.variants.no-base]
+rank = 2
 description = "`1` without bottom serif"
 selector.one = "noBase"
 
 [prime.one.variants.base]
-rank = 2
+rank = 3
 description = "`1` with bottom serif"
 selector.one = "base"
-
-[prime.one.variants.line]
-rank = 3
-description = "`1` drawn just like a straight line"
-selector.one = "line"
 
 [prime.one.variants.no-base-long-top-serif]
 rank = 4
@@ -5808,6 +5811,16 @@ selector.one = "noBaseFlatTopSerif"
 rank = 7
 description = "`1` with bottom serif and a flat top serif"
 selector.one = "baseFlatTopSerif"
+
+[prime.one.variants.no-base-top-cut]
+rank = 8
+description = "`1` without bottom serif and with a diagonal cut at top"
+selector.one = "noBaseTopCut"
+
+[prime.one.variants.base-top-cut]
+rank = 9
+description = "`1` with bottom serif and a diagonal cut at top"
+selector.one = "baseTopCut"
 
 
 
@@ -6048,6 +6061,7 @@ tag = "cv82"
 rank = 1
 description = "Higher five-pointed asterisk `*`"
 selector.asterisk = "pentaHigh"
+selector."asterisk/positionOnly" = "high"
 selector."asterisk/sMid" = "pentaSMid"
 selector."lowAsterisk" = "pentaLow"
 
@@ -6055,6 +6069,7 @@ selector."lowAsterisk" = "pentaLow"
 rank = 2
 description = "Lower five-pointed asterisk `*`"
 selector.asterisk = "pentaSMid"
+selector."asterisk/positionOnly" = "sMid"
 selector."asterisk/sMid" = "pentaSMid"
 selector."lowAsterisk" = "pentaLow"
 
@@ -6062,6 +6077,7 @@ selector."lowAsterisk" = "pentaLow"
 rank = 3
 description = "Higher five-pointed and turned asterisk `*`"
 selector.asterisk = "turnPentaHigh"
+selector."asterisk/positionOnly" = "high"
 selector."asterisk/sMid" = "turnPentaSMid"
 selector."lowAsterisk" = "turnPentaLow"
 
@@ -6069,6 +6085,7 @@ selector."lowAsterisk" = "turnPentaLow"
 rank = 4
 description = "Lower five-pointed and turned asterisk `*`"
 selector.asterisk = "turnPentaSMid"
+selector."asterisk/positionOnly" = "sMid"
 selector."asterisk/sMid" = "turnPentaSMid"
 selector."lowAsterisk" = "turnPentaLow"
 
@@ -6076,6 +6093,7 @@ selector."lowAsterisk" = "turnPentaLow"
 rank = 5
 description = "Higher six-pointed asterisk `*`"
 selector.asterisk = "hexHigh"
+selector."asterisk/positionOnly" = "high"
 selector."asterisk/sMid" = "hexSMid"
 selector."lowAsterisk" = "hexLow"
 
@@ -6083,6 +6101,7 @@ selector."lowAsterisk" = "hexLow"
 rank = 6
 description = "Lower six-pointed asterisk `*`"
 selector.asterisk = "hexSMid"
+selector."asterisk/positionOnly" = "sMid"
 selector."asterisk/sMid" = "hexSMid"
 selector."lowAsterisk" = "hexLow"
 
@@ -6090,6 +6109,7 @@ selector."lowAsterisk" = "hexLow"
 rank = 7
 description = "Higher turned six-pointed asterisk `*`"
 selector.asterisk = "turnHexHigh"
+selector."asterisk/positionOnly" = "high"
 selector."asterisk/sMid" = "turnHexSMid"
 selector."lowAsterisk" = "turnHexLow"
 
@@ -6097,6 +6117,7 @@ selector."lowAsterisk" = "turnHexLow"
 rank = 8
 description = "Lower turned six-pointed asterisk `*`"
 selector.asterisk = "turnHexSMid"
+selector."asterisk/positionOnly" = "sMid"
 selector."asterisk/sMid" = "turnHexSMid"
 selector."lowAsterisk" = "turnHexLow"
 
@@ -6123,21 +6144,21 @@ selector.underscore = "low"
 
 
 
-[prime.paragraph-sign]
+[prime.pilcrow]
 sampler = "¶"
 tag = "cv84"
 
-[prime.paragraph-sign.variants.high]
+[prime.pilcrow.variants.high]
 rank = 1
-description = "Higher paragraph sign `¶`"
-selector.paragraph = "high"
-selector.revertParagraph = "high"
+description = "Higher pilcrow sign `¶`"
+selector.pilcrow = "high"
+selector.revPilcrow = "high"
 
-[prime.paragraph-sign.variants.low]
+[prime.pilcrow.variants.low]
 rank = 2
-description = "Lower paragraph sign `¶`"
-selector.paragraph = "low"
-selector.revertParagraph = "low"
+description = "Lower pilcrow sign `¶`"
+selector.pilcrow = "low"
+selector.revPilcrow = "low"
 
 
 
@@ -6311,10 +6332,10 @@ rank = 2
 description = "The traditional, four-fold At symbol (`@`)"
 selector.at = "fourfold"
 
-[prime.at.variants.short]
+[prime.at.variants.fourfold-solid-inner]
 rank = 3
-description = "The shorter, Fira-like At symbol (`@`)"
-selector.at = "short"
+description = "The four-fold At symbol (`@`) with inner loop being solid"
+selector.at = "fourfoldSolidInner"
 
 [prime.at.variants.threefold-tall]
 rank = 4
@@ -6325,6 +6346,16 @@ selector.at = "threefoldTall"
 rank = 5
 description = "The traditional, four-fold At symbol (`@`) with taller outline"
 selector.at = "fourfoldTall"
+
+[prime.at.variants.fourfold-solid-inner-tall]
+rank = 6
+description = "The four-fold At symbol (`@`) with inner loop being solid and taller outline"
+selector.at = "fourfoldSolidInnerTall"
+
+[prime.at.variants.short]
+rank = 7
+description = "The shorter, Fira-like At symbol (`@`)"
+selector.at = "short"
 
 
 
@@ -6530,19 +6561,55 @@ selector.punctuationDot = "square"
 
 
 
+[prime.diacritic-dot]
+sampler = "öẋ ij"
+hotChars = "ijäöü"
+samplerExplain = "Dot and Comma shape in diacritics"
+tag = "VXDD"
+
+[prime.diacritic-dot.variants.round]
+rank = 1
+description = "Dots and Commas in diacritics are round"
+selector.diacriticDot = "round"
+
+[prime.diacritic-dot.variants.square]
+rank = 2
+description = "Dots and Commas in diacritics are square"
+selector.diacriticDot = "square"
+
+
+
 # This is a special variant selector that controls digit form
+[prime.digit-form]
+isSpecial = true
+hotChars = "0123456789"
+description = "Default digit form"
+
 [prime.digit-form.variants.lining]
 selector.__defaultDigitForm = "lining"
+description = "Lining (default)"
+snapshotFeatureApplication = "'lnum' on"
 
 [prime.digit-form.variants.old-style]
 selector.__defaultDigitForm = "oldStyle"
+description = "Old-style"
+snapshotFeatureApplication = "'onum' on"
 
 # This is a special variant selector that controls APL form
+[prime.apl-form]
+isSpecial = true
+hotChars = "∆∇○←→↑↓"
+description = "APL form"
+
 [prime.apl-form.variants.none]
 selector.__enableAplForm = "none"
+description = "Disable APL-specific forms (default)"
+snapshotFeatureApplication = "'APLF' off"
 
 [prime.apl-form.variants.enable]
 selector.__enableAplForm = "enable"
+description = "Enable harmonized alternate forms APL operators"
+snapshotFeatureApplication = "'APLF' on"
 
 ###################################################################################################
 
@@ -6625,7 +6692,7 @@ nine = "straight-bar"
 # Symbols
 tilde = "low"
 asterisk = "penta-high"
-paragraph-sign = "high"
+pilcrow = "high"
 caret = "medium"
 underscore = "high"
 at = "threefold"
@@ -6642,6 +6709,7 @@ ascii-single-quote = "straight"
 ascii-grave = "straight"
 question = "smooth"
 punctuation-dot = "round"
+diacritic-dot = "round"
 
 # m, n, h has tailed variant, but not very ideal
 # Do not make them default
@@ -6783,7 +6851,7 @@ eight = "two-circles"
 nine = "closed-contour"
 asterisk = "hex-high"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 brace = "straight"
 number-sign = "slanted"
 at = "fourfold"
@@ -6851,6 +6919,7 @@ brace = "straight"
 at = "fourfold"
 percent = "rings-continuous-slash"
 punctuation-dot = "square"
+diacritic-dot = "square"
 
 [composite.ss02.slab-override.design]
 capital-k = "straight-serifed"
@@ -6968,6 +7037,7 @@ ampersand = "upper-open"
 percent = "rings-continuous-slash"
 bar = "force-upright"
 punctuation-dot = "square"
+diacritic-dot = "square"
 
 [composite.ss04.slab-override.design]
 capital-d = "more-rounded-bilateral-serifed"
@@ -7017,7 +7087,7 @@ eight = "crossing-asymmetric"
 nine = "open-contour"
 asterisk = "penta-low"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 caret = "high"
 number-sign = "slanted"
 ampersand = "et-toothless-corner"
@@ -7067,12 +7137,13 @@ six = "closed-contour"
 seven = "bend-serifless"
 eight = "two-circles"
 nine = "closed-contour"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 at = "fourfold"
 percent = "rings-continuous-slash"
 bar = "force-upright"
 punctuation-dot = "square"
+diacritic-dot = "square"
 
 [composite.ss06.slab-override.design]
 capital-d = "more-rounded-bilateral-serifed"
@@ -7116,7 +7187,7 @@ eight = "crossing-asymmetric"
 nine = "closed-contour"
 asterisk = "hex-high"
 paren = "large-contour"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 at = "fourfold"
 percent = "rings-continuous-slash"
@@ -7241,7 +7312,7 @@ seven = "bend-serifless"
 eight = "crossing-asymmetric"
 nine = "closed-contour"
 asterisk = "penta-low"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 dollar = "open"
 
@@ -7288,7 +7359,7 @@ one = "base"
 four = "closed"
 eight = "two-circles"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 percent = "rings-continuous-slash"
 
 [composite.ss10.italic]
@@ -7361,7 +7432,7 @@ seven = "bend-serifless"
 eight = "crossing-asymmetric"
 nine = "open-contour"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 brace = "straight"
 number-sign = "slanted"
 dollar = "open"
@@ -7416,10 +7487,11 @@ six = "closed-contour"
 seven = "bend-serifless"
 eight = "crossing-asymmetric"
 nine = "closed-contour"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 percent = "rings-continuous-slash"
 punctuation-dot = "square"
+diacritic-dot = "square"
 
 [composite.ss13.slab-override.design]
 capital-d = "more-rounded-bilateral-serifed"
@@ -7469,7 +7541,7 @@ four = "semi-open-non-crossing"
 seven = "straight-serifed"
 paren = "flat-arc"
 asterisk = "penta-low"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 ampersand = "upper-open"
 percent = "rings-continuous-slash"
@@ -7532,7 +7604,7 @@ eight = "two-circles"
 nine = "open-contour"
 asterisk = "penta-low"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted-open"
 ampersand = "upper-open"
 question = "corner"
@@ -7615,7 +7687,7 @@ eight = "crossing-asymmetric"
 nine = "open-contour"
 asterisk = "turn-hex-high"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 paren = "large-contour"
 brace = "straight"
 number-sign = "slanted"
@@ -7668,13 +7740,14 @@ seven = "straight-serifed"
 nine = "closed-contour"
 asterisk = "hex-low"
 underscore = "low"
-paragraph-sign = "low"
+pilcrow = "low"
 number-sign = "slanted"
 ampersand = "upper-open"
 at = "fourfold"
 dollar = "interrupted"
 cent = "bar-interrupted"
 punctuation-dot = "square"
+diacritic-dot = "square"
 brace = "curly-flat-boundary"
 
 [composite.ss17.italic]

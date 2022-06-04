@@ -1,6 +1,7 @@
 import [add-lookup add-common-feature pick-feature add-feature-lookup pick-lookup BeginLookupBlock EndLookupBlock ChainRuleBuilder] from "./table-util"
-import [Cv AnyCv CvDecompose DollarShrinkKernel DollarShorterBar] from "../support/gr"
+import [Cv AnyCv CvDecompose RightDependentLink RightDependentTrigger] from "../support/gr"
 
+extern Map
 extern Set
 
 define look-around null
@@ -29,32 +30,14 @@ export : define [buildCVSS sink para glyphStore] : begin
 		.type 'gsub_multiple'
 		.substitutions decompositions
 
-	# '$' : Kernel Shrinking
-	define dsFrom { }
-	define dsTo   { }
-	define sbSet : new Set
-	foreach { gid g } [glyphStore.namedEntries] : begin
-		if ([DollarShorterBar.get g] === 'trigger') : begin
-			sbSet.add : glyphStore.ensureExists gid
-		if [DollarShrinkKernel.get g] : begin
-			dsFrom.push : glyphStore.ensureExists gid
-			dsTo.push : glyphStore.ensureExists : DollarShrinkKernel.get g
-
-	define lookupNameDollarShrink : add-lookup sink : object
-		.type 'gsub_chaining'
-		.rules : list : chain-rule (dsFrom ~> dsTo) ([Array.from sbSet] ~> look-around)
-
-
 	define [addFeatureAndLookup tag lookupName init] : begin
 		define feature : pick-feature sink [FeatureName tag]
 		add-common-feature sink feature
 
 		define lookup : pick-lookup sink lookupName init
 		add-feature-lookup feature lookupNameCvDecompose
-		add-feature-lookup feature lookupNameDollarShrink
 		add-feature-lookup feature lookupName
 		sink.lookupDep.push { lookupNameCvDecompose lookupName }
-		sink.lookupDep.push { lookupName lookupNameDollarShrink }
 		cvLookupNameSet.add lookupName
 
 
@@ -96,3 +79,5 @@ export : define [buildCVSS sink para glyphStore] : begin
 		sink.lookupDep.push { lutnCv lutnSS }
 
 	EndLookupBlock rec sink
+
+define [objectIsNotEmpty obj] : obj && [Object.keys obj].length
