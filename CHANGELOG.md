@@ -1,5 +1,46 @@
 ## Modifications since version 2.x
 
+### 15.6.3
+
+ * Improve shape of Cyrillic Zhe under Curly variants (#1392).
+
+
+### 15.6.2
+
+ * Fix assignment of `l` for SS08.
+ * Fix PHP ligation set's `.=` (#1390).
+
+
+### 15.6.1
+
+ * Add characters:
+  - BLANK SYMBOL (`U+2422`);
+  - SYMBOL FOR DELETE FORM TWO (`U+2425`);
+  - SYMBOL FOR SUBSTITUTE FORM TWO (`U+2426`);
+
+
+### 15.6.0
+
+ * Fix assignment of `r` and `w` for SS09 (#1378, #1379).
+ * Add variant selectors for Cyrillic Zhe (#1380).
+ * Harmonize dimensions of Cyrillic Yer, Yeri and Yery (#1382).
+
+
+### 15.5.2
+
+* Add characters:
+  - BOWTIE WITH LEFT HALF BLACK (`U+29D1`) ... BLACK HOURGLASS (`U+29D7`) (#1370);
+
+
+### 15.5.1
+
+* Add characters:
+  - QUADRUPLE PRIME (`U+2057`);
+  - CARET INSERTION POINT (`U+2041`);
+  - DOTTED CROSS (`U+205C`);
+* Unhinted webfonts are added into releases.
+
+
 ### 15.5.0
 
 * Add characters
