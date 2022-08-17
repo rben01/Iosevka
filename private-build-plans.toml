@@ -1,11 +1,11 @@
 [buildPlans.iosevka-rltb-mono]
 	family = "Iosevka RLTB"
 	serifs = "sans"
-	spacing = "fixed"
+	spacing = "term"
 	# no-ligation = true
 
 	[buildPlans.iosevka-rltb-mono.ligations]
-		enables = ["kern-dotty"]
+		enables = ["kern-dotty", "kern-bars", "center-ops"]
 
 	[buildPlans.iosevka-rltb-mono.variants.design]
 		# Capital letters
@@ -84,12 +84,13 @@
 		brace = "straight"
 		caret = "high"
 		cent = "through"
+		diacritic-dot = "round"
 		dollar = "through"
 		lig-ltgteq = "flat"
 		number-sign = "slanted"
-		paragraph-sign = "high"
 		paren = "normal"
 		percent = "rings-continuous-slash"
+		pilcrow = "high"
 		punctuation-dot = "round"
 		question = "smooth"
 		tilde = "low"
@@ -221,9 +222,9 @@
 		dollar = "interrupted"
 		lig-ltgteq = "flat"
 		number-sign = "slanted"
-		paragraph-sign = "high"
 		paren = "normal"
 		percent = "rings-segmented-slash"
+		pilcrow = "high"
 		punctuation-dot = "round"
 		question = "smooth"
 		tilde = "low"

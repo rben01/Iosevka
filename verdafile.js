@@ -431,7 +431,7 @@ const DistHintedTTF = file.make(
 const DistWoff2 = file.make(
 	(gr, fn) => `${DIST}/${gr}/woff2/${fn}.woff2`,
 	async (target, out, group, f) => {
-		const [from] = await target.need(DistHintedTTF(group, f), de`${out.dir}`);
+		const [from] = await target.need(DistUnhintedTTF(group, f), de`${out.dir}`);
 		echo.action(echo.hl.command("Create WOFF2"), from.full, echo.hl.operator("->"), out.full);
 		await silently.node(`utility/ttf-to-woff2.js`, from.full, out.full);
 	}
