@@ -9,7 +9,7 @@ glyph-block Letter-Latin-Lower-H : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
 	glyph-block-import Letter-Shared-Shapes : RightwardTailedBar nShoulder nShoulderMask
-	glyph-block-import Letter-Shared-Shapes : CyrDescender CyrLeftDescender HooktopLeftBar
+	glyph-block-import Letter-Shared-Shapes : CyrDescender HooktopLeftBar VerticalHook PalatalHook
 
 	define [SmallHSerifs tailed hookTop] : glyph-proc : if SLAB : begin
 		if [not hookTop] : include : tagged 'serifLT' : LeftwardTopSerif SB Ascender SideJut
@@ -60,13 +60,13 @@ glyph-block Letter-Latin-Lower-H : begin
 			if fTailed : include : RightwardTailedBar RightSB 0 (XH - SmallArchDepthB)
 			include : Serifs fTailed false
 
-		create-glyph "hbar.\(suffix)" : glyph-proc
+		create-glyph "hBar.\(suffix)" : glyph-proc
 			include [refer-glyph "h.\(suffix)"] AS_BASE ALSO_METRICS
 			include : HBarOverlay fHasTopSerif
 
 		create-glyph "hHookTop.\(suffix)" : glyph-proc
 			include : MarkSet.b
-			include : HooktopLeftBar
+			include : HooktopLeftBar.inner
 			include : nShoulder
 				left -- (SB + Stroke * HVContrast)
 				right -- RightSB
@@ -78,13 +78,13 @@ glyph-block Letter-Latin-Lower-H : begin
 			include : MarkSet.b
 			include : refer-glyph "hHookTop.\(suffix)"
 			eject-contour 'serifRB'
-			include : VerticalHook (RightSB - HalfStroke * HVContrast) 0 (-HookX) Hook
+			include : VerticalHook.r RightSB 0 (-HookX) Hook
 
 		create-glyph "heng.\(suffix)" : glyph-proc
 			include : MarkSet.b
 			include : refer-glyph "h.\(suffix)"
 			eject-contour 'serifRB'
-			include : VerticalHook (RightSB - HalfStroke * HVContrast) 0 (-HookX) Hook
+			include : VerticalHook.r RightSB 0 (-HookX) Hook
 
 		create-glyph "hengBar.\(suffix)" : glyph-proc
 			include [refer-glyph "heng.\(suffix)"] AS_BASE ALSO_METRICS
@@ -92,27 +92,32 @@ glyph-block Letter-Latin-Lower-H : begin
 
 
 	select-variant 'h' 'h'
+	link-reduced-variant 'h/descBase' 'h'
 	link-reduced-variant 'h/sansSerif' 'h' MathSansSerif
 	turned 'turnh' 0x265 'h' Middle (XH / 2) [MarkSet.p]
-	select-variant 'hbar' 0x127 (follow -- 'h')
+	select-variant 'hBar' 0x127 (follow -- 'h')
 
 	select-variant 'cyrl/shha' 0x4BB (shapeFrom -- 'h')
-	derive-composites 'cyrl/shhaDescender' 0x527 'cyrl/shha' [CyrDescender RightSB]
+	derive-composites 'cyrl/shhaDescender' 0x527 'cyrl/shha' [CyrDescender.rSideJut RightSB 0]
 
 	select-variant 'hHookTop' 0x266
 	select-variant 'hHookTopLTail' 0x267
 	select-variant 'heng' 0xA727
 	select-variant 'cyrl/dje' 0x452 (follow -- 'heng') (shapeFrom -- 'hengBar')
 
+	derive-composites 'hPalatalHook' 0xA795 'h/descBase'
+		PalatalHook.r
+			xLink -- RightSB
+			x -- RightSB + SideJut
+			y -- 0
+
 	create-glyph 'hookturnh' 0x2AE : glyph-proc
 		include : nShoulder
 			left -- (SB + Stroke * HVContrast)
 			right -- RightSB
-			bottom -- (Hook + HalfStroke + 1)
+			bottom -- (Hook + HalfStroke)
 		include : VBarLeft SB 0 Ascender
-		include : new-glyph : glyph-proc
-			include : refer-glyph "rtailBR"
-			include : ApparentTranslate RightSB (Hook + HalfStroke)
+		include : VerticalHook.r RightSB (Hook + HalfStroke) HookX Hook
 		include : FlipAround Middle (XH / 2)
 		include : MarkSet.p
 		if SLAB : begin
@@ -123,15 +128,11 @@ glyph-block Letter-Latin-Lower-H : begin
 		include : nShoulder
 			left -- (SB + Stroke * HVContrast)
 			right -- RightSB
-			bottom -- (Hook + HalfStroke + 1)
-		include : VBarLeft SB 0 (XH - 1)
-		include : new-glyph : glyph-proc
-			include : refer-glyph "rtailBR"
-			include : ApparentTranslate RightSB (Hook + HalfStroke)
+			bottom -- (Hook + HalfStroke)
+		include : VBarLeft SB 0 XH
+		include : VerticalHook.r RightSB (Hook + HalfStroke) HookX Hook
 		include : FlipAround Middle (XH / 2)
-		include : new-glyph : glyph-proc
-			include : refer-glyph "rtailBR"
-			include : ApparentTranslate RightSB 0
+		include : VerticalHook.r RightSB 0 HookX Hook
 		include : MarkSet.p
 		if SLAB : begin
 			include : LeftwardTopSerif (RightSB - Stroke * HVContrast) XH SideJut
@@ -142,7 +143,7 @@ glyph-block Letter-Latin-Lower-H : begin
 		include [refer-glyph src]
 		include : MarkSet.if
 
-	alias 'cyrl/tshe' 0x45B 'hbar'
+	alias 'cyrl/tshe' 0x45B 'hBar'
 
 	glyph-block-import Letter-Blackboard : BBS BBD BBBarLeft
 	create-glyph 'mathbb/h' 0x1D559 : glyph-proc

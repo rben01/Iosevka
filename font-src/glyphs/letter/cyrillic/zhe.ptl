@@ -137,7 +137,11 @@ glyph-block Letter-Cyrillic-Zhe : begin
 
 		create-glyph "cyrl/ZheDescender.\(suffix)" : composite-proc
 			refer-glyph "cyrl/Zhe.\(suffix)"
-			CyrDescender ([DivFrame para.diversityM 3].rightSB - O * 2)
+			local df : DivFrame para.diversityM 3
+			CyrDescender.r
+				xLink -- df.rightSB - 0.5 * HVContrast * df.mvs
+				x -- df.rightSB + SideJut
+				y -- 0
 
 		create-glyph "cyrl/zhe.\(suffix)" : glyph-proc
 			define df : DivFrame para.diversityM 3
@@ -147,7 +151,11 @@ glyph-block Letter-Cyrillic-Zhe : begin
 
 		create-glyph "cyrl/zheDescender.\(suffix)" : composite-proc
 			refer-glyph "cyrl/zhe.\(suffix)"
-			CyrDescender ([DivFrame para.diversityM 3].rightSB - O * 2)
+			local df : DivFrame para.diversityM 3
+			CyrDescender.r
+				xLink -- df.rightSB - 0.5 * HVContrast * df.mvs
+				x -- df.rightSB + SideJut
+				y -- 0
 
 		create-glyph "cyrl/zhe.BGR.\(suffix)" : glyph-proc
 			define df : DivFrame para.diversityM 3
@@ -158,5 +166,5 @@ glyph-block Letter-Cyrillic-Zhe : begin
 	select-variant 'cyrl/Zhe'          0x416
 	select-variant 'cyrl/ZheDescender' 0x496 (follow -- 'cyrl/Zhe')
 	select-variant 'cyrl/zhe'          0x436
-	select-variant 'cyrl/zhe.BGR'            (follow -- 'cyrl/Zhe')
-	select-variant 'cyrl/zheDescender' 0x497 (follow -- 'cyrl/Zhe')
+	select-variant 'cyrl/zhe.BGR'            (follow -- 'cyrl/zhe')
+	select-variant 'cyrl/zheDescender' 0x497 (follow -- 'cyrl/zhe')

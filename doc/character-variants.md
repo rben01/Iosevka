@@ -2210,11 +2210,12 @@
 <td><img src="../images/cv-ampersand-closed.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-closed.dark.svg#gh-dark-mode-only" width=32/></td>
 <td><img src="../images/cv-ampersand-upper-open.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-upper-open.dark.svg#gh-dark-mode-only" width=32/></td>
 <td><img src="../images/cv-ampersand-lower-open.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-lower-open.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-ampersand-flat-top.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-flat-top.dark.svg#gh-dark-mode-only" width=32/></td>
 <td><img src="../images/cv-ampersand-et-toothed.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-et-toothed.dark.svg#gh-dark-mode-only" width=32/></td>
 <td><img src="../images/cv-ampersand-et-toothless-corner.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-et-toothless-corner.dark.svg#gh-dark-mode-only" width=32/></td>
 <td><img src="../images/cv-ampersand-et-toothless-rounded.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-et-toothless-rounded.dark.svg#gh-dark-mode-only" width=32/></td>
-<td><img src="../images/cv-ampersand-flat-top.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-flat-top.dark.svg#gh-dark-mode-only" width=32/></td>
-<td colspan="5"> </td>
+<td><img src="../images/cv-ampersand-et-tailed.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-ampersand-et-tailed.dark.svg#gh-dark-mode-only" width=32/></td>
+<td colspan="4"> </td>
 </tr>
 <tr>
 <td>1</td>
@@ -2224,7 +2225,8 @@
 <td>5</td>
 <td>6</td>
 <td>7</td>
-<td colspan="5"> </td>
+<td>8</td>
+<td colspan="4"> </td>
 </tr>
 <tr>
 <td rowspan="2"><code>cv90</code></td>
@@ -2372,6 +2374,36 @@
 <td colspan="5">1</td>
 <td colspan="5">2</td>
 <td colspan="2"> </td>
+</tr>
+<tr>
+<td rowspan="2"><code>VXAF</code></td>
+<td><img src="../images/cv-lig-neq-vertical.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-vertical.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-neq-slightly-slanted.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-slightly-slanted.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-neq-more-slanted.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-more-slanted.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-neq-vertical-dotted.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-vertical-dotted.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-neq-slightly-slanted-dotted.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-slightly-slanted-dotted.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-neq-more-slanted-dotted.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-neq-more-slanted-dotted.dark.svg#gh-dark-mode-only" width=32/></td>
+<td colspan="6"> </td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td colspan="6"> </td>
+</tr>
+<tr>
+<td rowspan="2"><code>VXAG</code></td>
+<td><img src="../images/cv-lig-equal-chain-with-notch.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-equal-chain-with-notch.dark.svg#gh-dark-mode-only" width=32/></td>
+<td><img src="../images/cv-lig-equal-chain-without-notch.light.svg#gh-light-mode-only" width=32/><img src="../images/cv-lig-equal-chain-without-notch.dark.svg#gh-dark-mode-only" width=32/></td>
+<td colspan="10"> </td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td colspan="10"> </td>
 </tr>
 </table>
 

@@ -8,6 +8,7 @@ glyph-module
 glyph-block Symbol-Punctuation-Emotion : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
+	glyph-block-import Letter-Shared-Shapes : RetroflexHook
 
 	local emotionBottom : Math.max (CAP * 0.3) (DotSize * 1.5)
 
@@ -17,7 +18,7 @@ glyph-block Symbol-Punctuation-Emotion : begin
 			create-glyph "exclam.\(suffix)" : glyph-proc
 				local df : DivFrame para.diversityF
 				set-width df.width
-				include : MarkSet.capital
+				include : df.markSet.capital
 				include : VBar df.middle [clamp 0 (CAP * 0.4) (emotionBottom * 1.18)] CAP
 				include : DrawAt df.middle dr (dr - overshoot)
 
@@ -35,8 +36,18 @@ glyph-block Symbol-Punctuation-Emotion : begin
 		select-variant 'question/dotPart' (follow -- 'punctuationDot')
 		select-variant 'questionDown/dotPart' (follow -- 'punctuationDot')
 
-		alias 'alveolarclick' 0x1C3 'exclam'
-		turned 'exclamDown'  0xA1   'exclam'  [DivFrame para.diversityF].middle (XH / 2)
+		derive-glyphs 'retroflexClickHook' 0x1DF0A 'exclam' : function [src sel] : glyph-proc
+			local df : DivFrame para.diversityF
+			include : df.markSet.capDesc
+			include : refer-glyph src
+			include : RetroflexHook.m
+				x -- df.middle
+				y -- 0
+				yAttach -- DotRadius
+
+		alias 'alveolarclick'  0x1C3 'exclam'
+		turned 'exclamDown'    0xA1  'exclam'  [DivFrame para.diversityF].middle (XH / 2)
+		turned 'exclamDownAlt' null  'exclam'  [DivFrame para.diversityF].middle (XH / 2)
 
 	do "Question"
 		local [YConnectT top emotionBottom] : mix emotionBottom (top - HalfStroke) 0.375

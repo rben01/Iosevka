@@ -9,7 +9,7 @@ glyph-block Letter-Latin-Z : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
 	glyph-block-import Letter-Shared : CreateAccentedComposition
-	glyph-block-import Letter-Shared-Shapes : HCurlyTail
+	glyph-block-import Letter-Shared-Shapes : HCurlyTail PalatalHook RetroflexHook CyrDescender
 	glyph-block-import Letter-Blackboard : BBS BBD
 	glyph-block-import Letter-Latin-X : XStrand
 
@@ -59,11 +59,13 @@ glyph-block Letter-Latin-Z : begin
 			corner RightSB (XH - Stroke)
 			corner (SB + Stroke * cor) [if (mode === MODE-ZSWASH) 0 Stroke]
 		if [DisplayBottomStroke mode] : include : tagged 'strokeBottom' : HBarBottom SB RightSB 0
+		set-base-anchor "trailing" RightSB 0
 
 	define [SmallZCurlyShape mode] : glyph-proc
 		include : tagged 'strokeTop' : HBarTop SB (RightSB - Stroke * HVContrast) XH
 		include : XStrand false SLAB SB 0 RightSB XH 0.125 0.4 0.36
 		if [DisplayBottomStroke mode] : include : tagged 'strokeBottom' : HBarBottom (SB + Stroke * HVContrast) RightSB 0
+		set-base-anchor "trailing" RightSB 0
 
 	define [ZCursiveShapeImpl top mode] : glyph-proc
 		define hookTerminalWidth : AdviceStroke 3.5
@@ -86,8 +88,8 @@ glyph-block Letter-Latin-Z : begin
 				corner (RightSB - xDiagWidth) (2 * top)
 				corner (RightSB - xDiagWidth) (top - yFootHeight)
 			dispiro
-				flat (SB + 2 * O) (top - yHookDepth) [widths.rhs.heading hookTerminalWidth Upward]
-				curl (SB + 2 * O) (top - yHookDepth + yHookStraightDepth) [heading Upward]
+				flat SB (top - yHookDepth) [widths.rhs.heading hookTerminalWidth Upward]
+				curl SB (top - yHookDepth + yHookStraightDepth) [heading Upward]
 				arcvh
 				g2.right.mid (SB + xHookDepth) (top - O) [widths.rhs.heading Stroke Rightward]
 				flat [mix (SB + xMockTailDepth) RightSB kTop] (top - kTop * yTailDepth)
@@ -137,12 +139,15 @@ glyph-block Letter-Latin-Z : begin
 					corner RightSB top
 
 				dispiro
-					flat (RightSB - 2 * O) yHookDepth [widths.rhs.heading hookTerminalWidth Downward]
-					curl (RightSB - 2 * O) (yHookDepth - yHookStraightDepth) [heading Downward]
+					flat RightSB yHookDepth [widths.rhs.heading hookTerminalWidth Downward]
+					curl RightSB (yHookDepth - yHookStraightDepth) [heading Downward]
 					arcvh
 					g2.left.mid (RightSB - xHookDepth) O [widths.rhs.heading Stroke Leftward]
 					flat [mix (RightSB - xHookDepth) SB kBot] (kBot * yTailDepth)
 					curl SB                                   (yTailDepth)
+
+		if (mode != MODE-RTAIL) : begin
+			set-base-anchor "trailing" (RightSB - 0.55 * xHookDepth) 0
 
 	define [ZCursiveShape mode]         : ZCursiveShapeImpl CAP mode
 	define [SmallZCursiveShape mode]    : ZCursiveShapeImpl XH mode
@@ -204,10 +209,11 @@ glyph-block Letter-Latin-Z : begin
 			if serifs : include : serifs CAP
 			if slash  : include : slash  CAP
 
-		create-glyph "ZDesc.\(suffix)" : glyph-proc
-			include [refer-glyph "Z.\(suffix)"] AS_BASE ALSO_METRICS
-			eject-contour 'serifRB'
-			include : VBarRight [mix SB RightSB 1.05] (HalfStroke - LongJut) Stroke
+		create-glyph "Z/rtailBase.\(suffix)" : glyph-proc
+			include : MarkSet.capital
+			include : capital MODE-RTAIL
+			if serifs : include : serifs CAP
+			if slash  : include : slash  CAP
 
 		create-glyph "ZDTail.\(suffix)" : glyph-proc
 			include : MarkSet.capital
@@ -230,11 +236,6 @@ glyph-block Letter-Latin-Z : begin
 			include : small MODE-Z
 			if serifs : include : serifs XH
 			if slash  : include : slash  XH
-
-		create-glyph "zDesc.\(suffix)" : glyph-proc
-			include [refer-glyph "z.\(suffix)"] AS_BASE ALSO_METRICS
-			eject-contour 'serifRB'
-			include : VBarRight [mix SB RightSB 1.05] (HalfStroke - LongJut) Stroke
 
 		create-glyph "z/rtailBase.\(suffix)" : glyph-proc
 			include : MarkSet.e
@@ -276,21 +277,30 @@ glyph-block Letter-Latin-Z : begin
 
 	select-variant 'Z' 'Z'
 	link-reduced-variant 'Z/sansSerif' 'Z' MathSansSerif
+	link-reduced-variant 'Z/reduced' 'Z'
 	link-reduced-variant 'Z/reduced/sansSerif' 'Z'
+	select-variant 'Z/rtailBase' (follow -- 'Z')
+
+	select-variant 'smcpZ' 0x1D22 (shapeFrom -- 'z') (follow -- 'Z')
+
 	select-variant 'z' 'z'
 	link-reduced-variant 'z/sansSerif' 'z' MathSansSerif
-	select-variant 'smcpZ' 0x1D22 (shapeFrom -- 'z') (follow -- 'Z')
-	select-variant 'Z/reduced' (shapeFrom -- 'Z')
-	select-variant 'z/reduced' (shapeFrom -- 'z')
+	link-reduced-variant 'z/reduced' 'z'
 	select-variant 'z/rtailBase' (follow -- 'z')
 
-	select-variant 'ZDesc' 0x2C6B
-	select-variant 'zDesc' 0x2C6C
 	select-variant 'ZDTail' 0x224 (follow -- 'ZDesc')
 	select-variant 'zDTail' 0x225 (follow -- 'zDesc')
 	select-variant 'ZSwash' 0x2C7F (follow -- 'ZDesc')
 	select-variant 'zSwash' 0x240 (follow -- 'zDesc')
 	select-variant 'zCurlyTail' 0x291 (follow -- 'zDesc')
+
+	derive-composites 'ZDesc'        0x2C6B 'Z/rtailBase' [CyrDescender.r RightSB 0]
+	derive-composites 'zDesc'        0x2C6C 'z/rtailBase' [CyrDescender.r RightSB 0]
+
+	derive-composites 'ZPalatalHook' 0xA7C6 'Z/rtailBase' [PalatalHook.r RightSB 0]
+	derive-composites 'zPalatalHook' 0x1D8E 'z/rtailBase' [PalatalHook.r RightSB 0]
+
+	derive-composites 'zRTailBR'     0x290  'z/rtailBase' [RetroflexHook.r RightSB 0]
 
 	alias 'grek/Zeta' 0x396 'Z/reduced'
 	alias-reduced-variant 'grek/Zeta/sansSerif' 'grek/Zeta' 'Z/reduced/sansSerif' MathSansSerif
@@ -329,4 +339,3 @@ glyph-block Letter-Latin-Z : begin
 	CreateAccentedComposition 'zTildeOver' 0x1D76 'z/reduced' 'tildeOverWide2'
 	CreateAccentedComposition 'ZCaron' 0x17D 'Z' 'caronAbove' true
 	CreateAccentedComposition 'zCaron' 0x17E 'z' 'caronAbove' true
-	derive-composites 'zRTailBR' 0x290 'z/rtailBase' 'rtailBR'

@@ -10,6 +10,7 @@ glyph-block Letter-Latin-Upper-P : begin
 	glyph-block-import Common-Derivatives
 	glyph-block-import Letter-Shared : SetGrekUpperTonos
 	glyph-block-import Letter-Shared-Metrics : BowlXDepth
+	glyph-block-import Letter-Shared-Shapes : LetterBarOverlay
 	glyph-block-import Letter-Blackboard : BBS BBD
 	glyph-block-export PShape PShapeOutline RevPShape PBarPosY PRotundaShape BBPShape
 
@@ -106,7 +107,7 @@ glyph-block Letter-Latin-Upper-P : begin
 	set PShape.OpenGap : function [] : params [top [mul PShape.defaultMul] [bp PShape.BarPos] [sw Stroke]] : VBarLeft
 		SB * mul + sw * HVContrast
 		[PBarPosY top sw bp] - sw
-		[PBarPosY top sw bp] + sw + 1
+		Math.max ([PBarPosY top sw bp] + sw) [mix top [PBarPosY top sw bp] 0.5]
 		0.2 * (RightSB - SB) * ([AdviceStroke 5] / Stroke)
 
 	set RevPShape.SlabMotion : function [top sw mul] : glyph-proc
@@ -119,7 +120,7 @@ glyph-block Letter-Latin-Upper-P : begin
 	set RevPShape.OpenGap : function [] : params [top [mul PShape.defaultMul] [bp PShape.BarPos] [sw Stroke]] : VBarRight
 		Width - SB * mul - sw * HVContrast
 		[PBarPosY top sw bp] - sw
-		[PBarPosY top sw bp] + sw + 1
+		Math.max ([PBarPosY top sw bp] + sw) [mix top [PBarPosY top sw bp] 0.5]
 		0.2 * (RightSB - SB) * ([AdviceStroke 5] / Stroke)
 
 	define PConfig : object
@@ -184,6 +185,12 @@ glyph-block Letter-Latin-Upper-P : begin
 			flat [mix SB RightSB 0.5]   (yBowl + XH * 0.25)
 			curl [mix SB RightSB 0.875] (yBowl - XH * 0.25)
 
+	create-glyph 'PBar/overlay' : LetterBarOverlay.l.in
+		x     -- (SB * PShape.defaultMul)
+		bot   -- ([PBarPosY CAP Stroke PShape.BarPos] + Stroke)
+		top   -- (CAP - Stroke)
+		space -- { 0 (RightSB - Stroke * HVContrast) }
+	derive-composites 'PBar' 0x2C63 'P' 'PBar/overlay'
 
 	define [BBPShape] : params [[mul PShape.defaultMul] [overshoot PShape.defaultOvershoot]] : glyph-proc
 		define sb : SB * mul
