@@ -203,7 +203,7 @@
 		five = "oblique-upper-left-bar"
 		four = "semi-open"
 		nine = "open-contour"
-		one = "no-base"
+		one = "base"
 		seven = "bend-serifless"
 		six = "open-contour"
 		three = "two-arcs"

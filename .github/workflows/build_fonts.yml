@@ -1,0 +1,33 @@
+name: Build Fonts
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build fonts
+        run: npm run build {ttf-unhinted,woff2}"::"{iosevka-rltb-proportional-sans,iosevka-rltb-mono}
+        shell: bash
+
+      - name: Archive font files
+        uses: actions/upload-artifact@v3
+        with:
+          name: font-files
+          path: |
+            dist/**.ttf
+            dist/**.woff2
