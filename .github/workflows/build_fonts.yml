@@ -6,7 +6,16 @@ on:
 
 jobs:
   build:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        font_kind: [ttf-unhinted, webfont-unhinted]
+        font_family: [iosevka-rltb-proportional-sans, iosevka-rltb-mono]
 
     steps:
       - name: Checkout
@@ -24,8 +33,7 @@ jobs:
       - run: npm ci
 
       - name: Build fonts
-        run: npm run build -- contents"::"{iosevka-rltb-proportional-sans,iosevka-rltb-mono}
-        shell: bash
+        run: npm run build -- ${{ matrix.font_kind }}::${{ matrix.font_family }}
 
       - name: Archive font files
         uses: actions/upload-artifact@v3
