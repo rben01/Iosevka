@@ -2,7 +2,7 @@ name: Build Fonts
 
 on:
   push:
-    branches: [main]
+    branches: [add-font-files]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
