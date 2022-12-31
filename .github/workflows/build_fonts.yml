@@ -3,6 +3,7 @@ name: Build Fonts
 on:
   push:
     branches: [add-font-files]
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
