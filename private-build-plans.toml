@@ -210,7 +210,6 @@
 		lig-ltgteq = "flat"
 		number-sign = "slanted"
 		paren = "normal"
-		partial-derivative = "straight-bar"
 		percent = "rings-continuous-slash"
 		pilcrow = "high"
 		punctuation-dot = "round"
