@@ -16,7 +16,12 @@ jobs:
     strategy:
       matrix:
         font_kind: [ttf-unhinted, webfont-unhinted]
-        font_family: [iosevka-rltb-proportional-sans, iosevka-rltb-mono]
+        font_family:
+          [
+            iosevka-rltb-proportional-sans,
+            iosevka-rltb-mono,
+            iosevka-rltb-mono-alt,
+          ]
 
     steps:
       - name: Checkout
