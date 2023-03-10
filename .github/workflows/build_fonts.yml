@@ -57,8 +57,11 @@ jobs:
           ]
 
     steps:
-      - name: ls
-        run: "ls dist/**"
+      - name: pwd
+        run: pwd
+
+      - name: find
+        run: find . -print
         
       - name: Rename CSS (base)
         run: "mv \
