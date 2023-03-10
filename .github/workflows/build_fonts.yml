@@ -2,7 +2,7 @@ name: Build Fonts
 
 on:
   push:
-    branches: [add-font-files]
+    branches: [main, add-font-files]
   workflow_dispatch: {}
 
 concurrency:
@@ -11,6 +11,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build Fonts
     runs-on: ubuntu-latest
 
     strategy:
@@ -41,8 +42,71 @@ jobs:
       - name: Build fonts
         run: npm run build -- ${{ matrix.font_kind }}::${{ matrix.font_family }}
 
+  generate-css:
+    name: Generate CSS
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    strategy:
+      matrix:
+        fontname:
+          [
+            iosevka-rltb-mono,
+            iosevka-rltb-mono-alt,
+            iosevka-rltb-proportional-sans,
+          ]
+
+    steps:
+      - name: Rename CSS (base)
+        run: "mv \
+          dist/${{ matrix.fontname }}/${{ matrix.fontname }}-unhinted.css \
+          dist/${{ matrix.fontname }}/font-local.css\
+          "
+
+      - name: Copy CSS for GitHub Pages
+        run: "sed -E \"s\
+          ^\
+          src:\\s*\
+          url\\(.*\\)\\s*\
+          format\\('truetype'\\),\\s*\
+          url\\('(.*)'\\)\\s*\
+          (format\\('woff2'\\)\\s*;)\
+          ^\
+          src: \
+          url('https://rben01.github.io/Iosevka/dist/${{ matrix.fontname }}/\\1') \
+          \\2\
+          ^g\" \
+          dist/${{ matrix.fontname }}/font-local.css \
+          > \
+          dist/${{ matrix.fontname }}/font-github-pages.css\
+          "
+
+      - name: Copy CSS for Cloudflare Pages
+        run: "sed -E \"s\
+          ^\
+          src:\\s*\
+          url\\(.*\\)\\s*\
+          format\\('truetype'\\),\\s*\
+          url\\('(.*)'\\)\\s*\
+          (format\\('woff2'\\)\\s*;)\
+          ^\
+          src: \
+          url('https://iosevka-rltb.pages.dev/dist/${{ matrix.fontname }}/\\1') \
+          \\2\
+          ^g\" \
+          dist/${{ matrix.fontname }}/font-local.css \
+          > \
+          dist/${{ matrix.fontname }}/font-cloudflare.css\
+          "
+
+  archive:
+    name: Upload Artifact
+    runs-on: ubuntu-latest
+    needs: [build, generate-css]
+
+    steps:
       - name: Archive font files
         uses: actions/upload-artifact@v3
         with:
-          name: font-files
           path: dist
+          name: dist
