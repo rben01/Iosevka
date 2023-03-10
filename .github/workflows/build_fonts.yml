@@ -57,6 +57,9 @@ jobs:
           ]
 
     steps:
+      - name: ls
+        run: "ls dist/**"
+        
       - name: Rename CSS (base)
         run: "mv \
           dist/${{ matrix.fontname }}/${{ matrix.fontname }}-unhinted.css \
