@@ -2,12 +2,17 @@ name: Build Fonts
 
 on:
   push:
-    branches: [main, add-font-files]
+    branches:
+      - add-font-files
   workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  FONTS_DIR: font-files
+  DIST_DIR: dist
 
 jobs:
   build:
@@ -16,13 +21,13 @@ jobs:
 
     strategy:
       matrix:
-        font_kind: [ttf-unhinted, webfont-unhinted]
+        font_kind:
+          - ttf-unhinted
+          - webfont-unhinted
         font_family:
-          [
-            iosevka-rltb-proportional-sans,
-            iosevka-rltb-mono,
-            iosevka-rltb-mono-alt,
-          ]
+          - iosevka-rltb-mono
+          - iosevka-rltb-mono-alt
+          - iosevka-rltb-proportional-sans
 
     steps:
       - name: Checkout
@@ -42,31 +47,37 @@ jobs:
       - name: Build fonts
         run: npm run build -- ${{ matrix.font_kind }}::${{ matrix.font_family }}
 
-  generate-css:
-    name: Generate CSS
+      - name: Archive font files
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ env.DIST_DIR }}
+          name: ${{ env.FONTS_DIR }}
+
+  archive:
+    name: Generate CSS and Upload Fonts+CSS Artifact
     runs-on: ubuntu-latest
-    needs: [build]
+    needs:
+      - build
 
     strategy:
       matrix:
-        fontname:
-          [
-            iosevka-rltb-mono,
-            iosevka-rltb-mono-alt,
-            iosevka-rltb-proportional-sans,
-          ]
+        font_name:
+          - iosevka-rltb-mono
+          - iosevka-rltb-mono-alt
+          - iosevka-rltb-proportional-sans
 
     steps:
-      - name: pwd
-        run: pwd
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.FONTS_DIR }}
 
       - name: find
         run: find . -print
-        
-      - name: Rename CSS (base)
+
+      - name: Rename Local CSS File
         run: "mv \
-          dist/${{ matrix.fontname }}/${{ matrix.fontname }}-unhinted.css \
-          dist/${{ matrix.fontname }}/font-local.css\
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/${{ matrix.font_name }}-unhinted.css \
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css\
           "
 
       - name: Copy CSS for GitHub Pages
@@ -79,12 +90,12 @@ jobs:
           (format\\('woff2'\\)\\s*;)\
           ^\
           src: \
-          url('https://rben01.github.io/Iosevka/dist/${{ matrix.fontname }}/\\1') \
+          url('https://rben01.github.io/Iosevka/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
           \\2\
           ^g\" \
-          dist/${{ matrix.fontname }}/font-local.css \
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css \
           > \
-          dist/${{ matrix.fontname }}/font-github-pages.css\
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-github-pages.css\
           "
 
       - name: Copy CSS for Cloudflare Pages
@@ -97,22 +108,16 @@ jobs:
           (format\\('woff2'\\)\\s*;)\
           ^\
           src: \
-          url('https://iosevka-rltb.pages.dev/dist/${{ matrix.fontname }}/\\1') \
+          url('https://iosevka-rltb.pages.dev/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
           \\2\
           ^g\" \
-          dist/${{ matrix.fontname }}/font-local.css \
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css \
           > \
-          dist/${{ matrix.fontname }}/font-cloudflare.css\
+          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-cloudflare.css\
           "
 
-  archive:
-    name: Upload Artifact
-    runs-on: ubuntu-latest
-    needs: [build, generate-css]
-
-    steps:
       - name: Archive font files
         uses: actions/upload-artifact@v3
         with:
-          path: dist
-          name: dist
+          path: ${{ env.FONTS_DIR }}
+          name: ${{ env.DIST_DIR }}
