@@ -70,6 +70,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ env.FONTS_DIR }}
+          path: ${{ env.FONTS_DIR }}
 
       - name: find
         run: find . -print
