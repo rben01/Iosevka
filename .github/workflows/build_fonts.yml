@@ -11,7 +11,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FONTS_DIR: font-files
   DIST_DIR: dist
 
 jobs:
@@ -21,9 +20,6 @@ jobs:
 
     strategy:
       matrix:
-        font_kind:
-          - ttf-unhinted
-          - webfont-unhinted
         font_family:
           - iosevka-rltb-mono
           - iosevka-rltb-mono-alt
@@ -45,40 +41,13 @@ jobs:
       - run: npm ci
 
       - name: Build fonts
-        run: npm run build -- ${{ matrix.font_kind }}::${{ matrix.font_family }}
-
-      - name: Archive font files
-        uses: actions/upload-artifact@v3
-        with:
-          path: ${{ env.DIST_DIR }}
-          name: ${{ env.FONTS_DIR }}
-
-  archive:
-    name: Generate CSS and Upload Fonts+CSS Artifact
-    runs-on: ubuntu-latest
-    needs:
-      - build
-
-    strategy:
-      matrix:
-        font_name:
-          - iosevka-rltb-mono
-          - iosevka-rltb-mono-alt
-          - iosevka-rltb-proportional-sans
-
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: ${{ env.FONTS_DIR }}
-          path: ${{ env.FONTS_DIR }}
-
-      - name: find
-        run: find . -print
+        # Built fonts end up in ./dist, i.e., in env.DIST_DIR
+        run: npm run build -- ttf-unhinted::${{ matrix.font_family }} webfont-unhinted::${{ matrix.font_family }}
 
       - name: Rename Local CSS File
         run: "mv \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/${{ matrix.font_name }}-unhinted.css \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/${{ matrix.font_name }}-unhinted.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css\
           "
 
       - name: Copy CSS for GitHub Pages
@@ -94,9 +63,9 @@ jobs:
           url('https://rben01.github.io/Iosevka/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
           \\2\
           ^g\" \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css \
           > \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-github-pages.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-github-pages.css\
           "
 
       - name: Copy CSS for Cloudflare Pages
@@ -112,13 +81,16 @@ jobs:
           url('https://iosevka-rltb.pages.dev/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
           \\2\
           ^g\" \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-local.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css \
           > \
-          ${{ env.FONTS_DIR }}/${{ matrix.font_name }}/font-cloudflare.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-cloudflare.css\
           "
+
+      - name: Show all files
+        run: find . -print
 
       - name: Archive font files
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ env.FONTS_DIR }}
+          path: ${{ env.DIST_DIR }} # contains only the one font family in this matrix run
           name: ${{ env.DIST_DIR }}
