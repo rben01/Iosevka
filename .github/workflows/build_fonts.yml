@@ -46,8 +46,8 @@ jobs:
 
       - name: Rename Local CSS File
         run: "mv \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/${{ matrix.font_name }}-unhinted.css \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-local.css\
           "
 
       - name: Copy CSS for GitHub Pages
@@ -60,12 +60,12 @@ jobs:
           (format\\('woff2'\\)\\s*;)\
           ^\
           src: \
-          url('https://rben01.github.io/Iosevka/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
+          url('https://rben01.github.io/Iosevka/${{ env.DIST_DIR }}/${{ matrix.font_family }}/\\1') \
           \\2\
           ^g\" \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-local.css \
           > \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-github-pages.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-github-pages.css\
           "
 
       - name: Copy CSS for Cloudflare Pages
@@ -78,12 +78,12 @@ jobs:
           (format\\('woff2'\\)\\s*;)\
           ^\
           src: \
-          url('https://iosevka-rltb.pages.dev/${{ env.DIST_DIR }}/${{ matrix.font_name }}/\\1') \
+          url('https://iosevka-rltb.pages.dev/${{ env.DIST_DIR }}/${{ matrix.font_family }}/\\1') \
           \\2\
           ^g\" \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-local.css \
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-local.css \
           > \
-          ${{ env.DIST_DIR }}/${{ matrix.font_name }}/font-cloudflare.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-cloudflare.css\
           "
 
       - name: Show all files
