@@ -1,5 +1,7 @@
 from fontTools.subset import main as run_subset
 from pathlib import Path
+import argparse
+
 
 SUBSET_ARGS = [
     "--flavor=woff2",
@@ -25,19 +27,25 @@ def subset_all(font_family_dir: Path) -> int:
             return status
 
 
-def main() -> int:
-    for font_family in [
-        "iosevka-rltb-mono",
-        "iosevka-rltb-mono-alt",
-        "iosevka-rltb-proportional-sans",
-    ]:
-        font_family_dir = Path("dist").joinpath(font_family, "ttf-unhinted")
-        if status := subset_all(font_family_dir):
-            return status
+def main(args: argparse.Namespace) -> int:
+    args = vars(args)
+    font_family = args["font-family"]
+    font_family_dir = Path("dist").joinpath(font_family, "ttf-unhinted")
+
+    if not font_family_dir.exists():
+        raise ValueError(f"{font_family_dir} does not exist")
+
+    if status := subset_all(font_family_dir):
+        return status
 
 
 if __name__ == "__main__":
     import sys
 
-    if status := main():
+    parser = argparse.ArgumentParser(prog="make_woff2.py")
+    _ = parser.add_argument("font-family")
+
+    args = parser.parse_args()
+
+    if status := main(args):
         sys.exit(status)

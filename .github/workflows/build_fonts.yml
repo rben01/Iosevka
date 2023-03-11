@@ -56,7 +56,7 @@ jobs:
 
       - name: Generate subsetted WOFF2
         # This overwrites the existing WOFF2 files
-        run: python make_woff2.py
+        run: python make_woff2.py ${{ matrix.font_family }}
 
       - name: Rename local CSS file
         run: "mv \
