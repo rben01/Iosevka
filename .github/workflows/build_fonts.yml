@@ -38,13 +38,27 @@ jobs:
           node-version: 18.x
           cache: npm
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Python packages
+        run: pip install fonttools brotli
+
       - run: npm ci
 
       - name: Build fonts
-        # Built fonts end up in ./dist, i.e., in env.DIST_DIR
+        # Built fonts end up in ./dist, i.e., in env.DIST_DIR. \
+        # The WOFF2 fonts will be overwritten later, but we generate them anyway so that
+        # Iosevka generates the CSS for us
         run: npm run build -- ttf-unhinted::${{ matrix.font_family }} webfont-unhinted::${{ matrix.font_family }}
 
-      - name: Rename Local CSS File
+      - name: Generate subsetted WOFF2
+        # This overwrites the existing WOFF2 files
+        run: python make_woff2.py
+
+      - name: Rename local CSS file
         run: "mv \
           ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
           ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-local.css\
