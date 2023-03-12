@@ -106,8 +106,8 @@ jobs:
       - name: Show all files
         run: find . -print
 
-      - name: Archive font files
+      - name: Make artifact
         uses: actions/upload-artifact@v3
         with:
           path: ${{ env.DIST_DIR }}/${{ matrix.font_family }}
-          name: ${{ env.DIST_DIR }}
+          name: ${{ matrix.font_family }}
