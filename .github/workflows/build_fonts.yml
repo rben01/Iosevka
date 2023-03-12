@@ -29,6 +29,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Remove ./dist
+        run: rm -rf dist
+
       - name: Install ttfautohint
         run: sudo apt-get install -y ttfautohint
 
@@ -106,5 +109,5 @@ jobs:
       - name: Archive font files
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ env.DIST_DIR }} # contains only the one font family in this matrix run
+          path: ${{ env.DIST_DIR }}/${{ matrix.font_family }}
           name: ${{ env.DIST_DIR }}
