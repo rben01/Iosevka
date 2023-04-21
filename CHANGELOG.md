@@ -1,14 +1,71 @@
 ## Modifications since version 2.x
 
-### 19.0.1
+### 22.0.2
 
-* Fix shape artifacts in inequality symbols with negated under-bars (#1548).
-* Use a better shape for `0` under SS08 (#1549).
+* Add characters:
+  - SHOULDERED OPEN BOX (`U+237D`) (#1657).
+  - HEXAGRAM FOR THE CREATIVE HEAVEN (`U+4DC0`) ... HEXAGRAM FOR BEFORE COMPLETION (`U+4DFF`) (#1653).
+  - MODIFIER LETTER SHORT EQUALS SIGN (`U+A78A`) (#1658).
+  - CYRILLIC CAPITAL LETTER YERU WITH BACK YER (`U+A650`).
+  - CYRILLIC SMALL LETTER YERU WITH BACK YER (`U+A651`).
+  - MODIFIER LETTER CYRILLIC SMALL YERU WITH BACK YER (`U+1E06C`).
+* Make square brackets shallower to harmonize with other brackets (#1662).
+* Fix serifs and variant application of `cv67` on `U+0521`.
 
 
-### 19.0.0
+### 22.0.1
+
+* Add Characters:
+  - VECTOR OR CROSS PRODUCT (`U+2A2F`) (#1648).
+  - ROTATED LIGHT FOUR POINTED BLACK CUSP (`U+2BCD`).
+  - ROTATED WHITE FOUR POINTED CUSP (`U+2BCF`).
+  - CYRILLIC CAPITAL LETTER IOTIFIED YAT (`U+A652`) ... CYRILLIC SMALL LETTER REVERSED YU (`U+A655`).
+  - CYRILLIC CAPITAL LETTER CLOSED LITTLE YUS (`U+A658`) ... CYRILLIC SMALL LETTER IOTIFIED CLOSED LITTLE YUS (`U+A65D`).
+  - LATIN SMALL LETTER A REVERSED-SCHWA (`U+AB31`).
+  - LATIN SMALL LETTER INVERTED OE (`U+AB40`).
+  - LATIN SMALL LETTER TURNED OE WITH STROKE (`U+AB41`).
+  - LATIN SMALL LETTER TURNED OE WITH HORIZONTAL STROKE (`U+AB42`).
+* Optimize shape of Iotified-A (#1640).
+* Fix variant application of `cv19` on `U+04B4`, `U+04B5`, `U+A68A`, and `U+A68B` (#1646).
+* Fix shape of Square Lozenge (#1643).
+* Fix shape of Tilde with Dot Above (`U+2E1E`) and Tilde with Dot Below (`U+2E1F`).
+
+
+### 22.0.0
 
 * \[**Breaking**\] Reordered variant selectors' name and OT tag.
-* Fixed ligations that forming triple-line ligatures.
-* Made the shape of less and greater sign wider (#1542).
+* Add Characters:
+  - CYRILLIC CAPITAL LETTER EL WITH MIDDLE HOOK (`U+0520`).
+  - CYRILLIC SMALL LETTER EL WITH MIDDLE HOOK (`U+0521`).
+  - CYRILLIC CAPITAL LETTER EN WITH MIDDLE HOOK (`U+0522`).
+  - CYRILLIC SMALL LETTER EN WITH MIDDLE HOOK (`U+0523`).
+  - KIP SIGN (`U+20AD`).
+  - MULTIPLICATION SIGN WITH DOT ABOVE (`U+2A30`).
+  - IDENTICAL WITH DOT ABOVE (`U+2A67`).
+  - TILDE OPERATOR WITH DOT ABOVE (`U+2A6A`).
+  - CONGRUENT WITH DOT ABOVE (`U+2A6D`).
+  - EQUALS WITH ASTERISK (`U+2A6E`).
+  - COMBINING CYRILLIC LETTER IOTIFIED A (`U+2DFC`).
+  - TILDE WITH DOT ABOVE (`U+2E1E`).
+  - TILDE WITH DOT BELOW (`U+2E1F`).
+  - CYRILLIC CAPITAL LETTER IOTIFIED A (`U+A656`).
+  - CYRILLIC SMALL LETTER IOTIFIED A (`U+A657`).
+  - CYRILLIC CAPITAL LETTER TE WITH MIDDLE HOOK (`U+A68A`).
+  - CYRILLIC SMALL LETTER TE WITH MIDDLE HOOK (`U+A68B`).
+  - LATIN CAPITAL LETTER AA (`U+A732`).
+  - LATIN SMALL LETTER AA (`U+A733`).
+  - LATIN CAPITAL LETTER AO (`U+A734`) (#1623).
+  - LATIN SMALL LETTER SAKHA YAT (`U+AB60`).
+  - LATIN SMALL LETTER IOTIFIED E (`U+AB61`).
+  - LATIN SMALL LETTER OPEN OE (`U+AB62`).
+  - MODIFIER LETTER SMALL CAPITAL AA (`U+10780`) (#1626).
+* Add Extra-high asterisks (#1506).
+* Fix shape artifacts of `U+499`, `U+1D93`, `U+1D94`, `U+A731` (#1580, #1617, #1618).
+* Fix shape artifacts of cursive `k` (#1619).
+* Fix shape artifacts of R-derivatives (#1620).
+* Use correct glyph for `U+225B`.
+* Add specialized variant selector for micro sign (#1629).
+* Optimize SS08 style assignments (#1633).
+* Optimize serif stroke width of Cyrillic Iotified Es and Yu (#1634).
+* Optimize shape of Italic Cyrillic Yat (#1637).
 

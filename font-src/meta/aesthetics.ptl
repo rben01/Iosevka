@@ -145,13 +145,17 @@ export : define [calculateMetrics para] : begin
 	define SmoothAdjust : StrokeWidthBlend 80 144
 	define [ArchDepthAOf archDepth width] : archDepth - TanSlope * SmoothAdjust / Width * width
 	define [ArchDepthBOf archDepth width] : archDepth + TanSlope * SmoothAdjust / Width * width
-	define [YSmoothMidR top bot ada adb] : begin
+	define [YSmoothMidR top bot _ada _adb] : begin
+		local ada : fallback _ada ArchDepthA
+		local adb : fallback _adb ArchDepthB
 		local delta : (adb - ada) / 2
 		local smOfSma : ada + delta
 		local smOfSmb : adb - delta
 		local yNotAdjusted : mix top bot (smOfSmb / (smOfSma + smOfSmb))
 		return : yNotAdjusted - delta
-	define [YSmoothMidL top bot ada adb] : begin
+	define [YSmoothMidL top bot _ada _adb] : begin
+		local ada : fallback _ada ArchDepthA
+		local adb : fallback _adb ArchDepthB
 		local delta : (adb - ada) / 2
 		local smOfSma : ada + delta
 		local smOfSmb : adb - delta
@@ -358,22 +362,25 @@ export : define DesignParameters : object
 	GeometricLargeX            : lambda [mw uw] : (mw + uw / 2) / mw
 	geometric_tiny_x           (1    / 7)
 	geometric_very_small_x     (2.5  / 7)
-	geometric_slightly_small_x (3.25  / 7)
+	geometric_slightly_small_x (3.25 / 7)
 	geometric_small_x          (4    / 7)
 	geometric_medium_small_x   (4.75 / 7)
 	geometric_medium_x         (5.5  / 7)
 	arrow_size                 0.45
 	# ()
 	parenOutside               0.2
+	parenOutsideSwAdj          0.2
 	parenInside                0.9
+	parenInsideSwAdj           0.35
 	parenCurliness             0.7
 	parenOvershoot             0.0375
 	# []
-	bracketOutside             0.1
-	bracketInside              0.95
+	bracketOutside             0.2
+	bracketOutsideSwAdj        0.2
+	bracketInside              0.9
 	# {}
 	braceOutside               0.05
-	braceInside                0.95
+	braceInside                0.9
 	braceCurlyM1               0.6
 	braceCurlyM2               0.45
 	braceOvershoot             0.02
@@ -398,13 +405,15 @@ export : define DesignParameters : object
 
 export : define [GenDivFrame metrics] : begin
 	class CDivFrame
-		public [new _div _hPack _sbMul] : begin
+		public [new _div _hPack _sbMul _mvs _ox] : begin
+			local ox : fallback _ox 0
 			local div : fallback _div 1
 			local hPack : Math.max 1 [fallback _hPack 0]
-			local mvs   : if _hPack [metrics.AdviceStroke _hPack div] metrics.Stroke
+			local mvs   : fallback _mvs : if _hPack [metrics.AdviceStroke _hPack div] metrics.Stroke
 			local sbMul : fallback _sbMul : Math.min 1 : (metrics.Width * div - hPack * mvs) / (2 * hPack * metrics.SB)
 
 			set this.div            div
+			set this.hPack          hPack
 			set this.width        : metrics.Width * div
 			set this.middle       : metrics.Middle * div
 			set this.sb           : metrics.SB * sbMul
@@ -413,8 +422,34 @@ export : define [GenDivFrame metrics] : begin
 			set this.mvs            mvs
 			set this.markSet      : MarksetDiv div sbMul metrics
 
+			# No-overshoot metrics -- used for arch depth calculation
+			set this.ox                 ox
+			set this.widthNoOvershoot : this.width - ox
+			set this.divNoOvershoot   : this.widthNoOvershoot / metrics.Width
+
+		public [archDepth d _stroke] : begin
+			return : Math.max (d * this.divNoOvershoot) (1.125 * [fallback _stroke this.mvs])
+		public [archDepthA d _stroke] : begin
+			return : metrics.ArchDepthAOf [this.archDepth d _stroke] this.widthNoOvershoot
+		public [archDepthB d _stroke] : begin
+			return : metrics.ArchDepthBOf [this.archDepth d _stroke] this.widthNoOvershoot
+
+		public [slice _divisions _keeps _o] : begin
+			local o : fallback _o 0
+			local divisions : fallback _divisions this.hPack
+			local keeps : fallback _keeps 2
+
+			local oneStroke : metrics.HVContrast * this.mvs
+			local totalGap : this.rightSB - this.leftSB - divisions * oneStroke - 2 * o
+			local oneGap : totalGap / (divisions - 1)
+
+			local subDfWidth : 2 * this.leftSB + 2 * o + oneGap * (keeps - 1) + oneStroke * keeps
+			local subDfDiv : subDfWidth / metrics.Width
+
+			return : new CDivFrame subDfDiv keeps (this.leftSB / metrics.SB) this.mvs o
+
 		public [applyToGlyph g] : begin
 			g.setWidth this.width
 			return this
 
-	return : lambda [_div _hPack _sbMul] : new CDivFrame _div _hPack _sbMul
+	return : lambda [_div _hPack _sbMul _mvs _ox] : new CDivFrame _div _hPack _sbMul _mvs _ox

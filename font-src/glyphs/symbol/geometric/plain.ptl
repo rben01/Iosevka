@@ -392,6 +392,24 @@ glyph-block Symbol-Geometric-Plain : for-width-kinds WideWidth1
 
 		ConvexPolygonWhiteContainingBlackShape LonzengeFill 'whiteLozengeContainingBlackSmallLozenge' 0x1F7A0 [Object.assign {.} Size.SmallInner Size.Oblique]
 
+	do "Square-lozenge"
+		define [SquareLozengeShape cx cy size] : begin
+			define p 0.8
+			return : spiro-outline
+				corner (cx - size) (cy + size)
+				g4     cx (cy + p * size)
+				corner (cx + size) (cy + size)
+				g4     (cx + p * size) cy
+				corner (cx + size) (cy - size)
+				g4     cx (cy - p * size)
+				corner (cx - size) (cy - size)
+				g4     (cx - p * size) cy
+				close
+
+		StdWhiteShape SquareLozengeShape 'squareLozenge' 0x2311 Size.SmallOblique
+		StdWhiteShape SquareLozengeShape 'rotatedWhiteFourPointedCusp' 0x2BCF Size.MediumOblique
+		StdBlackShape SquareLozengeShape 'rotatedBlackFourPointedCusp' 0x2BCD Size.MediumOblique
+
 	do "Circle"
 		define [CircleShape cx cy size] : spiro-outline
 			g4 (cx - size) cy
@@ -409,7 +427,7 @@ glyph-block Symbol-Geometric-Plain : for-width-kinds WideWidth1
 			define rs : Geom.TallSize / (sizeOrig * 1.5)
 			return : CircleShape cx cy (sizeOrig * rs - sw)
 
-		StdBlackShape CircleShape 'blackCircleO' null
+		StdBlackShape CircleShape 'blackCircleO' null {.size 0.995}
 		StdBlackShape CircleShape 'blackCircle' 0x25CF
 
 		StdWhiteShape CircleShape 'whiteCircle' 0x25CB
@@ -503,6 +521,7 @@ glyph-block Symbol-Geometric-Plain : for-width-kinds WideWidth1
 		ConvexWhitePolygon [RegularPolygonFill 5  1  1.05 0.5] 'rhWhitePentagon' 0x2B54
 		StdBlackShape [RegularPolygonFill 6  1  1.05 0] 'blackHexagon' 0x2B22
 		ConvexWhitePolygon [RegularPolygonFill 6  1  1.05 0] 'whiteHexagon' 0x2B21
+		ConvexWhitePolygon [RegularPolygonFill 6  1  1.05 0.5] 'hWhiteHexagon' 0x2394
 		StdBlackShape [RegularPolygonFill 6  1  1.05 0.5] 'hBlackHexagon' 0x2B23
 		StdBlackShape [RegularPolygonFill 8  1  1.05 0] 'blackHorizontalOctagon' 0x2BC3
 		StdBlackShape [RegularPolygonFill 8  1  1.05 0.128] 'blackOctagon' 0x2BC4

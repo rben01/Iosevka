@@ -1,3 +1,16 @@
+import { mix } from "../utils.mjs";
+
+export class Vec2 {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	static from(z) {
+		return new Vec2(z.x, z.y);
+	}
+}
+
 export class Point {
 	constructor(type, x, y) {
 		this.type = type;
@@ -56,6 +69,9 @@ export class Point {
 	}
 	static translated(z, dx, dy) {
 		return new Point(z.type, z.x + dx || 0, z.y + dy || 0);
+	}
+	static mix(type, a, b, p) {
+		return new Point(type, mix(a.x, b.x, p), mix(a.y, b.y, p));
 	}
 }
 Point.Type = {

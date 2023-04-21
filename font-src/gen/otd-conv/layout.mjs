@@ -1,5 +1,7 @@
 import { Ot } from "ot-builder";
 
+import { Vec2 } from "../../support/geometry/point.mjs";
+
 export function convertGsub(table, glyphs) {
 	return ConvertGsubGposImpl(GsubHandlers, Ot.Gsub.Table, table, glyphs);
 }
@@ -24,12 +26,12 @@ function ConvertGsubGposImpl(handlers, T, table, glyphs) {
 	if (table.lookups) {
 		if (table.lookupOrder) {
 			for (const l of table.lookupOrder) {
-				if (!table.lookups[l]) throw new Error("Cannot find lookup " + l);
+				if (!table.lookups[l]) throw new Error(`Cannot find lookup '${l}'`);
 				ls.declare(l, table.lookups[l]);
 			}
 		}
 		for (const l in table.lookups) {
-			if (!table.lookups[l]) throw new Error("Cannot find lookup " + l);
+			if (!table.lookups[l]) throw new Error(`Cannot find lookup '${l}'`);
 			ls.declare(l, table.lookups[l]);
 		}
 		for (const l in table.lookups) ls.fill(l, table.lookups[l]);
@@ -304,7 +306,7 @@ function convertMarkRecords(marks, mm, store) {
 		const g = store.glyphs.queryByName(gn);
 		if (!g) continue;
 		let markAnchors = [];
-		markAnchors[mm.get(mark.class)] = { x: mark.x, y: mark.y };
+		markAnchors[mm.get(mark.class)] = Vec2.from(mark);
 		out.set(g, { markAnchors: markAnchors });
 	}
 	return out;

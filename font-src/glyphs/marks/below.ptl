@@ -46,7 +46,19 @@ glyph-block Mark-Below : begin
 		set-width 0
 		set-mark-anchor 'below' markMiddle 0 markMiddle belowMarkStack
 		set-base-anchor 'belowBrace' markMiddle belowMarkMid
-		include : CedillaShape Stroke
+		include : CedillaShape (2 * Stroke)
+
+	create-glyph 'cedillaExtShapeBelowOArc' : glyph-proc
+		set-width 0
+		set-mark-anchor 'below' markMiddle 0 markMiddle belowMarkStack
+		set-base-anchor 'belowBrace' markMiddle belowMarkMid
+		include : CedillaShape (Stroke + O)
+
+	create-glyph 'cedillaExtShapeBelowSOArc' : glyph-proc
+		set-width 0
+		set-mark-anchor 'below' markMiddle 0 markMiddle belowMarkStack
+		set-base-anchor 'belowBrace' markMiddle belowMarkMid
+		include : CedillaShape ([AdviceStroke2 2 3 XH] + O)
 
 	create-glyph 'cedillaBelow' 0x327 : glyph-proc
 		set-width 0
@@ -111,7 +123,7 @@ glyph-block Mark-Below : begin
 		set-base-anchor 'belowBrace' markMiddle belowMarkMid
 
 		include : VBar.m markMiddle belowMarkBot belowMarkTop (markFine * 2)
-		include : HBar.m (markMiddle - markExtend) (markMiddle + markExtend) [mix belowMarkTop belowMarkBot 0.5] (markFine * 2)
+		include : HBar.m (markMiddle - markExtend) (markMiddle + markExtend) belowMarkMid (markFine * 2)
 
 	create-glyph 'minusBelow' 0x320 : glyph-proc
 		set-width 0
@@ -120,7 +132,7 @@ glyph-block Mark-Below : begin
 
 		include : VBar.m (markMiddle - markExtend) belowMarkBot belowMarkTop (markFine * 2)
 		include : VBar.m (markMiddle + markExtend) belowMarkBot belowMarkTop (markFine * 2)
-		include : HBar.m (markMiddle - markExtend) (markMiddle + markExtend) [mix belowMarkTop belowMarkBot 0.5] (markFine * 2)
+		include : HBar.m (markMiddle - markExtend) (markMiddle + markExtend) belowMarkMid (markFine * 2)
 
 	create-glyph 'bridgeBelow' 0x32A : glyph-proc
 		set-width 0
@@ -253,6 +265,13 @@ glyph-block Mark-Below : begin
 		set-width 0
 		include : WithTransform [Translate (-markExtend) 0] : refer-glyph 'greaterBelow'
 		include : WithTransform [Translate (+markExtend) 0] : refer-glyph 'upArrowHeadBelow'
+		set-mark-anchor 'below' markMiddle 0 markMiddle belowMarkStack
+		set-base-anchor 'belowBrace' markMiddle belowMarkMid
+
+	create-glyph 'greaterAndDownArrowheadBelow' 0x1DFF : glyph-proc
+		set-width 0
+		include : WithTransform [Translate (-markExtend) 0] : refer-glyph 'greaterBelow'
+		include : WithTransform [Translate (+markExtend) 0] : refer-glyph 'downArrowHeadBelow'
 		set-mark-anchor 'below' markMiddle 0 markMiddle belowMarkStack
 		set-base-anchor 'belowBrace' markMiddle belowMarkMid
 

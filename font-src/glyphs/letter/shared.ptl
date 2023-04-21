@@ -107,7 +107,7 @@ glyph-block Letter-Shared-Metrics : begin
 		local trShrink : Math.pow (((right - left) / (top - bottom))) 0.5
 		return : Math.max
 			sw * 1.25 * HVContrast
-			trShrink * [Math.min ((top - bottom) * 0.45) ((right - left + sw * HVContrast) * 0.5)]
+			trShrink * [Math.min ((top - bottom) * 0.45) ((right - left + sw * HVContrast) * 0.875)]
 
 glyph-block Letter-Shared-Shapes : begin
 	glyph-block-import CommonShapes
@@ -227,24 +227,25 @@ glyph-block Letter-Shared-Shapes : begin
 		define kSkewShift 0.5
 		export : define [shape] : params [
 				[top XH] [left SB] [right RightSB] [stroke Stroke] [fine ShoulderFine]
+				[ada SmallArchDepthA] [adb SmallArchDepthB]
 			] : begin
 			local skew : shoulderMidSkew fine stroke
 			local mt : [mix left right 0.5] + (skew + kSkewShift * TanSlope) * stroke
 			local mb : [mix left right 0.5] + (skew + kSkewShift * TanSlope) * stroke
 			return : dispiro
 				widths.lhs fine
-				flat (left + (stroke - fine) * HVContrast) (top - SmallArchDepthA - 0.01)
-				curl (left + (stroke - fine) * HVContrast) (0 + SmallArchDepthB)
+				flat (left + (stroke - fine) * HVContrast) (top - ada - 0.01)
+				curl (left + (stroke - fine) * HVContrast) (0 + adb)
 				arcvh
 				g4   (mb) O [widths.lhs.heading stroke {.y (1) .x (-skew)}]
 				archv
-				flat (right - OX) (0 + SmallArchDepthA)
-				curl (right - OX) (top - SmallArchDepthB)
+				flat (right - OX) (0 + ada)
+				curl (right - OX) (top - adb)
 				arcvh
 				g4   (mt) (top - O) [widths.lhs.heading stroke {.y (-1) .x (-skew)}]
 				archv
-				flat (left + (stroke - fine) * HVContrast) (top - SmallArchDepthA) [widths.lhs fine]
-				curl (left + (stroke - fine) * HVContrast) (top - SmallArchDepthA - 0.01)
+				flat (left + (stroke - fine) * HVContrast) (top - ada) [widths.lhs fine]
+				curl (left + (stroke - fine) * HVContrast) (top - ada - 0.01)
 
 		export : define [toothless] : params [
 				[top XH] [left SB] [right RightSB] [rise SHook] [mBlend : Math.sqrt (1 / 2)]
@@ -268,25 +269,25 @@ glyph-block Letter-Shared-Shapes : begin
 				curl (left + (sw - fine) * HVContrast) (top - SmallArchDepthA - 0.01) [widths fine 0]
 
 		export : define [rounded] : params [
-				[top XH] [left SB] [right RightSB] [yTerminal CAP] [sw Stroke]
+				[top XH] [left SB] [right RightSB] [yTerminal CAP] [sw Stroke] [fine ShoulderFine]
+				[ada SmallArchDepthA] [adb SmallArchDepthB]
 			] : begin
-			local fine ShoulderFine
 			local skew : shoulderMidSkew fine sw
 			local mt : [mix left right 0.5] + (skew + kSkewShift * TanSlope) * sw
-			local mb : [mix left right 0.5] + CorrectionOMidX * Stroke
+			local mb : [mix left right 0.5] + CorrectionOMidX * sw
 			return : dispiro
 				flat left yTerminal [widths.lhs.heading sw Downward]
-				curl left SmallArchDepthB
+				curl left adb
 				arcvh
-				g4.right.mid mb O
+				g4 mb O
 				archv
-				flat (right - OX) (0 + SmallArchDepthA)
-				curl (right - OX) (top - SmallArchDepthB)
+				flat (right - OX) (0 + ada)
+				curl (right - OX) (top - adb)
 				arcvh
 				g4   (mt) (top - O) [widths.heading sw 0 {.y (-1) .x (-skew)}]
 				archv
-				flat (left + (sw - fine) * HVContrast) (top - SmallArchDepthA) [widths fine 0]
-				curl (left + (sw - fine) * HVContrast) (top - SmallArchDepthA - 0.01) [widths fine 0]
+				flat (left + (sw - fine) * HVContrast) (top - ada) [widths fine 0]
+				curl (left + (sw - fine) * HVContrast) (top - ada - 0.01) [widths fine 0]
 
 		export : define [toothlessTop] : params [
 				[top XH] [left SB] [rise SHook] [mBlend : Math.sqrt (1 / 2)]
@@ -309,25 +310,25 @@ glyph-block Letter-Shared-Shapes : begin
 				g4 left (top - rise) [widths.lhs Stroke]
 
 		export : define [roundedTop] : params [
-				[top XH] [left SB] [yTerminal Descender]
+				[top XH] [left SB] [right RightSB] [yTerminal Descender] [sw Stroke] [fine ShoulderFine]
+				[ada SmallArchDepthA] [adb SmallArchDepthB]
 			] : begin
-			local fine ShoulderFine
 			local skew : shoulderMidSkew fine
-			local mt : [mix left RightSB 0.5] - CorrectionOMidX * Stroke
-			local mb : [mix left RightSB 0.5] + (skew + kSkewShift * TanSlope) * Stroke
+			local mt : [mix left right 0.5] - CorrectionOMidX * sw
+			local mb : [mix left right 0.5] + (skew + kSkewShift * TanSlope) * sw
 			return : dispiro
-				flat (left + (Stroke - fine) * HVContrast) (top - SmallArchDepthA - 0.01) [widths fine 0]
-				curl (left + (Stroke - fine) * HVContrast) (0 + SmallArchDepthB) [widths fine 0]
+				flat (left + (sw - fine) * HVContrast) (top - ada - 0.01) [widths fine 0]
+				curl (left + (sw - fine) * HVContrast) (0 + adb) [widths fine 0]
 				arcvh
-				g4   (mb) O [widths.heading Stroke 0 {.y (1) .x (-skew)}]
+				g4   (mb) O [widths.heading sw 0 {.y (1) .x (-skew)}]
 				archv
-				flat (RightSB - OX) (0 + SmallArchDepthA)
-				curl (RightSB - OX) (top - SmallArchDepthB)
+				flat (right - OX) (0 + ada)
+				curl (right - OX) (top - adb)
 				arcvh
-				g4   mt (top - O) [widths.lhs Stroke]
+				g4   mt (top - O) [widths.lhs sw]
 				archv
-				flat left (top - SmallArchDepthA)
-				curl left yTerminal [widths.lhs.heading Stroke Downward]
+				flat left (top - ada)
+				curl left yTerminal [widths.lhs.heading sw Downward]
 
 	glyph-block-export : OBarRight
 	define OBarRight : namespace
@@ -369,137 +370,137 @@ glyph-block Letter-Shared-Shapes : begin
 	glyph-block-export ConnectedCedilla
 	define [ConnectedCedilla src sel] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
+		include : add-glyph-dependency 'cedillaExtShapeBelow'
 		include : difference
 			new-glyph : glyph-proc
 				include [refer-glyph src] AS_BASE ALSO_METRICS
 				currentGlyph.clearGeometry
 				include : refer-glyph 'cedillaExtShapeBelow'
-			WithTransform [Translate (Stroke * 0.25 * TanSlope) (Stroke * 0.25)] [refer-glyph src]
-			WithTransform [Translate (Stroke * 0.50 * TanSlope) (Stroke * 0.50)] [refer-glyph src]
-			WithTransform [Translate (Stroke * 0.75 * TanSlope) (Stroke * 0.75)] [refer-glyph src]
-			WithTransform [Translate (Stroke * 1.00 * TanSlope) (Stroke * 1.00)] [refer-glyph src]
-			WithTransform [Translate (Stroke * 1.25 * TanSlope) (Stroke * 1.25)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 0.25)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 0.50)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 0.75)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 1.00)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 1.25)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 1.50)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 1.75)] [refer-glyph src]
+			WithTransform [ApparentTranslate 0 (Stroke * 2.00)] [refer-glyph src]
 		include : refer-glyph 'blankBelow'
 
-	glyph-block-export SerifedArcStart_RtlLhs
-	define [SerifedArcStart_RtlLhs sx cx cy sw hook origBar] : begin
-		local barSw : if origBar sw [ArcStartSerifWidth sw]
-		local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
-		return : list
-			g4.up.start
-				sx - (barSw - fine) * HVContrast
-				cy - hook + O * 2
-				widths.lhs.heading fine Upward
-			arcvh
-			ShoulderMidKnotLhs cx (cy - O) fine sw (-1) (-1)
-			archv
+	glyph-block-export SerifedArcStart
+	define SerifedArcStart : namespace
+		export : define [RtlLhs sx cx cy sw hook origBar] : begin
+			local barSw : if origBar sw [ArcStartSerifWidth sw]
+			local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
+			return : list
+				g4.up.start
+					sx - (barSw - fine) * HVContrast
+					cy - hook + O * 2
+					widths.lhs.heading fine Upward
+				arcvh.superness 2
+				ShoulderMidKnotLhs cx (cy - O) fine sw (-1) (-1)
+				archv
 
-	glyph-block-export SerifedArcStart_LtrRhs
-	define [SerifedArcStart_LtrRhs sx cx cy sw hook origBar] : begin
-		local barSw : if origBar sw [ArcStartSerifWidth sw]
-		local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
-		return : list
-			g4.up.start
-				sx + (barSw - fine) * HVContrast
-				cy - hook + O * 2
-				widths.rhs.heading fine Upward
-			arcvh
-			ShoulderMidKnotRhs cx (cy - O) fine sw (+1) (-1)
-			archv
+		export : define [LtrRhs sx cx cy sw hook origBar] : begin
+			local barSw : if origBar sw [ArcStartSerifWidth sw]
+			local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
+			return : list
+				g4.up.start
+					sx + (barSw - fine) * HVContrast
+					cy - hook + O * 2
+					widths.rhs.heading fine Upward
+				arcvh.superness 2
+				ShoulderMidKnotRhs cx (cy - O) fine sw (+1) (-1)
+				archv
 
-	glyph-block-export SerifedArcEnd_RtlRhs
-	define [SerifedArcEnd_RtlRhs sx cx cy sw hook origBar] : begin
-		local barSw : if origBar sw [ArcStartSerifWidth sw]
-		local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
-		return : list
-			arcvh
-			ShoulderMidKnotRhs cx (cy + O) fine sw (-1) (+1)
-			archv
-			g4.up.end
-				sx + (barSw - fine) * HVContrast
-				cy + hook - O * 2
-				widths.rhs.heading fine Upward
+	glyph-block-export SerifedArcEnd
+	define SerifedArcEnd : namespace
+		export : define [RtlRhs sx cx cy sw hook origBar] : begin
+			local barSw : if origBar sw [ArcStartSerifWidth sw]
+			local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
+			return : list
+				arcvh
+				ShoulderMidKnotRhs cx (cy + O) fine sw (-1) (+1)
+				archv.superness 2
+				g4.up.end
+					sx + (barSw - fine) * HVContrast
+					cy + hook - O * 2
+					widths.rhs.heading fine Upward
 
-	glyph-block-export SerifedArcEnd_LtrLhs
-	define [SerifedArcEnd_LtrLhs sx cx cy sw hook origBar] : begin
-		local barSw : if origBar sw [ArcStartSerifWidth sw]
-		local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
-		return : list
-			arcvh
-			ShoulderMidKnotLhs cx (cy + O) fine sw (+1) (+1)
-			archv
-			g4.up.end
-				sx - (barSw - fine) * HVContrast
-				cy + hook - O * 2
-				widths.lhs.heading fine Upward
+		export : define [LtrLhs sx cx cy sw hook origBar] : begin
+			local barSw : if origBar sw [ArcStartSerifWidth sw]
+			local fine : barSw * [mix CThinB (ShoulderFine / Stroke) 0.5]
+			return : list
+				arcvh
+				ShoulderMidKnotLhs cx (cy + O) fine sw (+1) (+1)
+				archv.superness 2
+				g4.up.end
+					sx - (barSw - fine) * HVContrast
+					cy + hook - O * 2
+					widths.lhs.heading fine Upward
 
-	glyph-block-export InwardSlabArcStart_RtlLhs
-	define [InwardSlabArcStart_RtlLhs sx cx cy sw hook] : begin
-		return : list
-			g4 sx (cy - DToothlessRise) [widths.lhs sw]
-			g4 (cx - CorrectionOMidX * sw) (cy - O)
-			archv
+	glyph-block-export InwardSlabArcStart
+	define InwardSlabArcStart : namespace
+		export : define [RtlLhs sx cx cy sw hook] : begin
+			return : list
+				g4 sx (cy - DToothlessRise) [widths.lhs sw]
+				g4 (cx - CorrectionOMidX * sw) (cy - O)
+				archv
 
-	glyph-block-export InwardSlabArcStart_LtrRhs
-	define [InwardSlabArcStart_LtrRhs sx cx cy sw hook] : begin
-		return : list
-			g4 sx (cy - DToothlessRise) [widths.rhs sw]
-			g4 (cx - CorrectionOMidX * sw) (cy - O)
-			archv
+		export : define [LtrRhs sx cx cy sw hook] : begin
+			return : list
+				g4 sx (cy - DToothlessRise) [widths.rhs sw]
+				g4 (cx - CorrectionOMidX * sw) (cy - O)
+				archv
 
-	glyph-block-export InwardSlabArcEnd_RtlRhs
-	define [InwardSlabArcEnd_RtlRhs sx cx cy sw hook] : begin
-		return : list
-			arcvh
-			g4 (cx + CorrectionOMidX * sw) (cy + O)
-			g4 sx (cy + DToothlessRise) [widths.rhs sw]
-
-	glyph-block-export InwardSlabArcEnd_LtrLhs
-	define [InwardSlabArcEnd_LtrLhs sx cx cy sw hook] : begin
-		return : list
-			arcvh
-			g4 (cx + CorrectionOMidX * sw) (cy + O)
-			g4 sx (cy + DToothlessRise) [widths.lhs sw]
+	glyph-block-export InwardSlabArcEnd
+	define InwardSlabArcEnd : namespace
+		export : define [RtlRhs sx cx cy sw hook] : begin
+			return : list
+				arcvh
+				g4 (cx + CorrectionOMidX * sw) (cy + O)
+				g4 sx (cy + DToothlessRise) [widths.rhs sw]
+		export : define [LtrLhs sx cx cy sw hook] : begin
+			return : list
+				arcvh
+				g4 (cx + CorrectionOMidX * sw) (cy + O)
+				g4 sx (cy + DToothlessRise) [widths.lhs sw]
 
 	glyph-block-export ArcStartSerifWidth
 	define [ArcStartSerifWidth stroke] : Math.max (stroke * 0.875) VJutStroke
 
-	glyph-block-export ArcStartSerifR
-	define [ArcStartSerifR cx cy stroke hook overflow] : begin
-		return : VBar.r cx (cy - hook + O * 2) (cy + [fallback overflow 0]) [ArcStartSerifWidth stroke]
+	glyph-block-export ArcStartSerifDepth
+	define [ArcStartSerifDepth hook] : hook - O * 2
 
-	glyph-block-export ArcStartSerifL
-	define [ArcStartSerifL cx cy stroke hook overflow] : begin
-		return : VBar.l cx (cy - hook + O * 2) (cy + [fallback overflow 0]) [ArcStartSerifWidth stroke]
+	glyph-block-export : ArcStartSerif
+	define ArcStartSerif : namespace
+		export : define [L cx cy stroke hook overflow] : begin
+			return : VBar.l cx (cy - hook + O * 2) (cy + [fallback overflow 0]) [ArcStartSerifWidth stroke]
+		export : define [R cx cy stroke hook overflow] : begin
+			return : VBar.r cx (cy - hook + O * 2) (cy + [fallback overflow 0]) [ArcStartSerifWidth stroke]
 
-	glyph-block-export ArcEndSerifL
-	define [ArcEndSerifL cx cy stroke hook overflow] : begin
-		return : VBar.l cx (cy + hook - O * 2) (cy - [fallback overflow 0]) [ArcStartSerifWidth stroke]
+		export : define [InwardL cx cy stroke hook] : begin
+			return : VBar.l cx (cy - hook - DToothlessRise / 3) (cy - DToothlessRise) [ArcStartSerifWidth stroke]
+		export : define [InwardR cx cy stroke hook] : begin
+			return : VBar.r cx (cy - hook - DToothlessRise / 3) (cy - DToothlessRise) [ArcStartSerifWidth stroke]
 
-	glyph-block-export ArcEndSerifR
-	define [ArcEndSerifR cx cy stroke hook overflow] : begin
-		return : VBar.r cx (cy + hook - O * 2) (cy - [fallback overflow 0]) [ArcStartSerifWidth stroke]
+	glyph-block-export : ArcEndSerif
+	define ArcEndSerif : namespace
+		export : define [L cx cy stroke hook overflow] : begin
+			return : VBar.l cx (cy + hook - O * 2) (cy - [fallback overflow 0]) [ArcStartSerifWidth stroke]
+		export : define [R cx cy stroke hook overflow] : begin
+			return : VBar.r cx (cy + hook - O * 2) (cy - [fallback overflow 0]) [ArcStartSerifWidth stroke]
 
-	glyph-block-export ArcStartInwardSerifR
-	define [ArcStartInwardSerifR cx cy stroke hook] : begin
-		return : VBar.r cx (cy - hook - DToothlessRise / 3) (cy - DToothlessRise) [ArcStartSerifWidth stroke]
-
-	glyph-block-export ArcStartInwardSerifL
-	define [ArcStartInwardSerifL cx cy stroke hook] : begin
-		return : VBar.l cx (cy - hook - DToothlessRise / 3) (cy - DToothlessRise) [ArcStartSerifWidth stroke]
-
-	glyph-block-export ArcEndInwardSerifL
-	define [ArcEndInwardSerifL cx cy stroke hook] : begin
-		return : VBar.l cx (cy + hook + DToothlessRise / 2) (cy + DToothlessRise) [ArcStartSerifWidth stroke]
-
-	glyph-block-export ArcEndInwardSerifR
-	define [ArcEndInwardSerifR cx cy stroke hook] : begin
-		return : VBar.r cx (cy + hook + DToothlessRise / 2) (cy + DToothlessRise) [ArcStartSerifWidth stroke]
+		export : define [InwardL cx cy stroke hook] : begin
+			return : VBar.l cx (cy + hook + DToothlessRise / 2) (cy + DToothlessRise) [ArcStartSerifWidth stroke]
+		export : define [InwardR cx cy stroke hook] : begin
+			return : VBar.r cx (cy + hook + DToothlessRise / 2) (cy + DToothlessRise) [ArcStartSerifWidth stroke]
 
 	glyph-block-export ArcStartHookTop
-	define [ArcStartHookTop cx cy sw hookX hookY] : union
-		VBar.r cx (cy - hookY + O * 2) cy sw
-		VerticalHook.r cx cy hookX (-hookY) sw
+	define [ArcStartHookTop cx cy stroke hookX hookY] : begin
+		local sw : ArcStartSerifWidth stroke
+		return : union
+			VBar.r cx (cy - hookY + O * 2) cy sw
+			VerticalHook.r cx cy hookX (-hookY) sw
 
 	define DiagTailDefaultAngle 40
 
@@ -567,41 +568,94 @@ glyph-block Letter-Shared-Shapes : begin
 			arcvh 8
 			DiagonalTailF (-1) df cx cy rInY DiagTailDefaultAngle depth sw
 
-	define [JutIn left right] : Math.min Jut (HalfStroke + [Math.max (Stroke * TanSlope) ((right - left - Stroke * 2 * HVContrast) * 0.4)])
+	define [JutIn left right jut swRef hSplit] : begin
+		local ink : HVContrast * swRef
+		local gap : (right - left - hSplit * ink) / (hSplit - 1)
+		Math.min jut (0.5 * ink + [Math.max (Stroke * TanSlope) (0.375 * gap)])
+
+	class CSerifFrame
+		public [new top bot left right swRef swSerif div hSplit] : begin
+			set this.top     top
+			set this.bot     bot
+			set this.left    left
+			set this.right   right
+			set this.swRef   swRef
+			set this.swSerif swSerif
+			set this.div     div
+			set this.hSplit  hSplit
+
+			local ink : HVContrast * swRef
+			local gap : (right - left - hSplit * ink) / (hSplit - 1)
+
+
+			local jutFS   MidJutSide
+			local jut     : mix (0.5 * HVContrast * swRef) Jut [Math.min 1 : div * 2.25 / hSplit]
+			local sideJut : jut - 0.5 * ink
+
+			local jutIn     : JutIn left right jut swRef hSplit
+			local sideJutIn : jutIn - 0.5 * ink
+
+			local lBarCenter : left + 0.5 * ink
+			local lBarInner  : left + 1.0 * ink
+			local rBarCenter : right - 0.5 * ink
+			local rBarInner  : right - 1.0 * ink
+
+			set this.jut     jut
+			set this.sideJut sideJut
+
+			set this.enoughSpaceForFullSerifs : 0.5 * ink + 0.375 * gap > para.refJut
+
+			set this.lt : object
+				full        : tagged 'serifLT' : HSerif.mtAsymmetric lBarCenter top jut jutIn swSerif
+				[fullExt s] : tagged 'serifLT' : HSerif.mtAsymmetric lBarCenter top jut [JutIn left right jut swRef s] swSerif
+				fullSide    : tagged 'serifLT' : HSerif.mtAsymmetric lBarCenter top jut jutFS swSerif
+				outer       : tagged 'serifLT' : HSerif.lt left top sideJut swSerif
+				inner       : tagged 'serifLT' : HSerif.rt lBarInner top sideJutIn swSerif
+			set this.rt : object
+				full        : tagged 'serifRT' : HSerif.mtAsymmetric rBarCenter top jutIn jut swSerif
+				[fullExt s] : tagged 'serifRT' : HSerif.mtAsymmetric rBarCenter top [JutIn left right jut swRef s] jut swSerif
+				fullSide    : tagged 'serifRT' : HSerif.mtAsymmetric rBarCenter top jutFS jut swSerif
+				outer       : tagged 'serifRT' : HSerif.rt right top sideJut swSerif
+				inner       : tagged 'serifRT' : HSerif.lt rBarInner top sideJutIn swSerif
+			set this.lb : object
+				full        : tagged 'serifLB' : HSerif.mbAsymmetric lBarCenter bot jut jutIn swSerif
+				[fullExt s] : tagged 'serifLB' : HSerif.mbAsymmetric lBarCenter bot jut [JutIn left right jut swRef s] swSerif
+				fullSide    : tagged 'serifLB' : HSerif.mbAsymmetric lBarCenter bot jut jutFS swSerif
+				outer       : tagged 'serifLB' : HSerif.lb left bot sideJut swSerif
+				inner       : tagged 'serifLB' : HSerif.rb lBarInner bot sideJutIn swSerif
+			set this.rb : object
+				full        : tagged 'serifRB' : HSerif.mbAsymmetric rBarCenter bot jutIn jut swSerif
+				[fullExt s] : tagged 'serifRB' : HSerif.mbAsymmetric rBarCenter bot [JutIn left right jut swRef s] jut swSerif
+				fullSide    : tagged 'serifRB' : HSerif.mbAsymmetric rBarCenter bot jutFS jut swSerif
+				outer       : tagged 'serifRB' : HSerif.rb right bot sideJut swSerif
+				inner       : tagged 'serifRB' : HSerif.lb rBarInner bot sideJutIn swSerif
+
+			set this.mb : object
+				full : tagged 'serifMB' : HSerif.mbAsymmetric [mix lBarCenter rBarCenter 0.5] bot jutIn jutIn swSerif
+
+		public [slice l r] : begin
+			local ink : this.swRef * HVContrast
+			local gap : (this.right - this.left - this.hSplit * ink) / (this.hSplit - 1)
+			local l1 : this.left + (ink + gap) * l
+			local r1 : this.left + (ink + gap) * r + ink
+			return : new CSerifFrame this.top this.bot l1 r1 this.swRef this.swSerif this.div (r - l + 1)
 
 	glyph-block-export SerifFrame
-	define [SerifFrame] : params [top bot left right [sw Stroke]] : begin
-		local jutFS   MidJutSide
-		local jutIn : JutIn left right
-		local sideJutIn : jutIn - 0.5 * sw * HVContrast
-		local lBarCenter : left + 0.5 * sw * HVContrast
-		local lBarInner  : left + 1.0 * sw * HVContrast
-		local rBarCenter : right - 0.5 * sw * HVContrast
-		local rBarInner  : right - 1.0 * sw * HVContrast
-		return : object
-			lt : object
-				full     : tagged 'serifLT' : HSerif.mtAsymmetric lBarCenter top Jut jutIn sw
-				fullSide : tagged 'serifLT' : HSerif.mtAsymmetric lBarCenter top Jut jutFS sw
-				outer    : tagged 'serifLT' : HSerif.lt left top SideJut sw
-				inner    : tagged 'serifLT' : HSerif.rt lBarInner top sideJutIn sw
-			rt : object
-				full     : tagged 'serifRT' : HSerif.mtAsymmetric rBarCenter top jutIn Jut sw
-				fullSide : tagged 'serifRT' : HSerif.mtAsymmetric rBarCenter top jutFS Jut sw
-				outer    : tagged 'serifRT' : HSerif.rt right top SideJut sw
-				inner    : tagged 'serifRT' : HSerif.lt rBarInner top sideJutIn sw
-			lb : object
-				full     : tagged 'serifLB' : HSerif.mbAsymmetric lBarCenter bot Jut jutIn sw
-				fullSide : tagged 'serifLB' : HSerif.mbAsymmetric lBarCenter bot Jut jutFS sw
-				outer    : tagged 'serifLB' : HSerif.lb left bot SideJut sw
-				inner    : tagged 'serifLB' : HSerif.rb lBarInner bot sideJutIn sw
-			rb : object
-				full     : tagged 'serifRB' : HSerif.mbAsymmetric rBarCenter bot jutIn Jut sw
-				fullSide : tagged 'serifRB' : HSerif.mbAsymmetric rBarCenter bot jutFS Jut sw
-				outer    : tagged 'serifRB' : HSerif.rb right bot SideJut sw
-				inner    : tagged 'serifRB' : HSerif.lb rBarInner bot sideJutIn sw
+	define [SerifFrame] : params [top bot left right [swRef Stroke] [swSerif swRef] [div 1] [hSplit 2]] : begin
+		return : new CSerifFrame top bot left right swRef swSerif div hSplit
 
-	glyph-block-export WithAIHSerifsMask
-	define [WithAIHSerifsMask top bottom left right s] : begin
+	define SerifFrame.fromDf : function [] : params [df top bot [swSerif df.mvs]] : begin
+		return : SerifFrame top bot df.leftSB df.rightSB
+			swRef -- df.mvs
+			div -- df.div
+			hSplit -- [Math.max 2 df.hPack]
+			swSerif -- swSerif
+
+
+	glyph-block-export WithSerifOverflowMask
+	define [WithSerifOverflowMask fEnable top bottom left right s] : begin
+		if [not fEnable] : return s
+
 		local leftCenter : left + HalfStroke * HVContrast
 		local rightCenter : right - HalfStroke * HVContrast
 		local adj : TanSlope * Stroke * DesignParameters.serifShiftX
@@ -749,6 +803,32 @@ glyph-block Letter-Shared-Shapes : begin
 			export : define [inner] : params [[x SB] [top Ascender] [bottom 0]] : composite-proc
 				VBar.l x bottom (top - Hook - HalfStroke)
 				VerticalHook.l x (top - Hook - HalfStroke) HookX (-Hook)
+
+		# Cyrillic "Middle Hook" Characters
+		glyph-block-export MidHook
+		define MidHook : namespace
+			export : define [general] : params [left right top [bottom 0] ada adb [sw Stroke] [xDepth (-HookX)]] : composite-proc
+				nShoulder
+					left -- left
+					right -- right
+					top -- top
+					bottom -- bottom
+					ada -- ada
+					adb -- adb
+					stroke -- sw
+				VerticalHook.r right bottom xDepth Hook sw
+
+			# "Standard" version for El, Pe, En with MidHook
+			export : define [m df top] : begin
+				local xm : df.middle + 0.5 * df.mvs * HVContrast
+				general
+					left   -- xm
+					right  -- df.rightSB
+					top    -- top * 0.625 + df.mvs / 4
+					ada    -- ArchDepthA
+					adb    -- ArchDepthB
+					sw     -- df.mvs
+					xDepth -- (-[Math.max (df.mvs * HVContrast) : Math.min HookX (0.5 * (df.rightSB - df.leftSB - 2 * df.mvs * HVContrast))])
 
 	do "Belt overlays"
 		define [BeltOverlayAt x y] : begin

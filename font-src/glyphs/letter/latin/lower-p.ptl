@@ -12,8 +12,8 @@ glyph-block Letter-Latin-Lower-P : begin
 	glyph-block-import Letter-Shared-Shapes : OBarLeft DToothlessRise DMBlend
 	glyph-block-import Letter-Shared-Shapes : HooktopLeftBar PalatalHook SerifFrame
 
-	define [SmallPSerifLT] : return [SerifFrame XH Descender SB RightSB].lt.outer
-	define [SmallPSerifLB] : return [SerifFrame XH Descender SB RightSB].lb.fullSide
+	define [SmallPSerifLT] : return [SerifFrame.fromDf [DivFrame 1] XH Descender].lt.outer
+	define [SmallPSerifLB] : return [SerifFrame.fromDf [DivFrame 1] XH Descender].lb.fullSide
 
 	define [EaredBody] : glyph-proc
 		include : tagged 'bowl' : OBarLeft.shape
@@ -24,7 +24,11 @@ glyph-block Letter-Latin-Lower-P : begin
 		include : tagged 'stemLeft' : VBar.l SB Descender (XH - DToothlessRise)
 
 	define [EarlessRoundedBody] : glyph-proc
-		include : tagged 'bowl' : OBarLeft.roundedTop XH SB Descender
+		include : tagged 'bowl' : OBarLeft.roundedTop
+			top -- XH
+			left -- SB
+			right -- RightSB
+			yTerminal -- Descender
 
 	define [FullSerifs] : glyph-proc : if SLAB : begin
 		include : SmallPSerifLT

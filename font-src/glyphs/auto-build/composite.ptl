@@ -1053,8 +1053,9 @@ glyph-block AutoBuild-Accented-Equal : begin
 	createAccentedOp 'equal' 7 0.5 0 (aboveMarkBot - (SymbolMid - XH / 2)) : list
 		list 0x2259 {"triangularWedge.NWID"}
 		list 0x225a {"triangularVee.NWID"}
-		list 0x225b {"asterisk.pentaSMid"}
+		list 0x225b {"blackStar.NWID"}
 		list 0x225c {"whiteTriangleUp.NWID"}
+		list 0x2a6e {"asterisk.hexSMid"}
 	createAccentedOp 'sqrt' 5 0.5 (-Width / 4) [mix OperBot OperTop 0.6] : list
 		list 0x221b {"three.lnum"}
 		list 0x221c {"four.lnum"}
@@ -1253,21 +1254,26 @@ glyph-block Autobuild-Pnonetic-Ligatures : begin
 			set shrink1 : clamp 0 1 tmp-shrink1
 			set shrink2 : clamp 0 1 tmp-shrink2
 
-		local df1 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink1 true
-		local df2 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink2 true
+		local df1 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink1 true tfm.crowd tfm.crowdAdjScale
+		local df2 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink2 true tfm.crowd tfm.crowdAdjScale
+
+		# TODO: we need a better geometry to do such minkovski sums
+		define [createMaskout c1 c2 s] : begin
+			define dfg1 : df1.queryByNameEnsured c1
+			define dfg2 : df2.queryByNameEnsured c2
+			return : WithTransform [Translate (s + dfg1.advanceWidth * wadj1 - kern) 0] dfg2
 
 		foreach [{gn unicode { c1 c2 } mak} : items-of jobs.nonDecomposable] : if [not : query-glyph gn] : begin
 
-			local maskOuts {}
-			local s    0
 			local step (-OX)
+			local s    step
 			local dist (Stroke * 2)
-			while (s < dist) : do
-				maskOuts.push : new-glyph : glyph-proc
-					define dfg1 : df1.queryByNameEnsured c1
-					define dfg2 : df2.queryByNameEnsured c2
-					include dfg2
-					include : Translate (s + dfg1.advanceWidth * wadj1 - kern) 0
+
+			local maskOuts : list
+				createMaskout c1 c2 0.01
+				createMaskout c1 c2 (dist - 0.01)
+			while (s < dist) : begin
+				maskOuts.push : createMaskout c1 c2 s
 				set s : s + step
 
 			create-glyph gn unicode : glyph-proc
@@ -1281,7 +1287,8 @@ glyph-block Autobuild-Pnonetic-Ligatures : begin
 				include : Translate (dfg1.advanceWidth * wadj1 - kern) 0
 				local leftHalf : intersection dfg1
 					Rect (CAP * 2) (Descender * 2) (-CWidth) (dfg1.advanceWidth * wadj1 - kern + dfg2.advanceWidth * wadj2 / 2)
-				include : difference.apply null { leftHalf :: maskOuts}
+				include leftHalf
+				# include : difference.apply null { leftHalf :: maskOuts }
 				include : Ungizmo
 				include : Translate (-refW / 2) 0
 				include : Scale [clamp 0 1 ((CWidth - SB * 1.25) / (CWidth - SB * 2) * CWidth / refW)] 1
@@ -1300,6 +1307,9 @@ glyph-block Autobuild-Pnonetic-Ligatures : begin
 		include [Scale 0.7] true
 		include [Translate df.middle (CAP + AccentStackOffset / 2)] true
 		include [Regizmo] true
+
+	set ToSuperscript.crowd         3.5
+	set ToSuperscript.crowdAdjScale 0.7
 	define [AddSlash] : glyph-proc
 		include [refer-glyph 'wideSlashOver']
 
