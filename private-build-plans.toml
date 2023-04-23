@@ -187,12 +187,12 @@
 		eight = "two-circles"
 		five = "oblique-upper-left-bar"
 		four = "semi-open"
-		nine = "straight-bar"
+		nine = "open-contour"
 		one = "base"
 		seven = "straight-serifless"
-		six = "straight-bar"
-		three = "flat-top"
-		two = "straight-neck"
+		six = "open-contour"
+		three = "two-arcs"
+		two = "curly-neck"
 		zero = "dotted-oval"
 
 		# Puncutation
