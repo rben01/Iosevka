@@ -95,7 +95,7 @@ jobs:
           (format\\('woff2'\\)\\s*;)\
           ^\
           src: \
-          url('https://my-fonts.pages.dev/Iosevka/${{ env.DIST_DIR }}/${{ matrix.font_family }}/\\1') \
+          url('https://my-fonts.pages.dev/Iosevka/${{ matrix.font_family }}/\\1') \
           \\2\
           ^g\" \
           ${{ env.DIST_DIR }}/${{ matrix.font_family }}/font-local.css \
