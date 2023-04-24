@@ -55,7 +55,7 @@ jobs:
         # Built fonts end up in ./dist, i.e., in env.DIST_DIR. \
         # The WOFF2 fonts will be overwritten later, but we generate them anyway so that
         # Iosevka generates the CSS for us
-        run: npm run build -- webfont-unhinted::${{ matrix.font_family }} ttf-unhinted::${{ matrix.font_family }}
+        run: npm run build -- webfont-unhinted::${{ matrix.font_family }}
 
       - name: Generate subsetted WOFF2
         # This overwrites the existing WOFF2 files
@@ -64,23 +64,7 @@ jobs:
       - name: Rename local CSS file
         run: "mv \
           ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
-          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka-local.css\
-          "
-
-      - name: Copy CSS for Cloudflare Pages
-        run: "sed -E \"s\
-          ^\
-          src:\\s*\
-          url\\(.*\\)\\s*\
-          format\\('truetype'\\),\\s*\
-          url\\('(.*)'\\)\\s*\
-          (format\\('woff2'\\)\\s*;)\
-          ^\
-          src: \
-          url('\\1') \\2^g\" \
-          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka-local.css \
-          > \
-          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka-web.css\
+          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka.css\
           "
 
       - name: Show all files

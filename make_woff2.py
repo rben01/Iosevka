@@ -7,7 +7,7 @@ SUBSET_ARGS = [
     "--flavor=woff2",
     "--layout-features=kern,liga,clig,calt",
     # pretty much everything you'd need for Latin-esque stuff
-    '--unicodes="U+0020-007F,U+00A0-00FF,U+0100-017F,U+2000-206F,U+2070-209F,U+2200-22FF"',
+    "--unicodes=U+0020-007F,U+00A0-00FF,U+0100-017F,U+2000-206F,U+2070-209F,U+2200-22FF",
 ]
 
 
