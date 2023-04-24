@@ -67,9 +67,6 @@ jobs:
           ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka.css\
           "
 
-      - name: Show all files
-        run: find . -print
-
       - name: Make artifact
         uses: actions/upload-artifact@v3
         with:
