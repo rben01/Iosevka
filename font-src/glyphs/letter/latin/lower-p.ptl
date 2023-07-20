@@ -1,6 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
-import [mix linreg clamp fallback] from"../../../support/utils.mjs"
+import [mix fallback SuffixCfg] from"../../../support/utils.mjs"
 import [Dotless CvDecompose MathSansSerif] from"../../../support/gr.mjs"
 
 glyph-module
@@ -8,9 +8,10 @@ glyph-module
 glyph-block Letter-Latin-Lower-P : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
+	glyph-block-import Mark-Adjustment : ExtendAboveBaseAnchors
 	glyph-block-import Letter-Shared : CreateAccentedComposition
 	glyph-block-import Letter-Shared-Shapes : OBarLeft DToothlessRise DMBlend
-	glyph-block-import Letter-Shared-Shapes : HooktopLeftBar PalatalHook SerifFrame
+	glyph-block-import Letter-Shared-Shapes : TopHook PalatalHook SerifFrame
 
 	define [SmallPSerifLT] : return [SerifFrame.fromDf [DivFrame 1] XH Descender].lt.outer
 	define [SmallPSerifLB] : return [SerifFrame.fromDf [DivFrame 1] XH Descender].lb.fullSide
@@ -20,39 +21,38 @@ glyph-block Letter-Latin-Lower-P : begin
 		include : tagged 'stemLeft' : VBar.l SB Descender XH
 
 	define [EarlessCornerBody] : glyph-proc
-		include : tagged 'bowl' : OBarLeft.toothlessTop XH SB DToothlessRise DMBlend
+		include : tagged 'bowl' : OBarLeft.toothlessTop (rise -- DToothlessRise) (mBlend -- DMBlend)
 		include : tagged 'stemLeft' : VBar.l SB Descender (XH - DToothlessRise)
 
 	define [EarlessRoundedBody] : glyph-proc
-		include : tagged 'bowl' : OBarLeft.roundedTop
-			top -- XH
-			left -- SB
-			right -- RightSB
-			yTerminal -- Descender
+		include : tagged 'bowl' : OBarLeft.roundedTop (yTerminal -- Descender)
 
-	define [FullSerifs] : glyph-proc : if SLAB : begin
+	define [FullSerifs] : glyph-proc
 		include : SmallPSerifLT
 		include : SmallPSerifLB
 
 	define [MotionSerif] : SmallPSerifLT
+	define [BottomSerif] : SmallPSerifLB
 
-	define [BottomSerif] : glyph-proc : if SLAB : begin
-		include : SmallPSerifLB
+	define PConfig : SuffixCfg.weave
+		object # body
+			eared                EaredBody
+			earlessCorner        EarlessCornerBody
+			earlessRounded       EarlessRoundedBody
+		object # serifs
+			serifless           { no-shape     false }
+			motionSerifed       { MotionSerif  false }
+			bottomSerifed       { BottomSerif  true  }
+			serifed             { FullSerifs   true  }
 
-	define PConfig : object
-		eared          { EaredBody          FullSerifs  SLAB  }
-		motionSerifed  { EaredBody          MotionSerif false }
-		earlessCorner  { EarlessCornerBody  BottomSerif SLAB  }
-		earlessRounded { EarlessRoundedBody BottomSerif SLAB  }
-
-	foreach { suffix { Body Serifs doTS }} [Object.entries PConfig] : do
-		local yOverlay : mix 0 (Descender + [if doTS Stroke 0]) 0.5
+	foreach { suffix { Body {Serifs doBS} }} [Object.entries PConfig] : do
+		local yOverlay : mix 0 (Descender + [if doBS Stroke 0]) 0.5
 		create-glyph "p.\(suffix)" : glyph-proc
 			include : MarkSet.p
 			include : Body
 			include : Serifs
-			set-base-anchor 'overlayOnBar' (SB + 0.5 * Stroke * HVContrast) yOverlay
-			set-base-anchor 'overlay' Middle (XH / 2)
+			set-base-anchor 'overlayOnExtension' (SB + 0.5 * Stroke * HVContrast) yOverlay
+			set-base-anchor 'strike' Middle (XH / 2)
 
 		create-glyph "pPalatalHook.\(suffix)" : glyph-proc
 			include [refer-glyph "p.\(suffix)"] AS_BASE ALSO_METRICS
@@ -74,7 +74,7 @@ glyph-block Letter-Latin-Lower-P : begin
 	select-variant 'cyrl/er' 0x440 (shapeFrom -- 'p') (follow -- 'p')
 	select-variant "pPalatalHook" 0x1D88 (follow -- 'p')
 
-	CreateAccentedComposition 'pTildeOver' 0x1D71 'p' 'tildeOverOnBar'
+	CreateAccentedComposition 'pTildeOver' 0x1D71 'p' 'tildeOverOnExension'
 
 	derive-glyphs 'cyrl/rrTick' 0x48F 'cyrl/er' : lambda [src gr] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
@@ -82,6 +82,12 @@ glyph-block Letter-Latin-Lower-P : begin
 			widths.center [AdviceStroke 4]
 			flat [mix SB RightSB 0.5]   (HalfStroke + XH * 0.25)
 			curl [mix SB RightSB 0.875] (HalfStroke - XH * 0.25)
+
+	derive-glyphs 'pHookTop' 0x1A5 "p/hookTopBase" : function [src gr] : glyph-proc
+		include [refer-glyph src] AS_BASE ALSO_METRICS
+		eject-contour 'serifLT'
+		eject-contour 'stemLeft'
+		include : TopHook.lBarOuter SB Descender XH
 
 	glyph-block-import Letter-Blackboard : BBS BBD BBBarLeft
 	create-glyph 'mathbb/p' 0x1D561 : glyph-proc
@@ -92,11 +98,4 @@ glyph-block Letter-Latin-Lower-P : begin
 			VBar.r (RightSB - BBD - OX) 0 XH BBS
 		include : OBarLeft.shape
 			left -- SB + BBD
-			top  -- XH
-			stroke -- BBS
-
-	derive-glyphs 'pHookTop' 0x1A5 "p/hookTopBase" : function [src gr] : glyph-proc
-		include [refer-glyph src] AS_BASE ALSO_METRICS
-		eject-contour 'serifLT'
-		eject-contour 'stemLeft'
-		include : HooktopLeftBar.outer (top -- XH) (bottom -- Descender)
+			sw -- BBS

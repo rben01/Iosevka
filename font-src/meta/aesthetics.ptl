@@ -67,6 +67,8 @@ export : define [calculateMetrics para] : begin
 	define JHook para.jhook
 	define FHook para.fhook
 	define HookX para.hookx
+	define TailX para.tailX
+	define TailY para.tailY
 	define ArchDepth para.archDepth
 	define SmallArchDepth para.smallArchDepth
 
@@ -152,7 +154,7 @@ export : define [calculateMetrics para] : begin
 		local smOfSma : ada + delta
 		local smOfSmb : adb - delta
 		local yNotAdjusted : mix top bot (smOfSmb / (smOfSma + smOfSmb))
-		return : yNotAdjusted - delta
+		return : yNotAdjusted - delta * [Math.min 1 ((top - bot) / (ada + adb))]
 	define [YSmoothMidL top bot _ada _adb] : begin
 		local ada : fallback _ada ArchDepthA
 		local adb : fallback _adb ArchDepthB
@@ -160,7 +162,7 @@ export : define [calculateMetrics para] : begin
 		local smOfSma : ada + delta
 		local smOfSmb : adb - delta
 		local yNotAdjusted : mix top bot (smOfSma / (smOfSma + smOfSmb))
-		return : yNotAdjusted + delta
+		return : yNotAdjusted + delta * [Math.min 1 ((top - bot) / (ada + adb))]
 	define ArchDepthA : ArchDepth - TanSlope * SmoothAdjust
 	define ArchDepthB : ArchDepth + TanSlope * SmoothAdjust
 	define SmallArchDepthA : SmallArchDepth - TanSlope * SmoothAdjust
@@ -196,8 +198,8 @@ export : define [calculateMetrics para] : begin
 		DesignParameters UPM HalfUPM Width SB CAP XH Ascender Descender Contrast SymbolMid
 		ParenTop ParenBot OperTop OperBot TackTop TackBot PlusTop PlusBot PictTop PictBot BgOpTop
 		BgOpBot Italify Upright Scale Translate ApparentTranslate Rotate GlobalTransform TanSlope
-		HVContrast Upward Downward Rightward Leftward O OX
-		OXHook Hook AHook SHook RHook JHook FHook HookX ArchDepth SmallArchDepth Stroke DotSize
+		HVContrast Upward Downward Rightward Leftward O OX OXHook Hook AHook SHook RHook JHook FHook
+		HookX TailX TailY ArchDepth SmallArchDepth Stroke DotSize
 		PeriodSize HBarPos OverlayPos LongJut Jut VJut VJutStroke AccentStackOffset AccentWidth
 		AccentClearance AccentHeight CThin CThinB SLAB TailAdjX TailAdjY IBalance IBalance2
 		JBalance JBalance2 TBalance TBalance2 RBalance RBalance2 FBalance OneBalance WideWidth0
@@ -306,9 +308,10 @@ export : define [compositeBaseAnchors] : begin
 		set baseAnchorSink.(k) : new Anchor a.baseAnchors.(k).x a.baseAnchors.(k).y a.baseAnchors.(k).type a.baseAnchors.(k).mbx a.baseAnchors.(k).mby
 	return : new CMarkSet null baseAnchorSink
 
-export : define [MarksetDiv p sbMul me] : begin
+define [MarksetDiv p sbMul me] : begin
 	define width : p * me.Width
 	define middle : p * me.Middle
+	define leftSB   me.SB
 	define rightSB : me.Width * p - me.SB
 	define [ta anchor] : return : new Anchor
 		* (anchor.x * me.GlobalTransform.xx + anchor.y * me.TanSlope + me.GlobalTransform.x)
@@ -316,8 +319,10 @@ export : define [MarksetDiv p sbMul me] : begin
 
 	define [MarkAbove zone]        {.baseAnchors {.above       [ta : new Anchor middle  zone.top                  ]}}
 	define [MarkBelow zone]        {.baseAnchors {.below       [ta : new Anchor middle  zone.bot                  ]}}
-	define [MarkTopRight zone]     {.baseAnchors {.topright    [ta : new Anchor rightSB zone.top                  ]}}
-	define [MarkBottomRight zone]  {.baseAnchors {.bottomright [ta : new Anchor rightSB zone.bot                  ]}}
+	define [MarkTopLeft zone]      {.baseAnchors {.topLeft     [ta : new Anchor leftSB  zone.top                  ]}}
+	define [MarkTopRight zone]     {.baseAnchors {.topRight    [ta : new Anchor rightSB zone.top                  ]}}
+	define [MarkBottomLeft zone]   {.baseAnchors {.bottomLeft  [ta : new Anchor leftSB zone.bot                  ]}}
+	define [MarkBottomRight zone]  {.baseAnchors {.bottomRight [ta : new Anchor rightSB zone.bot                  ]}}
 
 	define markTieAbove            {.baseAnchors {.tieAbove    [ta : new Anchor width   (me.XH + me.AccentStackOffset * 1.38)]}}
 	define markTieBelow            {.baseAnchors {.tieBelow    [ta : new Anchor width   me.Descender              ]}}
@@ -328,14 +333,23 @@ export : define [MarksetDiv p sbMul me] : begin
 		local a : compositeBaseAnchors
 			MarkAbove       zone
 			MarkBelow       zone
+			MarkTopLeft     zone
 			MarkTopRight    zone
+			MarkBottomLeft  zone
 			MarkBottomRight zone
 			begin markTieAbove
 			begin markTieBelow
+
+		# Overlay on stems
 		set a.baseAnchors.overlay : new Anchor
 			* [mix a.baseAnchors.below.x a.baseAnchors.above.x me.OverlayPos]
 			* [mix a.baseAnchors.below.y a.baseAnchors.above.y me.OverlayPos]
+		# Slash over entire letter
 		set a.baseAnchors.slash : new Anchor
+			* [mix a.baseAnchors.below.x a.baseAnchors.above.x 0.5]
+			* [mix a.baseAnchors.below.y a.baseAnchors.above.y 0.5]
+		# Horizontal or near-horizontal strike on letter counter or bowl
+		set a.baseAnchors.strike : new Anchor
 			* [mix a.baseAnchors.below.x a.baseAnchors.above.x 0.5]
 			* [mix a.baseAnchors.below.y a.baseAnchors.above.y 0.5]
 		return a
@@ -349,7 +363,7 @@ export : define [MarksetDiv p sbMul me] : begin
 		oper    : buildStandardMarkSet {.top me.OperTop  .bot me.OperBot}
 		tack    : buildStandardMarkSet {.top me.TackTop  .bot me.TackBot}
 		plus    : buildStandardMarkSet {.top me.PlusTop  .bot me.PlusBot}
-		if      : buildStandardMarkSet {.top me.Ascender .bot me.Descender}
+		bp      : buildStandardMarkSet {.top me.Ascender .bot me.Descender}
 		capDesc : buildStandardMarkSet {.top me.CAP      .bot me.Descender}
 
 export : define DesignParameters : object
@@ -439,11 +453,15 @@ export : define [GenDivFrame metrics] : begin
 			local divisions : fallback _divisions this.hPack
 			local keeps : fallback _keeps 2
 
-			local oneStroke : metrics.HVContrast * this.mvs
-			local totalGap : this.rightSB - this.leftSB - divisions * oneStroke - 2 * o
-			local oneGap : totalGap / (divisions - 1)
+			return : this.sliceFine divisions keeps ((keeps - 1) / (divisions - 1)) o
 
-			local subDfWidth : 2 * this.leftSB + 2 * o + oneGap * (keeps - 1) + oneStroke * keeps
+		public [sliceFine strokes keeps pGaps _o] : begin
+			local o : fallback _o 0
+
+			local oneStroke : metrics.HVContrast * this.mvs
+			local totalGap : this.rightSB - this.leftSB - strokes * oneStroke - 2 * o
+
+			local subDfWidth : 2 * this.leftSB + 2 * o + totalGap * pGaps + oneStroke * keeps
 			local subDfDiv : subDfWidth / metrics.Width
 
 			return : new CDivFrame subDfDiv keeps (this.leftSB / metrics.SB) this.mvs o

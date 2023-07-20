@@ -51,10 +51,10 @@ glyph-block Autobuild-Enclosure-Shared : begin
 
 	glyph-block-export CollectJobs
 	define [CollectJobs globallyDecomposable centered allowProportional prefix suffix demands] : begin
-		local nonDecomposable     { }
-		local decomposableJobs    { }
-		local decomposableRelJobs { }
-		local relApplications     { }
+		local nonDecomposable       { }
+		local decomposableJobs      { }
+		local relApplications       { }
+		local decomposableRelGlyphs : new Set
 		foreach demand [items-of demands] : do
 			local unicode    demand.0
 			local parts      demand.1
@@ -73,27 +73,36 @@ glyph-block Autobuild-Enclosure-Shared : begin
 					if (centered && [getGlyphDefaultShift 0 0 : query-glyph : gr.get g] != [getGlyphDefaultShift 0 0 g])
 						set demandDecomposable false
 
-			local jobsOrig : if demandDecomposable decomposableJobs    nonDecomposable
-			local jobsRel  : if demandDecomposable decomposableRelJobs nonDecomposable
-
+			local jobsOrig : if demandDecomposable decomposableJobs nonDecomposable
 			jobsOrig.push { origJobGlyphGn unicode parts :: restInfo }
-			if para.enableCvSs : begin
-				local mesh : getGrMesh parts AnyCv query-glyph
-				foreach {gr fromParts toParts} [items-of mesh] : do
-					local fromGn : CircNameNoCheck unicode prefix fromParts suffix
-					local toGn   : CircName        unicode prefix toParts   suffix
-					jobsRel.push { toGn null toParts :: restInfo }
-					if [not demandDecomposable] : relApplications.push { gr fromGn toGn }
 
-		return : object nonDecomposable decomposableJobs decomposableRelJobs relApplications
+			if para.enableCvSs : begin
+				if demandDecomposable
+				: then : foreach part [items-of parts] : begin
+					local mesh : getGrMesh { part } AnyCv query-glyph
+					foreach {gr fromParts toParts} [items-of mesh] : foreach gn [items-of toParts]
+						decomposableRelGlyphs.add gn
+				: else : begin
+					local mesh : getGrMesh parts AnyCv query-glyph
+					foreach {gr fromParts toParts} [items-of mesh] : do
+						local fromGn : CircNameNoCheck unicode prefix fromParts suffix
+						local toGn   : CircName        unicode prefix toParts   suffix
+						nonDecomposable.push { toGn null toParts :: restInfo }
+						relApplications.push { gr fromGn toGn }
+
+		return : object nonDecomposable decomposableJobs decomposableRelGlyphs relApplications
 
 	glyph-block-export CreateDerivedFontFromJobs
 	define [CreateDerivedFontFromJobs aj restGids fn] : begin
-		define [object nonDecomposable decomposableJobs decomposableRelJobs] aj
-		local dfJobs : nonDecomposable.concat decomposableJobs decomposableRelJobs
-		local pendingGlyphs : new Set : restGids.slice 0
-		foreach {gnf unicode parts} [items-of dfJobs] : foreach gn [items-of parts]
+		define [object nonDecomposable decomposableJobs decomposableRelGlyphs] aj
+
+		local pendingGlyphs : new Set restGids
+		foreach gn decomposableRelGlyphs : pendingGlyphs.add gn
+		foreach {gnf unicode parts} [items-of nonDecomposable] : foreach gn [items-of parts]
 			pendingGlyphs.add gn
+		foreach {gnf unicode parts} [items-of decomposableJobs] : foreach gn [items-of parts]
+			pendingGlyphs.add gn
+
 		return : fn : Array.from pendingGlyphs
 
 	glyph-block-export applyRelations
@@ -319,6 +328,8 @@ glyph-block AutoBuild-Enclosure : begin
 
 	define [createCircledGlyphs digits demands]
 		EnclosureT "circle" CircledBuilder StandardSpacing digits 1 demands CircleEnclosureShape
+	define [createBackslashCircledGlyphs digits demands]
+		EnclosureT "circle-slashed" CircledBuilder StandardSpacing digits 1 demands BackslashCircleEnclosureShape
 	define [createItalicCircledGlyphs digits demands]
 		EnclosureT "circle-italic" CircledBuilder ItalicSpacing digits 1 demands CircleEnclosureShape
 	define [createSansSerifCircledGlyphs digits demands]
@@ -328,6 +339,14 @@ glyph-block AutoBuild-Enclosure : begin
 		set-width width
 		include : OShape top bot left right sw archDepthA archDepthB
 		include : AddEnclosureMark digits : circleDimens digits ww
+	define [BackslashCircleEnclosureShape digits ww gap] : glyph-proc
+		include : CircleEnclosureShape digits ww gap
+		define [object width sw top bot left right archDepthA archDepthB] : circleDimens digits ww
+		include : intersection
+			OShapeOutline top bot left right sw archDepthA archDepthB
+			dispiro
+				flat 0     [mix bot top 0.77] [widths.center sw]
+				curl width [mix bot top (1 - 0.77)]
 
 	define [createBoxedGlyphs digits demands]
 		EnclosureT 'boxed' CircledBuilder StandardSpacing digits 1 demands BoxEnclosureShape
@@ -605,6 +624,8 @@ glyph-block AutoBuild-Enclosure : begin
 	define [digitGlyphNames j] : begin
 		return : [(j+'').split ''].map: c => [glyphStore.queryNameOfUnicode (['0'.charCodeAt 0] + (c - 0))]
 
+	define [digitHasSerif d] : not (d == 6 || d == 8 || d == 9)
+
 	do "Single-digit circled"
 		local compositions : list
 			list 0xA9    {'C'}                       WideWidth2
@@ -612,14 +633,18 @@ glyph-block AutoBuild-Enclosure : begin
 			list 0x2117  {'P'}                       WideWidth2
 			list 0x1F1AD {'M'}                       WideWidth2
 			list 0x24EA  {'zero.lnum'}               WideWidth1
-			list 0x1F10D {'zero.lnum/forceSlashed'}  WideWidth1
-		foreach [j : range 1 till 9] : compositions.push : list
-			0x2460 + j - 1
-			digitGlyphNames j
-			begin WideWidth1
+			list 0x1F10B {'zero.lnum'}               WideWidth1 # We don't have serifs for digit 0, so make an alias here
+			list 0x1F10D {'zero.lnum/forceSlashed'}  WideWidth2
+		foreach [j : range 1 till 9] : compositions.push : list (0x2460 + j - 1) [digitGlyphNames j] WideWidth1
+		foreach [j : range 1 till 9] : if [not : digitHasSerif j] : compositions.push : list (0x2780 + j - 1) [digitGlyphNames j] WideWidth1
 		foreach [j : range 0 26] : compositions.push {(0x24B6 + j) {[glyphStore.queryNameOfUnicode (['A'.charCodeAt 0] + j)]} WideWidth1}
 		foreach [j : range 0 26] : compositions.push {(0x24D0 + j) {[glyphStore.queryNameOfUnicode (['a'.charCodeAt 0] + j)]} WideWidth1 0.5 (XH/2)}
 		createCircledGlyphs 1 compositions
+
+	do "Single-digit backslash-circled"
+		createBackslashCircledGlyphs 1 : list
+			list 0x1F10F {'dollar'} WideWidth2
+			list 0x1F16E {'C'}      WideWidth2
 
 	do "Single-digit italic circled"
 		createItalicCircledGlyphs 1 : list
@@ -628,14 +653,13 @@ glyph-block AutoBuild-Enclosure : begin
 
 	do "Single-digit sans-serif circled"
 		local compositions : list
-			list 0x1F10B  {'zero.lnum'}  WideWidth1
-		foreach [j : range 1 till 9] : compositions.push : list (0x2780 + j - 1) [digitGlyphNames j] WideWidth1
+		foreach [j : range 1 till 9] : if [digitHasSerif j] : compositions.push : list (0x2780 + j - 1) [digitGlyphNames j] WideWidth1
 		createSansSerifCircledGlyphs 1 compositions
 
 	do "Double-digit circled"
 		local compositions : list
 			list null    {'markBaseSpace'} WideWidth1
-			list 0x1F16D {'C' 'C'} WideWidth1
+			list 0x1F16D {'C' 'C'} WideWidth2
 			list 0x1F12D {'C' 'D'} WideWidth1
 			list 0x1F12E {'W' 'z'} WideWidth1
 		foreach [j : range 10 till 20] : compositions.push : list (0x2460 + j - 1) [digitGlyphNames j] WideWidth1
@@ -650,15 +674,16 @@ glyph-block AutoBuild-Enclosure : begin
 
 	do "Single-digit inset circled"
 		local compositions : list
-			list 0x24FF {'zero.lnum'} WideWidth1
+			list 0x24FF  {'zero.lnum'} WideWidth1
+			list 0x1F10C {'zero.lnum'} WideWidth1 # We don't have serifs for digit 0, so make an alias here
 		foreach [j : range 1 till 9] : compositions.push : list (0x2776 + j - 1) [digitGlyphNames j] WideWidth1
+		foreach [j : range 1 till 9] : if [not : digitHasSerif j] : compositions.push : list (0x278A + j - 1) [digitGlyphNames j] WideWidth1
 		foreach [j : range 0 26] : compositions.push {(0x1F150 + j) {[glyphStore.queryNameOfUnicode (['A'.charCodeAt 0] + j)]} WideWidth1}
 		createInsetCircledGlyphs 1 compositions
 
 	do "Single-digit inset sans-serif circled"
 		local compositions : list
-			list 0x1F10C  {'zero.lnum'}  WideWidth1
-		foreach [j : range 1 till 9] : compositions.push : list (0x278A + j - 1) [digitGlyphNames j] WideWidth1
+		foreach [j : range 1 till 9] : if [digitHasSerif j] : compositions.push : list (0x278A + j - 1) [digitGlyphNames j] WideWidth1
 		createInsetSansSerifCircledGlyphs 1 compositions
 
 	do "Double-digit inset circled"
@@ -1045,7 +1070,6 @@ glyph-block AutoBuild-Accented-Equal : begin
 		applyRelations jobs.relApplications
 
 	createAccentedOp 'equal' 7 0.4 0 aboveMarkBot : list
-		list 0x2257 {"o"}
 		list 0x225e {"m"}
 		list 0x225F {"question/hookPart" "question/dotPart"}
 	createAccentedOp 'equal' 5 0.8 0 aboveMarkBot : list
@@ -1055,7 +1079,7 @@ glyph-block AutoBuild-Accented-Equal : begin
 		list 0x225a {"triangularVee.NWID"}
 		list 0x225b {"blackStar.NWID"}
 		list 0x225c {"whiteTriangleUp.NWID"}
-		list 0x2a6e {"asterisk.hexSMid"}
+		list 0x2a6e {"mathAsterisk"}
 	createAccentedOp 'sqrt' 5 0.5 (-Width / 4) [mix OperBot OperTop 0.6] : list
 		list 0x221b {"three.lnum"}
 		list 0x221c {"four.lnum"}
@@ -1240,110 +1264,137 @@ glyph-block Autobuild-Pnonetic-Ligatures : begin
 	glyph-block-import Common-Derivatives
 	glyph-block-import Recursive-Build : Thinner
 	glyph-block-import Autobuild-Enclosure-Shared : CollectJobs CreateDerivedFontFromJobs EnsureComponentGlyphT applyRelations
+	glyph-block-import Autobuild-Transformed-Shared : ToSuperscript ToSubscript
 
-	define [createPhoneticLigatures prefix div _shrink1 _shrink2 wadj1 wadj2 tfm demands] : begin
-		define CWidth : Width * div
-		define jobs : CollectJobs NON-DECOMPOSABLE NOT-CENTERED ALLOW-PROPORTIONAL prefix "" demands
-		local shrink1 : clamp 0 1 _shrink1
-		local shrink2 : clamp 0 1 _shrink2
-		local kern : SB * shrink1 + SB * shrink2 + 0.5 * Stroke * [mix shrink1 shrink2 0.5] - OX * 2
-		foreach [cycle : range 0 4] : begin
-			set kern : SB * shrink1 + SB * shrink2 + 0.5 * Stroke * [mix shrink1 shrink2 0.5] - OX * 2
-			local tmp-shrink1 : (shrink1 * CWidth + kern * shrink1 / (shrink1 + shrink2)) / CWidth
-			local tmp-shrink2 : (shrink2 * CWidth + kern * shrink2 / (shrink1 + shrink2)) / CWidth
-			set shrink1 : clamp 0 1 tmp-shrink1
-			set shrink2 : clamp 0 1 tmp-shrink2
+	define [createPhoneticLigatures tfm prefix div mockNParts _shrink kKern demands] : begin
+		local ww0 : Width * div
+		local wwM : ww0 / [fallback tfm.crowdAdjScale 1]
+		local jobs : CollectJobs DECOMPOSABLE NOT-CENTERED ALLOW-PROPORTIONAL prefix "" demands
+		local shrink : clamp 0 1 _shrink
+		local kern 0
+		foreach [cycle : range 0 8] : begin
+			set kern : kKern * (2 * SB * shrink + (0.5 * Stroke * shrink * HVContrast - OX * 2))
+			local tmpShrink : (wwM + kern * (mockNParts - 1)) / (mockNParts * Width)
+			set shrink : Math.max _shrink : clamp 0 1 tmpShrink
 
-		local df1 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink1 true tfm.crowd tfm.crowdAdjScale
-		local df2 : CreateDerivedFontFromJobs jobs {} : lambda [gs] : Thinner gs shrink2 true tfm.crowd tfm.crowdAdjScale
+		local thinFont : CreateDerivedFontFromJobs jobs {} : function [gs]
+			Thinner gs shrink true tfm.crowd tfm.crowdAdjScale
 
-		# TODO: we need a better geometry to do such minkovski sums
-		define [createMaskout c1 c2 s] : begin
-			define dfg1 : df1.queryByNameEnsured c1
-			define dfg2 : df2.queryByNameEnsured c2
-			return : WithTransform [Translate (s + dfg1.advanceWidth * wadj1 - kern) 0] dfg2
-
-		foreach [{gn unicode { c1 c2 } mak} : items-of jobs.nonDecomposable] : if [not : query-glyph gn] : begin
-
-			local step (-OX)
-			local s    step
-			local dist (Stroke * 2)
-
-			local maskOuts : list
-				createMaskout c1 c2 0.01
-				createMaskout c1 c2 (dist - 0.01)
-			while (s < dist) : begin
-				maskOuts.push : createMaskout c1 c2 s
-				set s : s + step
-
-			create-glyph gn unicode : glyph-proc
-				set-width CWidth
-				if mak : include : [DivFrame (CWidth / Width)].markSet.(mak)
-				define dfg1 : df1.queryByNameEnsured c1
-				define dfg2 : df2.queryByNameEnsured c2
-				local sumChildrenWidth : dfg1.advanceWidth * wadj1 + dfg2.advanceWidth * wadj2
-				local refW : sumChildrenWidth - kern
-				include dfg2
-				include : Translate (dfg1.advanceWidth * wadj1 - kern) 0
-				local leftHalf : intersection dfg1
-					Rect (CAP * 2) (Descender * 2) (-CWidth) (dfg1.advanceWidth * wadj1 - kern + dfg2.advanceWidth * wadj2 / 2)
-				include leftHalf
-				# include : difference.apply null { leftHalf :: maskOuts }
-				include : Ungizmo
-				include : Translate (-refW / 2) 0
-				include : Scale [clamp 0 1 ((CWidth - SB * 1.25) / (CWidth - SB * 2) * CWidth / refW)] 1
-				include : Translate (CWidth / 2) 0
-				include : Regizmo
-
+		define [LigaturePlaceholderImpl aw markPlacement mak] : begin
+			define gni : '.phonetic-ligature-placeholder@' + [{ prefix aw markPlacement mak }.join '/']
+			if [query-glyph gni] : return gni
+			create-glyph gni : glyph-proc
+				set-width aw
+				if mak : include : [DivFrame div].markSet.(mak)
+				set-base-anchor 'enclosureInner' markPlacement 0
+				set-base-anchor 'slash' (aw / 2) (Ascender / 2)
 				include : tfm div
+			return gni
+
+		define [LigaturePartImpl thinFont compress markDist maskPos] : lambda [gidPart] : begin
+			define gni : '.phonetic-ligature-part.' + gidPart + '@' + [{ prefix compress markDist maskPos }.join '/']
+			if [query-glyph gni] : return gni
+			create-glyph gni : glyph-proc
+				set-width 0
+				include : difference
+					thinFont.queryByNameEnsured gidPart
+					MaskRight maskPos
+				include : Ungizmo
+				include : Scale compress 1
+				include : Regizmo
+				set-mark-anchor 'enclosureInner' 0 0 markDist 0
+				include : tfm div
+			return gni
+
+		define [LigatureImpl job decomposable] : if [not : query-glyph gn] : begin
+			local { gn unicode components mak } job
+
+			local sumChildrenWidth    0
+			local effectiveGlyphCount 0
+			local originals {}
+			local dfgs      {}
+			foreach { i component } [components.entries] : begin
+				set originals.(i) : query-glyph component
+				set dfgs.(i) : thinFont.queryByNameEnsured component
+				if (originals.(i).advanceWidth > 0) : inc effectiveGlyphCount
+				set sumChildrenWidth : sumChildrenWidth + dfgs.(i).advanceWidth
+
+			local refW      : sumChildrenWidth - kern * (effectiveGlyphCount - 1)
+			local compRefWw   wwM
+			local compress  : clamp 0 1 (compRefWw / refW)
+
+			if [not : query-glyph gn] : create-glyph gn unicode : glyph-proc
+				local decomposition   { }
+				local baseOffset : ww0 / 2 - refW * compress / 2
+				foreach { i component } [components.entries] : do
+					local currentIsMark : 0 == originals.(i).advanceWidth
+
+					local componentAdvance : if currentIsMark 0 : compress * (dfgs.(i).advanceWidth - kern)
+					local maskPos : dfgs.(i).advanceWidth - kern + [if ((i + 1) < effectiveGlyphCount) (dfgs.(i + 1).advanceWidth / 2) ww0]
+
+					if (i === 0) : begin
+						local placeholder : LigaturePlaceholderImpl ww0 baseOffset mak
+						decomposition.push placeholder
+						include [refer-glyph placeholder] AS_BASE ALSO_METRICS
+
+					if currentIsMark : then : begin
+						include [refer-glyph component]
+					: else : begin
+						local part : EnsureComponentGlyphT component
+							LigaturePartImpl thinFont compress componentAdvance maskPos
+						decomposition.push part
+						include [refer-glyph part]
+
+				if decomposable : CvDecompose.set currentGlyph decomposition
+
+		foreach job [items-of jobs.nonDecomposable]  : LigatureImpl job false
+		foreach job [items-of jobs.decomposableJobs] : LigatureImpl job true
 
 		applyRelations jobs.relApplications
 
 	define [ToLetter] : glyph-proc
-	define [ToSuperscript div] : glyph-proc
-		local df : DivFrame df
-		include [Ungizmo] true
-		include [Translate (-df.middle) (-CAP)] true
-		include [Scale 0.7] true
-		include [Translate df.middle (CAP + AccentStackOffset / 2)] true
-		include [Regizmo] true
 
-	set ToSuperscript.crowd         3.5
-	set ToSuperscript.crowdAdjScale 0.7
-	define [AddSlash] : glyph-proc
-		include [refer-glyph 'wideSlashOver']
-
-	define stdShrink : clamp 0.75 0.9 : StrokeWidthBlend 0.75 0.9
-	createPhoneticLigatures 'phonetic' para.diversityM stdShrink stdShrink 1 1 ToLetter : list
+	define stdShrink : clamp 0.625 0.9 : StrokeWidthBlend 0.625 0.9
+	createPhoneticLigatures ToLetter 'phonetic' para.diversityM 2 stdShrink 1 : list
 		list 0x02A3 { 'd/phoneticLeft'  'z'                     } 'b'
-		list 0x02A4 { 'd/phoneticLeft'  'ezh'                   } 'if'
-		list 0x02A5 { 'd/phoneticLeft'  'zCurlyTail'            } 'if'
+		list 0x02A4 { 'd/phoneticLeft'  'ezh'                   } 'bp'
+		list 0x02A5 { 'd/phoneticLeft'  'zCurlyTail'            } 'b'
 		list 0x02A6 { 't/phoneticLeft2' 's/phoneticRight'       } 'b'
-		list 0x02A7 { 't/teshLeft'      'esh'                   } 'if'
+		list 0x02A7 { 't/teshLeft'      'esh'                   } 'bp'
 		list 0x02A8 { 't/phoneticLeft1' 'cCurlyTail'            } 'b'
-		list 0x02A9 { 'f/phoneticLeft'  'eng/phoneticRight'     } 'if'
+		list 0x02A9 { 'f/phoneticLeft'  'eng/phoneticRight'     } 'bp'
 		list 0x02AA { 'l/phoneticLeft'  's/phoneticRight'       } 'b'
 		list 0x02AB { 'l/phoneticLeft'  'z'                     } 'b'
-		list 0xAB66 { 'd/phoneticLeft'  'zRTailBR'              } 'if'
-		list 0xAB67 { 't/phoneticLeft1' 'sRTail'                } 'p'
+		list 0xAB66 { 'd/phoneticLeft'  'zRTailBR'              } 'bp'
+		list 0xAB67 { 't/phoneticLeft1' 'sRTail'                } 'bp'
+		list 0xFB00 { 'f'               'f'                     } null
 		list 0xFB01 { 'f/compLigLeft1'  'dotlessi/compLigRight' } null
 		list 0xFB02 { 'f/compLigLeft2'  'l/compLigRight'        } null
+		list 0xFB05 { 'longs/flatExt'   't/phoneticLeft2'       } null
+		list 0xFB06 { 's/compLigLeft'   't/phoneticLeft3'       } null
 
-	createPhoneticLigatures 'phoneticSuperscript' 1 stdShrink stdShrink 1 1 ToSuperscript : list
+	createPhoneticLigatures ToLetter 'phonetic2' para.diversityM 3 stdShrink 1 : list
+		list 0xFB03 { 'f/compLigLeft1' 'f/compLigLeft1' 'dotlessi/compLigRight' } null
+		list 0xFB04 { 'f/compLigLeft3' 'f/compLigLeft2' 'l/compLigRight'        } null
+
+	createPhoneticLigatures ToSuperscript 'phoneticSuperscript' 1 2 stdShrink 1 : list
 		list 0x10787 { 'd/phoneticLeft'  'z'                     } 'b'
-		list 0x1078A { 'd/phoneticLeft'  'ezh'                   } 'if'
-		list 0x10789 { 'd/phoneticLeft'  'zCurlyTail'            } 'if'
+		list 0x1078A { 'd/phoneticLeft'  'ezh'                   } 'bp'
+		list 0x10789 { 'd/phoneticLeft'  'zCurlyTail'            } 'bp'
 		list 0x107AC { 't/phoneticLeft2' 's/phoneticRight'       } 'b'
-		list 0x107AE { 't/teshLeft'      'esh'                   } 'if'
+		list 0x107AE { 't/teshLeft'      'esh'                   } 'bp'
 		list 0x107AB { 't/phoneticLeft1' 'cCurlyTail'            } 'b'
-		list 0x10790 { 'f/phoneticLeft'  'eng/phoneticRight'     } 'if'
+		list 0x10790 { 'f/phoneticLeft'  'eng/phoneticRight'     } 'bp'
 		list 0x10799 { 'l/phoneticLeft'  's/phoneticRight'       } 'b'
 		list 0x1079A { 'l/phoneticLeft'  'z'                     } 'b'
-		list 0x10788 { 'd/phoneticLeft'  'zRTailBR'              } 'if'
+		list 0x10788 { 'd/phoneticLeft'  'zRTailBR'              } 'bp'
 		list 0x107AD { 't/phoneticLeft1' 'sRTail'                } 'p'
 
-	createPhoneticLigatures 'thSlash' 1 stdShrink stdShrink 1 1 AddSlash : list
-		list 0x1D7A { 't/phoneticLeft1' 'h' } 'b'
+	createPhoneticLigatures ToSubscript 'tenSubscript' 1 2 1 0.5 : list
+		list 0x23E8 { 'one.lnum' 'zero.lnum' } 'capital'
+
+	createPhoneticLigatures ToLetter 'thSlash' 1 2 stdShrink 1 : list
+		list 0x1D7A { 't/phoneticLeft1' 'h' 'wideSlash' } 'b'
 
 glyph-block Autobuild-Double-Emotions : begin
 	glyph-block-import CommonShapes

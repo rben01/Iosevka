@@ -8,17 +8,10 @@ import [DesignParameters] from"../meta/aesthetics.mjs"
 
 extern isFinite
 
-import [mix linreg clamp fallback] from"../support/utils.mjs"
-import [calculateMetrics setFontMetrics MarksetDiv GenDivFrame] from"../meta/aesthetics.mjs"
+import [mix linreg clamp fallback $NamedParameterPair$] from"../support/utils.mjs"
+import [calculateMetrics setFontMetrics GenDivFrame] from"../meta/aesthetics.mjs"
 
 $$include '../meta/macros.ptl'
-
-define [$NamedParameterPair$ l r] : begin
-	set this.left l
-	set this.right r
-	return this
-
-define [$DoNothing$] nothing
 
 export : define [buildGlyphs para recursive] : begin
 	local glyphStore : new GlyphStore
@@ -90,6 +83,7 @@ export : define [buildGlyphs para recursive] : begin
 		globalTransform Metrics.GlobalTransform
 		Contrast        Metrics.Contrast
 		Stroke          Metrics.Stroke
+		CorrectionOMidX Metrics.CorrectionOMidX
 		Superness       DesignParameters.superness
 	define BooleFns : BooleKit.SetupBuilders : object
 		globalTransform Metrics.GlobalTransform
@@ -109,7 +103,6 @@ export : define [buildGlyphs para recursive] : begin
 		$assignUnicodeImpl$
 		$defineGlyphBlockImpl$
 		$execState$
-		$DoNothing$
 		Metrics : Object.assign {.} Metrics
 		para
 		recursive
@@ -158,8 +151,8 @@ export : define [buildGlyphs para recursive] : begin
 		run-glyph-module "./auto-build/special-accented-letters.mjs"
 		run-glyph-module "./auto-build/mark-doppelganger.mjs"
 		run-glyph-module "./auto-build/accents.mjs"
-		run-glyph-module "./auto-build/composite.mjs"
 		run-glyph-module "./auto-build/transformed.mjs"
+		run-glyph-module "./auto-build/composite.mjs"
 
 	foreach [gb : items-of $pendingGlyphBlocks$] : gb.resolve
 

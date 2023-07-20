@@ -51,6 +51,7 @@ desc = 'Treat dot (`.`) as operator and perform chained centering'
 [simple.center-op-influence-colon]
 ligGroup =  "center-op-influence-colon"
 samples = ["<:", "<:>", ":>", ":=", "=:", ":-", "-:"]
+desc = 'Treat colon (`:`) as operator and perform chained centering'
 
 
 
@@ -329,6 +330,7 @@ buildup = [
 	'llgg',
 	'llggeq',
 	'plusplus',
+	'connected-underscore'
 ]
 
 [composite.dlig]
@@ -372,6 +374,7 @@ buildup = [
 	'llgg',
 	'llggeq',
 	'plusplus',
+	'connected-underscore'
 ]
 
 [composite.javascript]
@@ -390,6 +393,7 @@ buildup = [
 	'llgg',
 	'llggeq',
 	'plusplus',
+	'connected-underscore'
 ]
 
 [composite.php]
@@ -409,6 +413,7 @@ buildup = [
 	'llgg',
 	'llggeq',
 	'plusplus',
+	'connected-underscore'
 ]
 
 [composite.julia]

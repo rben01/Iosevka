@@ -438,12 +438,16 @@ glyph-block Symbol-Geometric-Plain : for-width-kinds WideWidth1
 		StdWhiteShape CircleShape 'exHeavyWhiteCircle'   0x1F789 {.sw [UnicodeWeightGrade 11 Geom.Scalar]}
 		StdWhiteShape CircleShape 'heavyLargeCircle'     0x2B55  [Object.assign {.sw [UnicodeWeightGrade 9 Geom.Scalar]} Size.Large]
 
+		StdBlackShape CircleShape 'blackVerySmallCircle' null Size.VerySmall
 		StdBlackShape CircleShape 'blackSmallCircle' null Size.Small
+		StdBlackShape CircleShape 'blackMediumSmallCircle' 0x2981 Size.MediumSmall
+		StdBlackShape CircleShape 'blackSlightlySmallCircle' 0x1F784 Size.SlightlySmall
 		StdBlackShape CircleShape 'blackMediumCircle' 0x26AB Size.Medium
 		StdBlackShape CircleShape 'blackLargeCircle' 0x2B24 Size.Large
-		StdBlackShape CircleShape 'blackSlightlySmallCircle' 0x1F784 Size.SlightlySmall
 
+		StdWhiteShape CircleShape 'whiteVerySmallCircle' null Size.VerySmall
 		StdWhiteShape CircleShape 'whiteSmallCircle' null Size.Small
+		StdWhiteShape CircleShape 'whiteMediumSmallCircle' 0x26AC Size.MediumSmall
 		StdWhiteShape CircleShape 'whiteMediumCircle' 0x26AA Size.Medium
 		StdWhiteShape CircleShape 'whiteLargeCircle' 0x25EF Size.Large
 
@@ -456,34 +460,6 @@ glyph-block Symbol-Geometric-Plain : for-width-kinds WideWidth1
 
 		StdBlackShape CircleInvertInnerShape 'blackInvInnerCircle' null
 		StdWhiteShape CircleInvertInnerShape 'whiteInvInnerCircle' null
-
-		create-glyph [MangleName 'dottedCircle'] [MangleUnicode 0x25CC] : glyph-proc
-			set-width Geom.Width
-			include : [DivFrame Geom.Scalar].markSet.plus
-			local n : 12 * [Math.ceil Geom.Scalar]
-			local fine : AdviceStroke 10
-			foreach j [range 0 n] : begin
-				local angle : Math.PI * 2 * j / n
-				local cx : Geom.MidX + (Geom.Right - Geom.MidX) * [Math.cos angle]
-				local cy : Geom.MidY + (Geom.Right - Geom.MidX) * [Math.sin angle]
-				include : CircleRingAt cx cy fine
-
-		create-glyph [MangleName 'dottedSquare'] [MangleUnicode 0x2B1A] : glyph-proc
-			set-width Geom.Width
-			include : [DivFrame Geom.Scalar].markSet.plus
-			local n : 4 * [Math.ceil Geom.Scalar]
-			local fine : AdviceStroke 10
-			local box : object
-				Left : Geom.Left + fine
-				Right : Geom.Right - fine
-				Top : Geom.Top - fine
-				Bot : Geom.Bot + fine
-			foreach j [range 0 n] : begin
-				local t : j / n
-				include : CircleRingAt box.Left [mix box.Bot box.Top t] fine
-				include : CircleRingAt [mix box.Left box.Right t] box.Top fine
-				include : CircleRingAt box.Right [mix box.Top box.Bot t] fine
-				include : CircleRingAt [mix box.Right box.Left t] box.Bot fine
 
 	do "Ellipse"
 		define [EllipseFillT kx ky] : lambda  [cx cy r s] : begin

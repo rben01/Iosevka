@@ -1,6 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
-import [mix linreg clamp fallback] from"../../../support/utils.mjs"
+import [mix fallback SuffixCfg] from"../../../support/utils.mjs"
 import [Dotless CvDecompose MathSansSerif] from"../../../support/gr.mjs"
 
 glyph-module
@@ -11,10 +11,10 @@ glyph-block Letter-Latin-Lower-M : begin
 	glyph-block-import Letter-Shared : CreateAccentedComposition
 	glyph-block-import Letter-Shared-Shapes : SerifFrame RightwardTailedBar DToothlessRise DMBlend
 	glyph-block-import Letter-Shared-Shapes : nShoulder nShoulderMask
-	glyph-block-import Letter-Shared-Shapes : CyrDescender PalatalHook VerticalHook
+	glyph-block-import Letter-Shared-Shapes : CyrDescender PalatalHook CurlyTail
 
 	define [SmallMSmooth df] : df.div * (0.5 * SmallArchDepth + 0.375 * Stroke)
-	define [SmallMShoulderSpiro] : params [left right top bottom width fine df coBottom] : glyph-proc
+	define [SmallMShoulderSpiro] : with-params [left right top bottom width fine df coBottom] : glyph-proc
 		local fix : TanSlope * Stroke * HVContrast * width / Stroke
 		local sm : [SmallMSmooth df] + fix / 2
 		include : spiro-outline
@@ -37,7 +37,7 @@ glyph-block Letter-Latin-Lower-M : begin
 			corner right [Math.min (top - sm - 0.1) bottom]
 			close
 
-	define [RevSmallMShoulderSpiro] : params [left right top bottom width fine df coBottom] : glyph-proc
+	define [RevSmallMShoulderSpiro] : with-params [left right top bottom width fine df coBottom] : glyph-proc
 		local fix : TanSlope * Stroke * HVContrast * width / Stroke
 		local sm : [SmallMSmooth df] - fix / 2
 		include : spiro-outline
@@ -74,18 +74,20 @@ glyph-block Letter-Latin-Lower-M : begin
 
 	define [SmallMBottomRightSerif df top rbot] : begin
 		local sf : SerifFrame.fromDf df top rbot
-		return : if (!para.isItalic && sf.enoughSpaceForFullSerifs) sf.rb.full sf.rb.outer
+		return : if sf.enoughSpaceForFullSerifs sf.rb.full sf.rb.outer
 
 	define [SmallMBottomMotionRightSerif df top rbot] : begin
 		local sf : SerifFrame.fromDf df top rbot
 		return sf.rb.outer
 
-	define [AutoSerifs df top lbot mbot rbot tailed earless] : glyph-proc
-		if SLAB : begin
-			if [not earless] : include : SmallMTopLeftSerif df top lbot
-			if [not para.isItalic] : include : SmallMBottomLeftSerif df top lbot
-			if [not para.isItalic] : include : SmallMBottomMiddleSerif df top mbot
-			if [not tailed] : include : SmallMBottomRightSerif df top rbot
+	define [FullSerifs df top lbot mbot rbot tailed earless] : glyph-proc
+		if [not earless] : include : SmallMTopLeftSerif df top lbot
+		include : SmallMBottomLeftSerif df top lbot
+		include : SmallMBottomMiddleSerif df top mbot
+		if [not tailed] : include : SmallMBottomRightSerif df top rbot
+
+	define [AutoSerifs df top lbot mbot rbot tailed earless] : begin
+		if SLAB [FullSerifs df top lbot mbot rbot tailed earless] [no-shape]
 
 	define [LtSerifs df top lbot mbot rbot tailed earless] : glyph-proc
 		include : SmallMTopLeftSerif df top lbot
@@ -132,7 +134,7 @@ glyph-block Letter-Latin-Lower-M : begin
 			curl df.rightSB rbot [heading Downward]
 
 		include : tagged 'barL' : VBar.l df.leftSB lbot (top - DToothlessRise) df.mvs
-		include : tagged 'barM' : VBar.m     df.middle mbot (top - DToothlessRise) df.mvs
+		include : tagged 'barM' : VBar.m df.middle mbot (top - DToothlessRise) df.mvs
 
 	define [EarlessRoundedDoubleArchSmallMShape top lbot mbot rbot df] : glyph-proc
 		include : union
@@ -166,35 +168,25 @@ glyph-block Letter-Latin-Lower-M : begin
 			flat df.rightSB [Math.max (top - [SmallMSmooth df]) (rbot + 0.1)]
 			curl df.rightSB rbot [heading Downward]
 
-	define SmallMConfig : object
-		normal                                 { SmallMArches                        AutoSerifs 0 0 0 }
-		tailed                                 { SmallMArches                        AutoSerifs 1 0 0 }
-		shortLeg                               { SmallMArches                        AutoSerifs 0 1 0 }
-		shortLegTailed                         { SmallMArches                        AutoSerifs 1 1 0 }
-		topLeftSerifed                         { SmallMArches                        LtSerifs   0 0 0 }
-		topLeftSerifedTailed                   { SmallMArches                        LtSerifs   1 0 0 }
-		shortLegTopLeftSerifed                 { SmallMArches                        LtSerifs   0 1 0 }
-		shortLegTopLeftSerifedTailed           { SmallMArches                        LtSerifs   1 1 0 }
-		topLeftAndBottomRightSerifed           { SmallMArches                        LtRbSerifs 0 0 0 }
-		shortLegTopLeftAndBottomRightSerifed   { SmallMArches                        LtRbSerifs 0 1 0 }
-		normal                                 { SmallMArches                        AutoSerifs 0 0 0 }
-		tailed                                 { SmallMArches                        AutoSerifs 1 0 0 }
-		shortLeg                               { SmallMArches                        AutoSerifs 0 1 0 }
-		shortLegTailed                         { SmallMArches                        AutoSerifs 1 1 0 }
-		earlessCornerDoubleArch                { EarlessCornerDoubleArchSmallMShape  AutoSerifs 0 0 1 }
-		earlessCornerDoubleArchTailed          { EarlessCornerDoubleArchSmallMShape  AutoSerifs 1 0 1 }
-		earlessCornerDoubleArchShortLeg        { EarlessCornerDoubleArchSmallMShape  AutoSerifs 0 1 1 }
-		earlessCornerDoubleArchShortLegTailed  { EarlessCornerDoubleArchSmallMShape  AutoSerifs 1 1 1 }
-		earlessRoundedDoubleArch               { EarlessRoundedDoubleArchSmallMShape AutoSerifs 0 0 1 }
-		earlessRoundedDoubleArchTailed         { EarlessRoundedDoubleArchSmallMShape AutoSerifs 1 0 1 }
-		earlessRoundedDoubleArchShortLeg       { EarlessRoundedDoubleArchSmallMShape AutoSerifs 0 1 1 }
-		earlessRoundedDoubleArchShortLegTailed { EarlessRoundedDoubleArchSmallMShape AutoSerifs 1 1 1 }
-		earlessSingleArch                      { EarlessSingleArchSmallMShape        AutoSerifs 0 0 1 }
-		earlessSingleArchTailed                { EarlessSingleArchSmallMShape        AutoSerifs 1 0 1 }
-		earlessSingleArchShortLeg              { EarlessSingleArchSmallMShape        AutoSerifs 0 1 1 }
-		earlessSingleArchShortLegTailed        { EarlessSingleArchSmallMShape        AutoSerifs 1 1 1 }
+	define SmallMConfig : SuffixCfg.weave
+		object
+			""                             { SmallMArches                        0 }
+			"earlessCornerDoubleArch"      { EarlessCornerDoubleArchSmallMShape  1 }
+			"earlessRoundedDoubleArch"     { EarlessRoundedDoubleArchSmallMShape 1 }
+			"earlessSingleArch"            { EarlessSingleArchSmallMShape        1 }
+		object
+			""                             { 0 }
+			"shortLeg"                     { 1 }
+		object
+			""						       { 0 }
+			"tailed"                       { 1 }
+		object
+			"serifless"                    { no-shape   }
+			"serifed"                      { FullSerifs }
+			"topLeftSerifed"               { LtSerifs   }
+			"topLeftAndBottomRightSerifed" { LtRbSerifs }
 
-	foreach { suffix { Body Serifs tailed shortLeg earless } } [Object.entries SmallMConfig] : do
+	foreach { suffix { {Body earless} {shortLeg} {tailed} {Serifs} } } [pairs-of SmallMConfig] : do
 		define [mShapeBody df height] : glyph-proc
 			include : Body height 0 [if shortLeg [SmallMShortLegHeight height df] 0] [if tailed ([SmallMSmoothHeight height df] + O) 0] df
 			if tailed : include : RightwardTailedBar df.rightSB 0 [SmallMSmoothHeight height df] (sw -- df.mvs)
@@ -215,10 +207,10 @@ glyph-block Letter-Latin-Lower-M : begin
 		create-glyph "mLTail.\(suffix)" : glyph-proc
 			local df : dfM
 			set-width df.width
-			include : df.markSet.p
+			include : df.markSet.e
 			include [refer-glyph "m.\(suffix)"]
 			eject-contour 'serifRB'
-			include : VerticalHook.r df.rightSB 0 (-HookX) Hook (sw -- df.mvs)
+			include : PalatalHook.rExt df.rightSB 0 (sw -- df.mvs)
 
 		create-glyph "turnmLeg.\(suffix)" : glyph-proc
 			local df : dfM
@@ -238,10 +230,34 @@ glyph-block Letter-Latin-Lower-M : begin
 			local realTop : XH / 2 + realHeight / 2
 			local realBot : XH / 2 - realHeight / 2
 			local df : DivFrame (realHeight / Width) 3 (XH * 0.1 / SB)
+			include : df.markSet.e
 			include : PointingTo Width realTop Width realBot : function [] : glyph-proc
 				include : mShapeBody df (Width - SB)
 				include : FlipAround df.middle ((Width - SB) / 2)
 				include : Translate 0 (SB / 2)
+
+		create-glyph "mCrossedTail.\(suffix)" : glyph-proc
+			local df : DivFrame para.diversityM 4
+			set-width df.width
+			include : df.markSet.e
+
+			local fine : AdviceStroke 5.5 df.div
+			local rinner : XH * 0.15 - fine * 0.75
+			local m1 : df.rightSB - df.mvs * HVContrast
+			local m2 : [mix (df.middle + 0.5 * df.mvs * HVContrast) m1 0.35] - 0.5 * fine * HVContrast
+			local x2 : df.rightSB + SideJut
+			local y2 : rinner * 2 + fine - O
+			include : Body XH 0 [if shortLeg [SmallMShortLegHeight XH df] 0] (y2 + O) df
+			include : dispiro
+				straight.down.start df.rightSB (y2 + O) [widths.rhs.heading df.mvs Downward]
+				CurlyTail fine rinner m1 0 m2 x2 y2 (adj -- 0)
+
+			include : Serifs df XH 0 [if shortLeg [SmallMShortLegHeight XH df] 0] 0 true earless
+			if (SLAB && [not shortLeg] && Serifs === FullSerifs) : begin
+				local sf : SerifFrame.fromDf df XH 0
+				if (sf.enoughSpaceForFullSerifs && m2 - (df.middle + sf.jutIn) < 0.01 * Width) : begin
+					eject-contour 'serifMB'
+					include sf.mb.left
 
 	select-variant 'm' 'm'
 	select-variant 'm/tailless' (shapeFrom -- 'm')
@@ -264,13 +280,12 @@ glyph-block Letter-Latin-Lower-M : begin
 	select-variant 'mLTail' 0x271
 	select-variant 'turnmLeg' 0x270 (follow -- 'm')
 	select-variant 'turnmSideways' 0x1D1F (follow -- 'm')
+	select-variant 'mCrossedTail' 0xAB3A (follow -- 'mLTail')
 
-	turned 'turnm' 0x26F 'm' [dfM].middle (XH / 2)
-	turned 'capitalTurnm' 0x19C 'capitalSmallM' [dfM].middle (CAP / 2)
+	turned 'turnm' 0x26F 'm' HalfAdvance (XH / 2)
+	turned 'capitalTurnm' 0x19C 'capitalSmallM' HalfAdvance (CAP / 2)
 
-	CreateAccentedComposition 'mTildeOver' 0x1D6F 'm' 'tildeOverWideDivM'
-
-	derive-composites 'currency/millSign' 0x20A5 'm' 'slashOver'
+	derive-composites 'currency/millSign' 0x20A5 'm' 'shortSlash'
 
 	glyph-block-import Letter-Blackboard : BBS BBD BBBarLeft
 	create-glyph 'mathbb/m' 0x1D55E : glyph-proc

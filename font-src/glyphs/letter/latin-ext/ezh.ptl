@@ -8,7 +8,7 @@ glyph-module
 glyph-block Letter-Latin-Ezh : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
-	glyph-block-import Letter-Shared-Shapes : CurlyTail SerifedArcEnd RetroflexHook VerticalHook
+	glyph-block-import Letter-Shared-Shapes : CurlyTail SerifedArcEnd RetroflexHook
 
 	define [StdTerminalShape top bot yMidBar] : begin
 		local hookDepth : Hook * (top - bot) / [fallback para.cap0 CAP]
@@ -22,7 +22,7 @@ glyph-block Letter-Latin-Ezh : begin
 		g4.down.mid  (RightSB - OX) [mix yMidBar bot p] [heading Downward]
 
 	glyph-block-export EzhShape
-	define [EzhShape] : params [top bot pleft pright terminalShape] : glyph-proc
+	define [EzhShape] : with-params [top bot pleft pright terminalShape] : glyph-proc
 		local cor : 1.2 * HVContrast
 		local yMidBar : mix bot top 0.6
 		local ezhLeft : mix SB RightSB [fallback pleft 0.2]
@@ -47,7 +47,7 @@ glyph-block Letter-Latin-Ezh : begin
 			include : VSerif.dl SB top VJut
 
 	glyph-block-export RevEzhShape
-	define [RevEzhShape] : params [top bot pleft pright hookless [ada SmallArchDepthA] [adb SmallArchDepthB] [diagCoeff 1.2] [pyBar 0.6]] : glyph-proc
+	define [RevEzhShape] : with-params [top bot pleft pright hookless [ada SmallArchDepthA] [adb SmallArchDepthB] [diagCoeff 1.2] [pyBar 0.6]] : glyph-proc
 		local cor : diagCoeff * HVContrast
 		local yMidBar : RevEzhShape.yMidBar top bot pyBar
 		local ezhRight : mix SB RightSB [fallback pright 0.8]
@@ -103,7 +103,7 @@ glyph-block Letter-Latin-Ezh : begin
 		include : RevEzhShape XH Descender
 
 	create-glyph 'lyogh.serifless' : glyph-proc
-		include : MarkSet.if
+		include : MarkSet.bp
 		include : EzhShape XH Descender 0.4
 		include : VBar.l SB (XH * 0.1) Ascender
 
@@ -114,10 +114,10 @@ glyph-block Letter-Latin-Ezh : begin
 	select-variant 'lyogh' 0x26E
 
 	create-glyph 'lyoghRTail.serifless' : glyph-proc
-		include : MarkSet.if
+		include : MarkSet.b
 		include : EzhShape XH 0 0.4
 		include : VBar.l SB 0 Ascender
-		include : VerticalHook.l SB 0 HookX Hook
+		include : RetroflexHook.lExt SB 0
 
 	create-glyph 'lyoghRTail.hooky' : glyph-proc
 		include [refer-glyph 'lyoghRTail.serifless'] AS_BASE ALSO_METRICS
@@ -125,7 +125,8 @@ glyph-block Letter-Latin-Ezh : begin
 
 	select-variant 'lyoghRTail' 0x1DF05 (follow -- 'lyogh')
 
-	create-glyph 'ezhtail' 0x1BA : glyph-proc
+	create-glyph 'ezhTail' 0x1BA : glyph-proc
+		include : MarkSet.p
 		local b : mix Descender XH 0.25
 		include : EzhShape XH b (terminalShape -- [HooklessTerminalShape 0.5])
 		local y : mix [mix b XH 0.6] b 0.5
@@ -141,8 +142,8 @@ glyph-block Letter-Latin-Ezh : begin
 			flat [mix SB RightSB 0.4] (Descender + Stroke)
 			curl RightSB (Descender + Stroke)
 
-	create-glyph 'ezhcurlytail' 0x293 : glyph-proc
-		include : MarkSet.e
+	create-glyph 'ezhCurlyTail' 0x293 : glyph-proc
+		include : MarkSet.p
 		local p : SmallArchDepthB / (SmallArchDepthA + SmallArchDepthB)
 		include : EzhShape XH Descender (terminalShape -- [HooklessTerminalShape p])
 		local fine : AdviceStroke2 3 5 (XH - Descender)
@@ -163,5 +164,5 @@ glyph-block Letter-Latin-Ezh : begin
 			SerifedArcEnd.RtlRhs SB Middle bot Stroke hookDepth
 	create-glyph 'ezhRetroflexHook' 0x1D9A : glyph-proc
 		include : MarkSet.p
-		include : EzhShape XH (Descender + Hook) (terminalShape -- RetroflexConnectionTerminal)
-		include : RetroflexHook.l SB (Descender + Hook) (yAttach -- Descender + Hook * 2)
+		include : EzhShape XH 0 (terminalShape -- RetroflexConnectionTerminal)
+		include : RetroflexHook.l SB 0 (yAttach -- Hook)

@@ -8,6 +8,7 @@ glyph-block Letter-Cyrillic-Orthography : begin
 
 	orthographic-italic 'cyrl/de'             0x434
 	orthographic-italic 'cyrl/dzhe'           0x45F
+	orthographic-italic 'cyrl/dzzhe'          0x52B
 	orthographic-italic 'cyrl/i'              0x438
 	orthographic-italic 'cyrl/iShortTail'     0x48B
 	orthographic-italic 'cyrl/sha'            0x448
@@ -15,7 +16,7 @@ glyph-block Letter-Cyrillic-Orthography : begin
 	orthographic-italic 'cyrl/te'             0x442
 	orthographic-italic 'cyrl/teDescender'    0x4AD
 	orthographic-italic 'cyrl/tse'            0x446
-	orthographic-italic 'cyrl/tstse'          0x4B5
+	orthographic-italic 'cyrl/tetse'          0x4B5
 	orthographic-italic 'cyrl/yat'            0x463
 	orthographic-italic 'cyrl/pe'             0x43f
 	orthographic-italic 'cyrl/peMidHook'      0x4A7
@@ -26,6 +27,7 @@ glyph-block Letter-Cyrillic-Orthography : begin
 	orthographic-italic 'cyrl/gheDescender'   0x4F7
 	orthographic-italic 'cyrl/ve'             0x432
 	orthographic-italic 'cyrl/gheStrokeHook'  0x4FB
+	orthographic-italic 'cyrl/dzze'           0xA689
 	orthographic-italic 'latn/yatSakha'       0xAB60
 
 	# Accented forms

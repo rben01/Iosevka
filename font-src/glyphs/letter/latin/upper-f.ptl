@@ -8,7 +8,7 @@ glyph-module
 glyph-block Letter-Latin-Upper-F : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
-	glyph-block-import Letter-Shared-Shapes : LetterBarOverlay VerticalHook
+	glyph-block-import Letter-Shared-Shapes : LetterBarOverlay PalatalHook
 
 	glyph-block-export xMidBarShrink
 	define [xMidBarShrink serifV] : [Math.max HalfStroke ((RightSB - SB) * 0.15)] + [if serifV (Stroke * 0.25) 0]
@@ -26,7 +26,7 @@ glyph-block Letter-Latin-Upper-F : begin
 	define xFBarLeft : SB * 1.5
 	define xFBarRight : Width - SB * 1.5
 
-	define [FShape] : params [top pyBar serifLT serifLB serifV [stroke : AdviceStroke2 2 3 top]] : glyph-proc
+	define [FShape] : with-params [top pyBar serifLT serifLB serifV [stroke : AdviceStroke2 2 3 top]] : glyph-proc
 		include : VBar.l (xFBarLeft) 0 top stroke
 		include : HBar.t (xFBarLeft - O) RightSB top stroke
 		include : tagged 'crossBar'
@@ -38,19 +38,6 @@ glyph-block Letter-Latin-Upper-F : begin
 		if serifV : begin
 			local { jutTop jutBot } : EFVJutLength top pyBar stroke
 			include : VSerif.dr RightSB top jutTop
-
-	define [RevFShape] : params [top pyBar serifRT serifRB serifV [stroke : AdviceStroke2 2 3 top]] : glyph-proc
-		include : VBar.r (xFBarRight) 0 top stroke
-		include : HBar.t SB (xFBarRight + O) top stroke
-		include : HBar.m (SB + [xMidBarShrink serifV]) (xFBarRight + O) [yMidBar top pyBar] stroke
-		if serifRT : include : HSerif.rt xFBarRight top SideJut
-		if serifRB : begin
-			include : tagged 'serifBottom' : HSerif.rb xFBarRight 0 SideJut
-			include : tagged 'serifBottom' : HSerif.lb (xFBarRight - HalfStroke * HVContrast) 0 MidJutSide
-		if serifV : begin
-			local { jutTop jutBot } : EFVJutLength top pyBar stroke
-			include : VSerif.dl SB top jutTop
-
 
 	define FConfig : object
 		serifless      { false false false }
@@ -111,6 +98,5 @@ glyph-block Letter-Latin-Upper-F : begin
 
 	derive-glyphs 'Fltail' 0x191 'F' : lambda [src gr] : glyph-proc
 		include [refer-glyph src] AS_BASE ALSO_METRICS
-		include : MarkSet.capDesc
 		eject-contour 'serifBottom'
-		include : VerticalHook.l xFBarLeft 0 (-HookX) Hook
+		include : PalatalHook.lExt xFBarLeft 0

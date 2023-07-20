@@ -1,71 +1,48 @@
 ## Modifications since version 2.x
 
-### 22.0.2
+### 25.0.1
 
-* Add characters:
-  - SHOULDERED OPEN BOX (`U+237D`) (#1657).
-  - HEXAGRAM FOR THE CREATIVE HEAVEN (`U+4DC0`) ... HEXAGRAM FOR BEFORE COMPLETION (`U+4DFF`) (#1653).
-  - MODIFIER LETTER SHORT EQUALS SIGN (`U+A78A`) (#1658).
-  - CYRILLIC CAPITAL LETTER YERU WITH BACK YER (`U+A650`).
-  - CYRILLIC SMALL LETTER YERU WITH BACK YER (`U+A651`).
-  - MODIFIER LETTER CYRILLIC SMALL YERU WITH BACK YER (`U+1E06C`).
-* Make square brackets shallower to harmonize with other brackets (#1662).
-* Fix serifs and variant application of `cv67` on `U+0521`.
+* Fix unnecessary serifs of U+03B7 GREEK SMALL LETTER ETA (#1837).
 
 
-### 22.0.1
+### 25.0.0
 
+* \[**BREAKING**\] Add middle serifed and XH serifed variants for Long S (`U+017F`) without a baseline serif. As a result, current variants are reordered (#1807).
+* \[**BREAKING**\] Add separate variant selector for CYRILLIC SMALL LETTER EM (`U+043C`). As a result, current variant selectors are reordered (#1825).
+* \[**Breaking**\] Change of variant names:
+  - `lower-mu`.`tailless` → `lower-mu`.`toothed-serifless`
+  - `lower-mu`.`tailed` → `lower-mu`.`tailed-serifless`
+  - `lower-mu`.`toothless-corner` → `lower-mu`.`toothless-corner-serifless`
+  - `lower-mu`.`toothless-rounded` → `lower-mu`.`toothless-rounded-serifless`
+  - `micro-sign`.`tailless` → `micro-sign`.`toothed-serifless`
+  - `micro-sign`.`tailed` → `micro-sign`.`tailed-serifless`
+  - `micro-sign`.`toothless-corner` → `micro-sign`.`toothless-corner-serifless`
+  - `micro-sign`.`toothless-rounded` → `micro-sign`.`toothless-rounded-serifless`
+* Add diamond-shaped zero (#1727).
+* Add tailless bar, earless corner, and earless corner tailed variants for Greek Alpha (`U+03B1`).
+* Add bottom serifed variant for Greek Gamma (`U+0393`).
+* Add serifed variants for Greek Mu (`U+03BC`).
 * Add Characters:
-  - VECTOR OR CROSS PRODUCT (`U+2A2F`) (#1648).
-  - ROTATED LIGHT FOUR POINTED BLACK CUSP (`U+2BCD`).
-  - ROTATED WHITE FOUR POINTED CUSP (`U+2BCF`).
-  - CYRILLIC CAPITAL LETTER IOTIFIED YAT (`U+A652`) ... CYRILLIC SMALL LETTER REVERSED YU (`U+A655`).
-  - CYRILLIC CAPITAL LETTER CLOSED LITTLE YUS (`U+A658`) ... CYRILLIC SMALL LETTER IOTIFIED CLOSED LITTLE YUS (`U+A65D`).
-  - LATIN SMALL LETTER A REVERSED-SCHWA (`U+AB31`).
-  - LATIN SMALL LETTER INVERTED OE (`U+AB40`).
-  - LATIN SMALL LETTER TURNED OE WITH STROKE (`U+AB41`).
-  - LATIN SMALL LETTER TURNED OE WITH HORIZONTAL STROKE (`U+AB42`).
-* Optimize shape of Iotified-A (#1640).
-* Fix variant application of `cv19` on `U+04B4`, `U+04B5`, `U+A68A`, and `U+A68B` (#1646).
-* Fix shape of Square Lozenge (#1643).
-* Fix shape of Tilde with Dot Above (`U+2E1E`) and Tilde with Dot Below (`U+2E1F`).
-
-
-### 22.0.0
-
-* \[**Breaking**\] Reordered variant selectors' name and OT tag.
-* Add Characters:
-  - CYRILLIC CAPITAL LETTER EL WITH MIDDLE HOOK (`U+0520`).
-  - CYRILLIC SMALL LETTER EL WITH MIDDLE HOOK (`U+0521`).
-  - CYRILLIC CAPITAL LETTER EN WITH MIDDLE HOOK (`U+0522`).
-  - CYRILLIC SMALL LETTER EN WITH MIDDLE HOOK (`U+0523`).
-  - KIP SIGN (`U+20AD`).
-  - MULTIPLICATION SIGN WITH DOT ABOVE (`U+2A30`).
-  - IDENTICAL WITH DOT ABOVE (`U+2A67`).
-  - TILDE OPERATOR WITH DOT ABOVE (`U+2A6A`).
-  - CONGRUENT WITH DOT ABOVE (`U+2A6D`).
-  - EQUALS WITH ASTERISK (`U+2A6E`).
-  - COMBINING CYRILLIC LETTER IOTIFIED A (`U+2DFC`).
-  - TILDE WITH DOT ABOVE (`U+2E1E`).
-  - TILDE WITH DOT BELOW (`U+2E1F`).
-  - CYRILLIC CAPITAL LETTER IOTIFIED A (`U+A656`).
-  - CYRILLIC SMALL LETTER IOTIFIED A (`U+A657`).
-  - CYRILLIC CAPITAL LETTER TE WITH MIDDLE HOOK (`U+A68A`).
-  - CYRILLIC SMALL LETTER TE WITH MIDDLE HOOK (`U+A68B`).
-  - LATIN CAPITAL LETTER AA (`U+A732`).
-  - LATIN SMALL LETTER AA (`U+A733`).
-  - LATIN CAPITAL LETTER AO (`U+A734`) (#1623).
-  - LATIN SMALL LETTER SAKHA YAT (`U+AB60`).
-  - LATIN SMALL LETTER IOTIFIED E (`U+AB61`).
-  - LATIN SMALL LETTER OPEN OE (`U+AB62`).
-  - MODIFIER LETTER SMALL CAPITAL AA (`U+10780`) (#1626).
-* Add Extra-high asterisks (#1506).
-* Fix shape artifacts of `U+499`, `U+1D93`, `U+1D94`, `U+A731` (#1580, #1617, #1618).
-* Fix shape artifacts of cursive `k` (#1619).
-* Fix shape artifacts of R-derivatives (#1620).
-* Use correct glyph for `U+225B`.
-* Add specialized variant selector for micro sign (#1629).
-* Optimize SS08 style assignments (#1633).
-* Optimize serif stroke width of Cyrillic Iotified Es and Yu (#1634).
-* Optimize shape of Italic Cyrillic Yat (#1637).
+  - CYRILLIC CAPITAL LETTER DZZE (`U+A688`) (#1799).
+  - CYRILLIC SMALL LETTER DZZE (`U+A689`) (#1799).
+  - LATIN CAPITAL LETTER L WITH HIGH STROKE (`U+A748`).
+  - LATIN SMALL LETTER L WITH HIGH STROKE (`U+A749`).
+  - LATIN CAPITAL LETTER G WITH OBLIQUE STROKE (`U+A7A0`) ... LATIN SMALL LETTER S WITH OBLIQUE STROKE (`U+A7A9`) (#1818).
+  - LATIN SMALL LETTER L WITH MIDDLE RING (`U+AB39`) (#1673).
+  - MODIFIER LETTER CYRILLIC SMALL DZZE (`U+1E04A`) (#1799).
+  - CIRCLED DOLLAR SIGN WITH OVERLAID BACKSLASH (`U+1F10F`).
+  - CIRCLED C WITH OVERLAID BACKSLASH (`U+1F16E`).
+* Fix reversed shape of `U+1D12` (#1814).
+* Fix right leg height of LATIN CAPITAL LETTER INSULAR R (`U+A782`) and LATIN SMALL LETTER INSULAR R (`U+A783`).
+* Fix effect of `cv23` on LATIN CAPITAL LETTER CHI (`A7B3`).
+* Fix effect of `cv46` on LATIN SMALL LETTER TURNED V (`U+028C`).
+* Make `cv36` affect LATIN SMALL LETTER KRA (`U+0138`) and GREEK SMALL LETTER KAPPA (`U+03BA`).
+* Make `cv39` affect GREEK SMALL LETTER ETA (`U+03B7`).
+* Fix variant assignment of `cv45` on `ss16`.
+* Fix variant assignment of `cv72` on `ss12` and `ss15`.
+* Fix variant assignment of `vxsa` on `ss09`.
+* Fix variant assignment of `vxaa` on `ss16` and `ss17`.
+* Fix variant assignment of `vxsg` and `vxsh` on `ss18`.
+* Improve density of quadruple arrows for better legibility at smaller font sizes.
+* Make capital Schwa respond to capital C variants (#1829).
 

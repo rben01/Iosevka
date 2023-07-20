@@ -1,6 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
-import [mix linreg clamp fallback] from"../../../support/utils.mjs"
+import [mix fallback SuffixCfg] from"../../../support/utils.mjs"
 import [Dotless CvDecompose MathSansSerif] from"../../../support/gr.mjs"
 
 glyph-module
@@ -8,9 +8,10 @@ glyph-module
 glyph-block Letter-Latin-Upper-G : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
+	glyph-block-import Mark-Adjustment : ExtendAboveBaseAnchors
 	glyph-block-import Letter-Shared-Shapes : DToothlessRise ShoulderMidKnotLhs
-	glyph-block-import Letter-Shared-Shapes : SerifedArcStart ArcStartHookTop
-	glyph-block-import Letter-Shared-Shapes : ArcStartSerif LetterBarOverlay
+	glyph-block-import Letter-Shared-Shapes : SerifedArcStart TopHook
+	glyph-block-import Letter-Shared-Shapes : ArcStartSerif LetterBarOverlay SerifFrame
 
 	define TOOTHED            0
 	define TOOTHLESS-CORNER   1
@@ -25,8 +26,8 @@ glyph-block Letter-Latin-Upper-G : begin
 	define SLAB-INWARD        2
 	define SLAB-HOOK-TOP     10
 
-	define [GShape toothShape slabShape crossBarShape top ada adb] : glyph-proc
-		local yBar : top * 0.52 + Stroke * 0.25
+	define [GShape toothShape slabShape crossBarShape top ada adb _yBarOverride] : glyph-proc
+		local yBar : fallback _yBarOverride (top * 0.52 + Stroke * 0.25)
 		local fine ShoulderFine
 
 		local knots : match slabShape
@@ -73,51 +74,37 @@ glyph-block Letter-Latin-Upper-G : begin
 		top   -- (CAP / 2)
 		space -- { (SB + Stroke * HVContrast) Width }
 
-	define GConfig : object
-		toothedSeriflessHookless              { TOOTHED           CROSSBAR-NONE   SLAB-NONE   }
-		toothlessCornerSeriflessHookless      { TOOTHLESS-CORNER  CROSSBAR-NONE   SLAB-NONE   }
-		toothlessRoundedSeriflessHookless     { TOOTHLESS-ROUNDED CROSSBAR-NONE   SLAB-NONE   }
-		toothedSeriflessHooked                { TOOTHED           CROSSBAR-HOOKED SLAB-NONE   }
-		toothlessCornerSeriflessHooked        { TOOTHLESS-CORNER  CROSSBAR-HOOKED SLAB-NONE   }
-		toothlessRoundedSeriflessHooked       { TOOTHLESS-ROUNDED CROSSBAR-HOOKED SLAB-NONE   }
-		toothedSeriflessCapped                { TOOTHED           CROSSBAR-CAPPED SLAB-NONE   }
-		toothlessCornerSeriflessCapped        { TOOTHLESS-CORNER  CROSSBAR-CAPPED SLAB-NONE   }
-		toothlessRoundedSeriflessCapped       { TOOTHLESS-ROUNDED CROSSBAR-CAPPED SLAB-NONE   }
-		toothedSerifedHookless                { TOOTHED           CROSSBAR-NONE   SLAB-LETTER }
-		toothlessCornerSerifedHookless        { TOOTHLESS-CORNER  CROSSBAR-NONE   SLAB-LETTER }
-		toothlessRoundedSerifedHookless       { TOOTHLESS-ROUNDED CROSSBAR-NONE   SLAB-LETTER }
-		toothedSerifedHooked                  { TOOTHED           CROSSBAR-HOOKED SLAB-LETTER }
-		toothlessCornerSerifedHooked          { TOOTHLESS-CORNER  CROSSBAR-HOOKED SLAB-LETTER }
-		toothlessRoundedSerifedHooked         { TOOTHLESS-ROUNDED CROSSBAR-HOOKED SLAB-LETTER }
-		toothedSerifedCapped                  { TOOTHED           CROSSBAR-CAPPED SLAB-LETTER }
-		toothlessCornerSerifedCapped          { TOOTHLESS-CORNER  CROSSBAR-CAPPED SLAB-LETTER }
-		toothlessRoundedSerifedCapped         { TOOTHLESS-ROUNDED CROSSBAR-CAPPED SLAB-LETTER }
-		toothedInwardSerifedHookless          { TOOTHED           CROSSBAR-NONE   SLAB-INWARD }
-		toothlessCornerInwardSerifedHookless  { TOOTHLESS-CORNER  CROSSBAR-NONE   SLAB-INWARD }
-		toothlessRoundedInwardSerifedHookless { TOOTHLESS-ROUNDED CROSSBAR-NONE   SLAB-INWARD }
-		toothedInwardSerifedHooked            { TOOTHED           CROSSBAR-HOOKED SLAB-INWARD }
-		toothlessCornerInwardSerifedHooked    { TOOTHLESS-CORNER  CROSSBAR-HOOKED SLAB-INWARD }
-		toothlessRoundedInwardSerifedHooked   { TOOTHLESS-ROUNDED CROSSBAR-HOOKED SLAB-INWARD }
-		toothedInwardSerifedCapped            { TOOTHED           CROSSBAR-CAPPED SLAB-INWARD }
-		toothlessCornerInwardSerifedCapped    { TOOTHLESS-CORNER  CROSSBAR-CAPPED SLAB-INWARD }
-		toothlessRoundedInwardSerifedCapped   { TOOTHLESS-ROUNDED CROSSBAR-CAPPED SLAB-INWARD }
+	define GConfig : SuffixCfg.weave
+		object
+			toothed          TOOTHED
+			toothlessCorner  TOOTHLESS-CORNER
+			toothlessRounded TOOTHLESS-ROUNDED
+		object
+			serifless        SLAB-NONE
+			serifed          SLAB-LETTER
+			inwardSerifed    SLAB-INWARD
+		object
+			hookless         CROSSBAR-NONE
+			hooked           CROSSBAR-HOOKED
+			capped           CROSSBAR-CAPPED
 
-
-	foreach { suffix { shape crossBarShape slabType } } [Object.entries GConfig] : begin
+	foreach { suffix { shape slabType crossBarShape } } [Object.entries GConfig] : begin
 		create-glyph "G.\(suffix)" : glyph-proc
 			include : MarkSet.capital
 			include : GShape shape slabType crossBarShape CAP ArchDepthA ArchDepthB
 		create-glyph "GHookTop.\(suffix)" : glyph-proc
 			include : MarkSet.capital
 			include : GShape shape SLAB-HOOK-TOP crossBarShape CAP ArchDepthA ArchDepthB
-			include : ArcStartHookTop RightSB CAP Stroke HookX Hook
+			include : TopHook.arcStart RightSB CAP Hook
+			include : ExtendAboveBaseAnchors (CAP + Ascender - XH)
 		create-glyph "smcpG.\(suffix)" : glyph-proc
 			include : MarkSet.e
 			include : GShape shape slabType crossBarShape XH ArchDepthA ArchDepthB
 		create-glyph "smcpGHookTop.\(suffix)" : glyph-proc
 			include : MarkSet.e
 			include : GShape shape SLAB-HOOK-TOP crossBarShape XH ArchDepthA ArchDepthB
-			include : ArcStartHookTop RightSB XH Stroke HookX Hook
+			include : TopHook.arcStart RightSB XH Hook
+			include : ExtendAboveBaseAnchors Ascender
 
 	select-variant 'G' 'G'
 	link-reduced-variant 'G/sansSerif' 'G' MathSansSerif
@@ -128,6 +115,30 @@ glyph-block Letter-Latin-Upper-G : begin
 	turned 'turnSmcpG' 0x1DF02 'smcpG' Middle (XH / 2)
 
 	derive-composites 'Gbar' 0x1E4 'G' 'GBarOverlay'
+
+	do "Komi sje"
+		define Config : object
+				serifless               { SLAB-NONE   }
+				unilateralSerifed       { SLAB-LETTER }
+				unilateralInwardSerifed { SLAB-INWARD }
+
+		foreach { suffix { slabType } } [Object.entries Config] : begin
+			create-glyph "cyrl/SjeKomi.\(suffix)" : glyph-proc
+				include : MarkSet.capital
+				include : GShape TOOTHLESS-ROUNDED slabType CROSSBAR-NONE CAP ArchDepthA ArchDepthB (CAP / 2)
+				if SLAB : begin
+					local sf2 : SerifFrame.fromDf [DivFrame 1] (CAP / 2) 0
+					include sf2.rt.full
+
+			create-glyph "cyrl/sjeKomi.\(suffix)" : glyph-proc
+				include : MarkSet.e
+				include : GShape TOOTHLESS-ROUNDED slabType CROSSBAR-NONE XH SmallArchDepthA SmallArchDepthB (XH / 2)
+				if SLAB : begin
+					local sf2 : SerifFrame.fromDf [DivFrame 1] (XH / 2) 0
+					include sf2.rt.full
+
+		select-variant 'cyrl/SjeKomi' 0x50C (follow -- 'cTopSerifOnly')
+		select-variant 'cyrl/sjeKomi' 0x50D (follow -- 'cTopSerifOnly')
 
 	glyph-block-import Letter-Blackboard : BBS BBD BBBarRight
 	define [BBGArcT sink offset top ada adb xTerm yTerm] : sink

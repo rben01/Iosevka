@@ -5,6 +5,7 @@ const languages = [
     { lang: 'English', sample: 'Shaw, those twelve beige hooks are joined if I patch a young, gooey mouth.' },
     { lang: 'IPA', sample: '[ɢʷɯʔ.nas.doːŋ.kʰlja] [ŋan.ȵʑi̯wo.ɕi̯uĕn.ɣwa]' },
     { lang: 'Azerbaijani', sample: 'Zəfər, jaketini də papağını da götür, bu axşam hava çox soyuq olacaq.' },
+    { lang: 'Belarusian', sample: 'У Іўі худы жвавы чорт у зялёнай камізэльцы пабег пад’есці фаршу з юшкай.' },
     { lang: 'Bulgarian', sample: 'Я, пазачът Вальо уж бди, а скришом хапва кюфтенца зад щайгите.', localeId :'bg' },
     { lang: 'Catalan', sample: '«Dóna amor que seràs feliç!». Això, iŀlús company geniüt, ja és un lluït rètol blavís d’onze kWh.' },
     { lang: 'Croatian', sample: 'Gojazni đačić s biciklom drži hmelj i finu vatu u džepu nošnje.' },
@@ -23,6 +24,7 @@ const languages = [
     { lang: 'Latvian', sample: 'Muļķa hipiji mēģina brīvi nogaršot celofāna žņaudzējčūsku.' },
     { lang: 'Lithuanian', sample: 'Įlinkdama fechtuotojo špaga sublykčiojusi pragręžė apvalų arbūzą.' },
     { lang: 'Macedonian', sample: 'Ѕидарски пејзаж: шугав билмез со чудење џвака ќофте и кељ на туѓ цех.' },
+    { lang: 'Maltese', sample: 'Kien liebes gozz ħwejjeġ u ċraret vera qodma u m’għażluhx fil-pront.' },
     { lang: 'Norwegian', sample: 'Jeg begynte å fortære en sandwich mens jeg kjørte taxi på vei til quiz' },
     { lang: 'Polish', sample: 'Pchnąć w tę łódź jeża lub ośm skrzyń fig.' },
     { lang: 'Portuguese', sample: 'Luís argüia à Júlia que «brações, fé, chá, óxido, pôr, zângão» eram palavras do português.' },
@@ -32,7 +34,8 @@ const languages = [
     { lang: 'Spanish', sample: 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin vergüenza, la más exquisita champaña del menú.' },
     { lang: 'Turkish', sample: 'Pijamalı hasta yağız şoföre çabucak güvendi.' },
     { lang: 'Ukrainian', sample: 'Чуєш їх, доцю, га? Кумедна ж ти, прощайся без ґольфів!' },
-    { lang: 'Vietnamese', sample: 'Do bạch kim rất quý nên sẽ dùng để lắp vô xương.' }
+    { lang: 'Vietnamese', sample: 'Do bạch kim rất quý nên sẽ dùng để lắp vô xương.' },
+    { lang: 'Welsh', sample: 'Parciais fy jac codi baw hud llawn dŵr ger tŷ Mabon.' }
 ];
 
 export default (function (args) {

@@ -70,7 +70,7 @@ class DiSpiroProxy {
 }
 
 export function SetupBuilders(bindings) {
-	const { Stroke, Superness } = bindings;
+	const { Stroke, Superness, Contrast, CorrectionOMidX } = bindings;
 	function KnotType(type) {
 		return (x, y, f) => {
 			if (!isFinite(x)) throw new TypeError("NaN detected for X");
@@ -112,6 +112,8 @@ export function SetupBuilders(bindings) {
 						kl(x + d.x * a.l, y + d.y * a.l, af),
 						kr(x + d.x * a.r, y + d.y * a.r, af)
 					];
+					sink[d.name][a.name].l = (x, y, af) => kl(x + d.x * a.l, y + d.y * a.l, af);
+					sink[d.name][a.name].r = (x, y, af) => kr(x + d.x * a.r, y + d.y * a.r, af);
 				}
 			}
 		}
@@ -332,12 +334,55 @@ export function SetupBuilders(bindings) {
 		const s = fallback(_s, Superness);
 		return 1 - Math.pow(1 - Math.pow(px, s), 1 / s);
 	};
+
 	function dispiro(...args) {
 		return new DispiroImpl(bindings, args);
 	}
 	function spiroOutline(...args) {
 		return new SpiroOutlineImpl(bindings, args);
 	}
+
+	class CCursiveBuilder {
+		constructor(box, sw) {
+			this.box = box;
+			this.sw = sw;
+		}
+
+		withSw(sw) {
+			return new CCursiveBuilder(this.box, sw);
+		}
+
+		x(pX, _pSX, _deltaX) {
+			const pSX = fallback(_pSX, 0);
+			const deltaX = fallback(_deltaX, 0);
+			const sw = this.sw;
+			return mix(this.box.left, this.box.right, pX) + pSX * Contrast * sw + deltaX;
+		}
+		xAT(px, _pSX, _deltaX) {
+			return this.x(px, _pSX, _deltaX) - this.sw * CorrectionOMidX;
+		}
+		xAB(px, _pSX, _deltaX) {
+			return this.x(px, _pSX, _deltaX) + this.sw * CorrectionOMidX;
+		}
+		y(pY, _pSY, _deltaY) {
+			const pSY = fallback(_pSY, 0);
+			const deltaY = fallback(_deltaY, 0);
+			const sw = this.sw;
+			return mix(this.box.bottom, this.box.top, pY) + pSY * sw + deltaY;
+		}
+		s(pS, d) {
+			const sw = fallback(this.sw);
+			if (d) {
+				return widths.heading((1 - pS) * sw, pS * sw, d);
+			} else {
+				return widths((1 - pS) * sw, pS * sw);
+			}
+		}
+	}
+	function CursiveBuilder(box, sw) {
+		return new CCursiveBuilder(box, sw);
+	}
+
 	return {
 		g4,
 		g2,
@@ -359,6 +404,7 @@ export function SetupBuilders(bindings) {
 		archv,
 		arcvh,
 		dispiro,
-		"spiro-outline": spiroOutline
+		"spiro-outline": spiroOutline,
+		CursiveBuilder
 	};
 }

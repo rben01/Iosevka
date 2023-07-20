@@ -1,6 +1,11 @@
 ### Autoarg macro
 define-operator "--" 890 'right' : syntax-rules
 	`(@l -- @r) [atom l] : dirty `[new $NamedParameterPair$ @{".quote" [formOf l]} @r]
+	`(@{".quote" l} -- @r) : dirty `[new $NamedParameterPair$ @l @r]
+
+### Arbitrary pair operator
+define-operator "~>" 880 'right' : syntax-rules
+	`(@l ~> @r) `{.left @l .right @r}
 
 ### Macro for identity match
 define-macro Just : begin
@@ -15,8 +20,8 @@ define-macro Just : begin
 
 	return m
 
-define-macro params : syntax-rules
-	`[params @_pairs @body] : begin
+define-macro postulate : syntax-rules
+	`[postulate @::$pairs] : begin
 		local ta : env.newt
 		local tb : env.newt
 		local t : env.newt
@@ -30,29 +35,49 @@ define-macro params : syntax-rules
 		local declarations `[begin]
 		local namedAssigns `[begin]
 		local indexAssigns `[begin]
-		local tearDowns `[begin]
+		local tearDowns    `[begin]
 
 		local j 0
-		foreach [pf : items-of : formOf _pairs] : begin
+		foreach $pf [items-of $pairs] : begin
 			local name
-			if [atom pf] : then
-				declarations.push `[local @pf]
-				indexAssigns.push `[set @pf : fallback @pf (@tb).(@{".quote" j})]
-				set name pf
-			: else
-				declarations.push `[local @(pf.0)]
-				indexAssigns.push `[set @(pf.0) : fallback @(pf.0) (@tb).(@{".quote" j}) @(pf.1)]
-				set name pf.0
-				if pf.2 : tearDowns.push `[local @(pf.2) @name]
-			namedAssigns.push `[if (@t && @t <@ $NamedParameterPair$ && @t.left == @{".quote" name}) [set @name @t.right]]
+			local pf : formOf $pf
+
+			match [formOf $pf]
+				pf [atom pf] : begin
+					declarations.push `[local @pf]
+					indexAssigns.push `[set @pf : fallback @pf (@tb).(@{".quote" j})]
+					set name pf
+				`[@pf] : begin
+					declarations.push `[local @pf]
+					indexAssigns.push `[set @pf : fallback @pf (@tb).(@{".quote" j})]
+					set name pf
+				`[@decl @dflt] : begin
+					declarations.push `[local @decl]
+					indexAssigns.push `[set @decl : fallback @decl (@tb).(@{".quote" j}) @dflt]
+					set name decl
+				`(@decl -- @dflt) : begin
+					declarations.push `[local @decl]
+					indexAssigns.push `[set @decl : fallback @decl (@tb).(@{".quote" j}) @dflt]
+					set name decl
+				{".operatorPiece" decl '--' dflt} : begin
+					declarations.push `[local @decl]
+					indexAssigns.push `[set @decl : fallback @decl (@tb).(@{".quote" j}) @dflt]
+					set name decl
+				true : throw : new Error "Invalid postulation syntax"
+
+			namedAssigns.push `[if (@t && @t <@ $NamedParameterPair$ && @t.left == @{".quote" name})
+				[set @name @t.right]]
 			inc j
 
 		ps.push declarations
 		ps.push `[foreach [@t : items-of @ta] @namedAssigns]
 		ps.push indexAssigns
 		ps.push tearDowns
-		ps.push : formOf body
+
 		return : dirty ps
+
+define-macro with-params : syntax-rules
+	`[with-params @_pairs @body] : dirty `[begin [postulate @::[formOf _pairs]] @[formOf body]]
 
 ### Necessary macros
 # A glyph construction is a function which "modifies" a glyph.
@@ -146,7 +171,7 @@ define-macro glyph-block-import : syntax-rules
 			CommonShapes `[no-shape KnotAdj Rect SquareAt Ring RingAt DotAt RingStroke RingStrokeAt
 			DotStrokeAt CircleRing CircleRingAt CircleDotAt RoundStrokeTerminalAt OShapeT OShape
 			OShapeOutline OShapeFlatTB HSerif VSerif NeedSlab NeedNotItalic HBar HOverlayBar VBar
-			LeftHook FlatSlashShape hookstart hookend Ungizmo Regizmo FlipAround ScaleAround Realign
+			FlatSlashShape hookstart hookend Ungizmo Regizmo FlipAround ScaleAround Realign
 			ForceUpright DiagCor NameUni PointingTo WithTransform clear-anchors AsRadical
 			ExtLineCenter ExtLineLhs ExtLineRhs DiagCorDs HCrossBar VERY-FAR MaskAbove MaskBelow
 			MaskLeft MaskRight HalfRectTriangle MaskAboveLine MaskBelowLine MaskLeftLine
@@ -204,20 +229,19 @@ define-macro glyph-block : syntax-rules
 			([typeof form] === "string") : set variableSet.(form) true
 
 		traceBody body
-		traceBody `[$NamedParameterPair$ $DoNothing$ $createAndSaveGlyphImpl$ $assignUnicodeImpl$]
+		traceBody `[$NamedParameterPair$ $createAndSaveGlyphImpl$ $assignUnicodeImpl$ $execState$]
 
 		set externEnv.$glyphBlockVariableUsage$ variableSet
 
-		define captureImports `[$createAndSaveGlyphImpl$ $NamedParameterPair$
-			$assignUnicodeImpl$ $DoNothing$ $execState$
-			Metrics para recursive glyphStore glyph-is-needed SpiroFns BooleFns MarkSet AS_BASE
-			ALSO_METRICS buildGlyphs tagged DivFrame fontMetrics]
+		define captureImports `[$createAndSaveGlyphImpl$ $NamedParameterPair$ $assignUnicodeImpl$
+			$execState$ Metrics para recursive glyphStore glyph-is-needed SpiroFns BooleFns
+			MarkSet AS_BASE ALSO_METRICS buildGlyphs tagged DivFrame fontMetrics]
 
 		define metricImports `[DesignParameters UPM HalfUPM Width SB CAP XH Ascender Descender
 			Contrast SymbolMid ParenTop ParenBot OperTop OperBot TackTop TackBot PlusTop PlusBot
 			PictTop PictBot BgOpTop BgOpBot Italify Upright Scale Translate ApparentTranslate Rotate
 			GlobalTransform TanSlope HVContrast Upward Downward Rightward Leftward
-			O OX OXHook Hook AHook SHook RHook JHook FHook HookX
+			O OX OXHook Hook AHook SHook RHook JHook FHook HookX TailX TailY
 			ArchDepth SmallArchDepth Stroke DotSize PeriodSize HBarPos OverlayPos LongJut Jut VJut
 			VJutStroke AccentStackOffset AccentWidth AccentClearance AccentHeight CThin CThinB SLAB
 			TailAdjX TailAdjY IBalance IBalance2 JBalance JBalance2 TBalance TBalance2 RBalance
@@ -230,7 +254,7 @@ define-macro glyph-block : syntax-rules
 			compositeBaseAnchors YSmoothMidR YSmoothMidL HSwToV NarrowUnicodeT WideUnicodeT]
 		define spiroFnImports `[g4 g2 corner flat curl close end straight widths
 			disable-contrast heading unimportant important alsoThru alsoThruThem bezControls
-			quadControls archv arcvh dispiro spiro-outline]
+			quadControls archv arcvh dispiro spiro-outline CursiveBuilder]
 		define booleFnImports `[union intersection difference]
 
 		dirty `[$GlyphBlocks$.push : lambda [$Capture_Ext$] : begin \\

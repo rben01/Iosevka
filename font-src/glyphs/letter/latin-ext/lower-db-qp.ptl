@@ -1,14 +1,14 @@
 $$include '../../../meta/macros.ptl'
 
 import [mix linreg clamp fallback] from"../../../support/utils.mjs"
-import [Dotless CvDecompose RequireCcmpDecompose] from"../../../support/gr.mjs"
+import [Dotless CvDecompose] from"../../../support/gr.mjs"
 
 glyph-module
 
 glyph-block Letter-Latin-Lower-DB-QP : begin
 	glyph-block-import CommonShapes
 	glyph-block-import Common-Derivatives
-	glyph-block-import Letter-Shared-Shapes : OBarLeft
+	glyph-block-import Letter-Shared-Shapes : OBarLeft UpwardHookShape SerifFrame
 	glyph-block-import Letter-Latin-Lower-AE-OE : SubDfAndShift
 
 	define [DbCenterShape df] : glyph-proc

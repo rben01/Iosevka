@@ -65,18 +65,12 @@ glyph-block Symbol-Math-Relation-Equal : begin
 	create-glyph 'equal' '=' : glyph-proc
 		include : EqualShape SB RightSB
 
-	create-glyph 'equalParallel' 0x22D5 : composite-proc
-		refer-glyph 'equal'
-		refer-glyph 'parallel.upright'
-
 	define EqDotDistance : EqualHalfSpace * 2 + DotRadius * OperatorStroke / Stroke
 
 	WithDotVariants 'oneDotApproxEq' 0x2250 : function [DrawAt kr ov] : glyph-proc
 		local dr : DotRadius * kr * OperatorStroke / Stroke
 		include : refer-glyph 'equal'
 		include : DrawAt Middle (SymbolMid + EqDotDistance) (dr - ov)
-
-	turned 'equalDot' 0x2A66 'oneDotApproxEq' Middle SymbolMid
 
 	WithDotVariants 'twoDotApproxEqCenter' 0x2251 : function [DrawAt kr ov] : glyph-proc
 		local dr : DotRadius * kr * OperatorStroke / Stroke
@@ -102,6 +96,12 @@ glyph-block Symbol-Math-Relation-Equal : begin
 			refer-glyph 'equal'
 			RingAt Middle SymbolMid (EqualHalfSpace + O + ringSw / 2)
 		include : RingStrokeAt Middle SymbolMid (EqualHalfSpace + ringSw / 2) ringSw
+
+	create-glyph 'ringEqual' 0x2257 : composite-proc
+		refer-glyph 'equal'
+		MarkSet.plus
+		refer-glyph 'ringAbove'
+		clear-anchors
 
 	create-glyph 'geometricallyEquivalentTo' 0x224E : glyph-proc
 		local ringSw : AdviceStroke 4
@@ -139,11 +139,6 @@ glyph-block Symbol-Math-Relation-Equal : begin
 	create-glyph 'ident' 0x2261 : glyph-proc
 		include : IdentShape SB RightSB
 
-	WithDotVariants 'oneDotIdent' 0x2A67 : function [DrawAt kr ov] : glyph-proc
-		local dr : DotRadius * kr * OperatorStroke / Stroke
-		include : refer-glyph 'ident'
-		include : DrawAt Middle (SymbolMid + EqualHalfSpace * 2 / 3 + EqDotDistance) (dr - ov)
-
 	create-glyph 'iiiident' 0x2263 : glyph-proc
 		include : HBar.m SB RightSB (SymbolMid + EqualHalfSpace * 2.25) OperatorStroke
 		include : HBar.m SB RightSB (SymbolMid + EqualHalfSpace * 0.75) OperatorStroke
@@ -165,6 +160,56 @@ glyph-block Symbol-Math-Relation-Equal : begin
 				g4 [mix Middle SB      kArcExtX] (SymbolMid - EqualHalfSpace * kArcExtY2)
 				g4 Middle (SymbolMid - EqualHalfSpace) [heading Rightward]
 				g4 [mix Middle RightSB kArcExtX] (SymbolMid - EqualHalfSpace * kArcExtY1)
+
+	create-glyph 'equalParallel' 0x22D5 : composite-proc
+		refer-glyph 'equal'
+		refer-glyph 'parallel'
+
+	create-glyph 'equalDoubleSlash' 0x29E3 : composite-proc
+		EqualShape [mix SB 0 0.5] [mix RightSB Width 0.5]
+		refer-glyph 'slantedParallel'
+
+	create-glyph 'equalDoubleSlashTilde' 0x29E4 : composite-proc
+		refer-glyph 'equalDoubleSlash'
+		MarkSet.tack
+		refer-glyph 'tildeAbove'
+		clear-anchors
+
+	create-glyph 'identDoubleSlash' 0x29E5 : composite-proc
+		IdentShape [mix SB 0 0.5] [mix RightSB Width 0.5]
+		refer-glyph 'slantedParallel'
+
+	create-glyph 'recordMark' 0x29E7 : composite-proc
+		refer-glyph 'equal'
+		refer-glyph 'stile'
+
+	turned 'equalDot' 0x2A66 'oneDotApproxEq' Middle SymbolMid
+
+	WithDotVariants 'oneDotIdent' 0x2A67 : function [DrawAt kr ov] : glyph-proc
+		local dr : DotRadius * kr * OperatorStroke / Stroke
+		include : refer-glyph 'ident'
+		include : DrawAt Middle (SymbolMid + EqualHalfSpace * 0.5 + EqDotDistance) (dr - ov)
+
+	create-glyph 'identParallel' 0x2A68 : composite-proc
+		refer-glyph 'ident'
+		refer-glyph 'parallel'
+
+	create-glyph 'identInterleave' 0x2A69 : composite-proc
+		IdentShape [mix SB 0 0.5] [mix RightSB Width 0.5]
+		refer-glyph 'interleave'
+
+	create-glyph 'bumpEqual' 0x2AAE : glyph-proc
+		include : intersection
+			Rect ParenTop SymbolMid 0 Width
+			refer-glyph 'geometricallyEquivalentTo'
+		include : ApparentTranslate 0 (EqualHalfSpace * 0.5)
+
+		include : HBar.m SB RightSB SymbolMid OperatorStroke
+		include : HBar.m SB RightSB (SymbolMid - EqualHalfSpace * 1.5) OperatorStroke
+
+	create-glyph 'groupMark' 0x2BD2 : composite-proc
+		refer-glyph 'ident'
+		refer-glyph 'stile'
 
 glyph-block Symbol-Math-Relation-Addons : begin
 	glyph-block-import CommonShapes
@@ -240,10 +285,6 @@ glyph-block Symbol-Math-Relation-Sym : begin
 	create-glyph 'sym' 0x223C : symWave SymbolMid 1
 	create-glyph 'flipSym' 0x223D : symWave SymbolMid (-1)
 
-	WithDotVariants 'oneDotSym' 0x2A6A : function [DrawAt kr ov] : composite-proc
-		refer-glyph 'sym'
-		DrawAt Middle PlusTop (DotRadius * kr * OperatorStroke / Stroke - ov)
-
 	WithDotVariants 'twoDotSym' 0x223B : function [DrawAt kr ov] : composite-proc
 		refer-glyph 'sym'
 		DrawAt Middle PlusTop (DotRadius * kr * OperatorStroke / Stroke - ov)
@@ -282,10 +323,6 @@ glyph-block Symbol-Math-Relation-Sym : begin
 			SymbolMid - sympShift / 2 + EqualHalfSpace * 1.5
 			SymbolMid - sympShift / 2
 
-	WithDotVariants 'oneDotSymEqEq' 0x2A6D : function [DrawAt kr ov] : composite-proc
-		refer-glyph 'symEqEq'
-		DrawAt Middle (PlusTop + EqualHalfSpace * 1.5) (DotRadius * kr * OperatorStroke / Stroke - ov)
-
 	create-glyph 'flipSymEq' 0x22CD : glyph-proc
 		include [refer-glyph 'flipSym'] AS_BASE
 		include : ApparentTranslate 0 (approxDist / 2)
@@ -297,6 +334,44 @@ glyph-block Symbol-Math-Relation-Sym : begin
 		include : ApparentTranslate 0 (sympShift / 2)
 		include : HBar.m SB RightSB (SymbolMid - sympShift / 2 + EqualHalfSpace * 1.5) OperatorStroke
 		include : HBar.m SB RightSB (SymbolMid - sympShift / 2) OperatorStroke
+
+	WithDotVariants 'oneDotSym' 0x2A6A : function [DrawAt kr ov] : composite-proc
+		refer-glyph 'sym'
+		DrawAt Middle PlusTop (DotRadius * kr * OperatorStroke / Stroke - ov)
+
+	WithDotVariants 'twoDotSymAlt' 0x2A6B : function [DrawAt kr ov] : glyph-proc
+		local dr : DotRadius * kr * OperatorStroke / Stroke
+		include : refer-glyph 'sym'
+		include : DrawAt [mix SB RightSB (1/6)] PlusBot (dr - ov)
+		include : DrawAt [mix SB RightSB (5/6)] PlusTop (dr - ov)
+
+	create-glyph 'symMinusSym' 0x2A6C : glyph-proc
+		include : symWave (SymbolMid + approxDist) 1
+		include : HBar.m SB RightSB SymbolMid OperatorStroke
+		include : symWave (SymbolMid - approxDist) 1
+
+	WithDotVariants 'oneDotSymEqEq' 0x2A6D : function [DrawAt kr ov] : composite-proc
+		refer-glyph 'symEqEq'
+		DrawAt Middle (PlusTop + EqualHalfSpace * 1.5) (DotRadius * kr * OperatorStroke / Stroke - ov)
+
+	create-glyph 'approxCircumflex' 0x2A6F : composite-proc
+		refer-glyph 'approx'
+		MarkSet.plus
+		refer-glyph 'circumflexAbove'
+		clear-anchors
+
+	create-glyph 'approxEqEq' 0x2A70 : glyph-proc
+		include : symWave (SymbolMid + approxDist * 1.375) 1
+		include : symWave (SymbolMid + approxDist * 0.375) 1
+		include : HBar.m SB RightSB (SymbolMid - approxDist * 1.5 + EqualHalfSpace * 1.5) OperatorStroke
+		include : HBar.m SB RightSB (SymbolMid - approxDist * 1.5) OperatorStroke
+
+	create-glyph 'eqEqSym' 0x2A73 : glyph-proc
+		local sympShift : approxDist + EqualHalfSpace * 1.5
+		include [refer-glyph 'sym'] AS_BASE
+		include : ApparentTranslate 0 (-sympShift / 2)
+		include : HBar.m SB RightSB (SymbolMid + sympShift / 2 - EqualHalfSpace * 1.5) OperatorStroke
+		include : HBar.m SB RightSB (SymbolMid + sympShift / 2) OperatorStroke
 
 glyph-block Symbol-Math-Relation-Inequality : begin
 	glyph-block-import CommonShapes
@@ -422,16 +497,26 @@ glyph-block Symbol-Math-Relation-Inequality : begin
 	derive-composites 'lessEqBarNegated' 0x2A87 'lessEqUpper' 'eqBarNegatedLower'
 	derive-composites 'lessSym' 0x2272 'lessEqUpper' 'symLower'
 	derive-composites 'lessSymBarNegated' 0x22E6 'lessEqUpper' 'symBarNegatedLower'
-	derive-composites 'lessEqslant' 0x2A7D 'lessEqUpper'
+	derive-composites 'lessEqSlant' 0x2A7D 'lessEqUpper'
 		LessShapeB (SymbolMid + dH - lessEqDist) (SymbolMid - dH - lessEqDist) SB RightSB OperatorStroke
+
+	WithDotVariants 'lessEqSlantDot' 0x2A7F : function [DrawAt kr ov] : composite-proc
+		LessShape (SymbolMid + dSH + lessEqDist) (SymbolMid - dSH + lessEqDist) SB RightSB [AdviceStroke 4]
+		LessShapeB (SymbolMid + dH - lessEqDist) (SymbolMid - dH - lessEqDist) SB RightSB [AdviceStroke 4]
+		DrawAt (RightSB - DotRadius) (SymbolMid + lessEqDist) (DotRadius * kr * [AdviceStroke 4] / Stroke - ov)
 
 	derive-composites 'greater.narrow' null 'greaterEqUpper' [ApparentTranslate 0 (-lessEqDist)]
 	derive-composites 'greaterEq' 0x2265 'greaterEqUpper' 'eqLower'
 	derive-composites 'greaterEqBarNegated' 0x2A88 'greaterEqUpper' 'eqBarNegatedLower'
 	derive-composites 'greaterSym' 0x2273 'greaterEqUpper' 'symLower'
 	derive-composites 'greaterSymBarNegated' 0x22E7 'greaterEqUpper' 'symBarNegatedLower'
-	derive-composites 'greaterEqslant' 0x2A7E 'greaterEqUpper'
+	derive-composites 'greaterEqSlant' 0x2A7E 'greaterEqUpper'
 		GreaterShapeB (SymbolMid + dH - lessEqDist) (SymbolMid - dH - lessEqDist) SB RightSB OperatorStroke
+
+	WithDotVariants 'greaterEqSlantDot' 0x2A80 : function [DrawAt kr ov] : composite-proc
+		GreaterShape (SymbolMid + dSH + lessEqDist) (SymbolMid - dSH + lessEqDist) SB RightSB [AdviceStroke 4]
+		GreaterShapeB (SymbolMid + dH - lessEqDist) (SymbolMid - dH - lessEqDist) SB RightSB [AdviceStroke 4]
+		DrawAt (SB + DotRadius) (SymbolMid + lessEqDist) (DotRadius * kr * [AdviceStroke 4] / Stroke - ov)
 
 	derive-composites 'normalSubsetEq' 0x22B4 'normalSubsetUpper' 'eqLower'
 	derive-composites 'normalSupersetEq' 0x22B5 'normalSupersetUpper' 'eqLower'
@@ -475,6 +560,15 @@ glyph-block Symbol-Math-Relation-Inequality : begin
 	derive-composites 'greaterEqEqBarNegated' 0x2269 'greaterEqEqUpper' 'eqEqBarNegatedLower'
 	derive-composites 'greaterSymSym' 0x2A86 'greaterEqEqUpper' 'symSymLower'
 	derive-composites 'greaterSymSymBarNegated' 0x2A8A 'greaterEqEqUpper' 'symSymBarNegatedLower'
+
+	turned 'turnGreaterEqSlant' 0x2A95 'greaterEqSlant' Middle SymbolMid
+	turned 'turnLessEqSlant' 0x2A96 'lessEqSlant' Middle SymbolMid
+	turned 'turnGreaterEqSlantDot' 0x2A97 'greaterEqSlantDot' Middle SymbolMid
+	turned 'turnLessEqSlantDot' 0x2A98 'lessEqSlantDot' Middle SymbolMid
+	turned 'turnGreaterEqEq' 0x2A99 'greaterEqEq' Middle SymbolMid
+	turned 'turnLessEqEq' 0x2A9A 'lessEqEq' Middle SymbolMid
+	turned 'turnGreaterSym' 0x2A9D 'greaterSym' Middle SymbolMid
+	turned 'turnLessSym' 0x2A9E 'lessSym' Middle SymbolMid
 
 	create-glyph 'lessGreater' 0x2276 : glyph-proc
 		include : LessShape (SymbolMid + llggHeight / 2) (SymbolMid - llggHeight / 6 + lessEqDist) SB RightSB lesslessSW
@@ -612,7 +706,7 @@ glyph-block Symbol-Math-Relation-Subset : begin
 	glyph-block-import Symbol-Math-Relation-Common : dH dSH dHSubstSimple lessEqDist dHElem dHSmallElem
 	glyph-block-import Symbol-Math-Relation-Addon-Glyphs
 
-	define [SubsetMaskShape] : params [top bot [sw OperatorStroke] [offset 0] [xShift 0]] : spiro-outline
+	define [SubsetMaskShape] : with-params [top bot [sw OperatorStroke] [offset 0] [xShift 0]] : spiro-outline
 		corner RightSB (top - offset) [heading Leftward]
 		curl (SB + [Math.max (sw * 1.5) ((xShift + top - bot) / 2)]) (top - offset)
 		archv
@@ -622,7 +716,7 @@ glyph-block Symbol-Math-Relation-Subset : begin
 		corner RightSB (bot + offset) [heading Rightward]
 
 
-	define [SubsetShape] : params [top bot [sw OperatorStroke] [offset 0] [xShift 0]] : dispiro
+	define [SubsetShape] : with-params [top bot [sw OperatorStroke] [offset 0] [xShift 0]] : dispiro
 		widths.lhs sw
 		flat RightSB (top - offset) [heading Leftward]
 		curl (SB + [Math.max (sw * 1.5) ((xShift + top - bot) / 2)]) (top - offset)

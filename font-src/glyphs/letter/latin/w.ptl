@@ -1,6 +1,6 @@
 $$include '../../../meta/macros.ptl'
 
-import [mix linreg clamp fallback] from"../../../support/utils.mjs"
+import [mix fallback SuffixCfg] from"../../../support/utils.mjs"
 import [Dotless CvDecompose MathSansSerif] from"../../../support/gr.mjs"
 
 glyph-module
@@ -18,13 +18,16 @@ glyph-block Letter-Latin-W : begin
 	define FORM-ASYMMETRIC 4
 	define FORM-CYRL-OMEGA 5
 
-	define SERIFS-NONE       0
-	define SERIFS-AUTO       1
-	define SERIFS-MOTION     2
-	define SERIFS-DOUBLE-V   3
-	define SERIFS-ASYMMETRIC 4
-	define SERIFS-CURSIVE    5
-	define SERIFS-CYRL-OMEGA 6
+	define SERIFS-NONE            0
+	define SERIFS-AUTO            1
+	define SERIFS-MOTION          2
+	define SERIFS-DOUBLE-V        3
+	define SERIFS-ASYMMETRIC      4
+	define SERIFS-CURSIVE         5
+	define SERIFS-CYRL-OMEGA      6
+	define SERIFS-ALL             7
+	define SERIFS-DOUBLE-V-ALL    8
+	define SERIFS-ASYMMETRIC-ALL  9
 
 	define CwFineOuter            5.0
 	define CwFineInner            6.0
@@ -197,15 +200,18 @@ glyph-block Letter-Latin-W : begin
 
 		local oSlabPos : if bodyType (O * 2) 0
 
-		local sf  : SerifFrame top 0 df.leftSB df.rightSB
-		local sfm : SerifFrame top 0 (df.leftSB + oSlabPos) (df.rightSB - oSlabPos)
+		local sf  : SerifFrame top 0 df.leftSB df.rightSB (hSplit -- 3)
+		local sfm : SerifFrame top 0 (df.leftSB + oSlabPos) (df.rightSB - oSlabPos) (hSplit -- 3)
 
 		include : match slabType
 			[Just SERIFS-NONE]   : glyph-proc
 			[Just SERIFS-AUTO]   : NeedSlab SLAB : composite-proc sf.lt.full sf.rt.full
+			[Just SERIFS-ALL]    : composite-proc sf.lt.full sf.rt.full
 			[Just SERIFS-MOTION] : begin sfm.lt.outer
 			[Just SERIFS-DOUBLE-V] : NeedSlab SLAB : composite-proc sfm.lt.outer sfm.rt.outer
+			[Just SERIFS-DOUBLE-V-ALL] : composite-proc sfm.lt.outer sfm.rt.outer
 			[Just SERIFS-ASYMMETRIC] : NeedSlab SLAB : composite-proc sfm.lt.outer sfm.rt.full
+			[Just SERIFS-ASYMMETRIC-ALL] : composite-proc sfm.lt.outer sfm.rt.full
 			[Just SERIFS-CURSIVE]    : NeedSlab SLAB sf.lt.outer
 			[Just SERIFS-CYRL-OMEGA] : begin
 				local jut : Math.min Jut (0.5 * HVContrast * dim.strokeOuter + 0.375 * (dim.xLeft2 - df.leftSB - 1.5 * HVContrast * dim.strokeOuter))
@@ -224,17 +230,16 @@ glyph-block Letter-Latin-W : begin
 
 		include : dispiro
 			widths.rhs dim.strokeOuter
-			straight.down.start df.rightSB (top - Hook) [heading Downward]
+			straight.down.start df.rightSB (top - TailY - 0.5 * dim.strokeOuter - O) [heading Downward]
 			quadControls 0 0.3 6 unimportant
 			g4 (dim.xBot2 + 0.5 * HVContrast * dim.wCoCr) 0 [widths.rhs.heading dim.fineOuterCr Downward]
 
 		include : VerticalHook.r
 			x -- df.rightSB
-			y -- (top - Hook)
-			xDepth -- (HookX * 0.65)
-			yDepth -- (-Hook + 0.5 * dim.strokeOuter)
+			y -- (top - TailY - 0.5 * dim.strokeOuter - O)
+			xDepth -- TailX
+			yDepth -- (-TailY)
 			sw -- dim.strokeOuter
-
 
 	define [WVertSides df top bodyType slabType] : glyph-proc
 		include : new-glyph : glyph-proc
@@ -244,6 +249,7 @@ glyph-block Letter-Latin-W : begin
 		local sf : SerifFrame top 0 df.leftSB df.rightSB
 		include : match slabType
 			[Just SERIFS-AUTO]   : NeedSlab SLAB : composite-proc sf.lt.full sf.rt.full
+			[Just SERIFS-ALL]    : composite-proc sf.lt.full sf.rt.full
 			[Just SERIFS-MOTION] : begin sf.lt.outer
 			___                  : glyph-proc
 
@@ -256,11 +262,11 @@ glyph-block Letter-Latin-W : begin
 
 		include : dispiro
 			widths.rhs
-			flat df.rightSB (top - Hook) [heading Downward]
-			curl df.rightSB [Math.min (0.8 * top) (top - Hook - 0.1)] [heading Downward]
+			flat df.rightSB (top - TailY - HalfStroke - O) [heading Downward]
+			curl df.rightSB [Math.min (0.8 * top) (top - TailY - HalfStroke - 0.1)] [heading Downward]
 			straight.down.end df.rightSB 0 [widths.rhs.heading [AdviceStroke 4 df.div] Downward]
 
-		include : VerticalHook.r df.rightSB (top - Hook) (HookX * 0.65) (-Hook + HalfStroke)
+		include : VerticalHook.r df.rightSB (top - TailY - HalfStroke - O) TailX (-TailY)
 
 
 	define [WCursiveImplImpl fHookTop df top bodyType slabType] : glyph-proc
@@ -286,10 +292,10 @@ glyph-block Letter-Latin-W : begin
 
 		if fHookTop
 		: then : begin
-			include : VerticalHook.r df.rightSB (top - Hook) (HookX * 0.65) (-Hook + 0.5 * fine) fine
+			include : VerticalHook.r df.rightSB (top - TailY - 0.5 * fine - O) TailX (-TailY) fine
 			include : dispiro
 				widths.rhs fine
-				flat (df.width - x1) (top - Hook) [heading Downward]
+				flat (df.width - x1) (top - TailY - 0.5 * fine - O) [heading Downward]
 				curl (df.width - x1) y3           [heading Downward]
 				arcvh 16
 				g4 ([mix (df.width - x1) (df.middle - fine / 2 * HVContrast) 0.5] + fine * CorrectionOMidX) O
@@ -316,25 +322,32 @@ glyph-block Letter-Latin-W : begin
 	define [WCursiveImpl df top bodyType serifsType] : WCursiveImplImpl false df top bodyType serifsType
 	define [WHookTopCursive df top bodyType serifsType]  : WCursiveImplImpl true  df top bodyType serifsType
 
-	define WConfig : object
-		cyrlCapialOmega                    { WShapeImpl   WHooktopShape   FORM-CYRL-OMEGA   SERIFS-CYRL-OMEGA }
-		cyrlSmallOmega                     { WShapeImpl   WHooktopShape   FORM-CYRL-OMEGA   SERIFS-CURSIVE    }
-		straightAsymmetric                 { WShapeImpl   WHooktopShape   FORM-ASYMMETRIC   SERIFS-ASYMMETRIC }
-		straightDoubleV                    { WShapeImpl   WHooktopShape   FORM-DOUBLE-V     SERIFS-DOUBLE-V   }
-		straightFlatTop                    { WShapeImpl   WHooktopShape   FORM-FLAT-TOP     SERIFS-AUTO       }
-		straight                           { WShapeImpl   WHooktopShape   FORM-STRAIGHT     SERIFS-AUTO       }
-		straightVerticalSides              { WVertSides   WVSHookTopShape FORM-STRAIGHT     SERIFS-AUTO       }
-		curly                              { WShapeImpl   WHooktopShape   FORM-CURLY        SERIFS-AUTO       }
-		cursive                            { WCursiveImpl WHookTopCursive FORM-CURLY        SERIFS-CURSIVE    }
-		straightAsymmetricMotionSerifed    { WShapeImpl   WHooktopShape   FORM-ASYMMETRIC   SERIFS-MOTION     }
-		straightDoubleVMotionSerifed       { WShapeImpl   WHooktopShape   FORM-DOUBLE-V     SERIFS-MOTION     }
-		straightFlatTopMotionSerifed       { WShapeImpl   WHooktopShape   FORM-FLAT-TOP     SERIFS-MOTION     }
-		straightVerticalSidesMotionSerifed { WVertSides   WVSHookTopShape FORM-STRAIGHT     SERIFS-MOTION     }
-		straightMotionSerifed              { WShapeImpl   WHooktopShape   FORM-STRAIGHT     SERIFS-MOTION     }
-		curlyMotionSerifed                 { WShapeImpl   WHooktopShape   FORM-CURLY        SERIFS-MOTION     }
-		cursiveMotionSerifed               { WCursiveImpl WHookTopCursive FORM-CURLY        SERIFS-MOTION     }
+	define WConfig : SuffixCfg.weave
+		# Body
+		object
+			straight                           { WShapeImpl   WHooktopShape   FORM-STRAIGHT   }
+			straightAsymmetric                 { WShapeImpl   WHooktopShape   FORM-ASYMMETRIC }
+			straightDoubleV                    { WShapeImpl   WHooktopShape   FORM-DOUBLE-V   }
+			straightFlatTop                    { WShapeImpl   WHooktopShape   FORM-FLAT-TOP   }
+			straightVerticalSides              { WVertSides   WVSHookTopShape FORM-STRAIGHT   }
+			curly                              { WShapeImpl   WHooktopShape   FORM-CURLY      }
+			cursive                            { WCursiveImpl WHookTopCursive FORM-CURLY      }
+			cyrlCapialOmega					   { WShapeImpl   WHooktopShape   FORM-CYRL-OMEGA }
+			cyrlSmallOmega                     { WShapeImpl   WHooktopShape   FORM-CYRL-OMEGA }
 
-	foreach { suffix { implT hookTopImplT bodyType slabType } } [Object.entries WConfig] : do
+		# Serifs
+		function [body] : if (body == 'cyrlCapialOmega' || body == 'cyrlSmallOmega')
+			then : object [""  SERIFS-CYRL-OMEGA]
+			else : object
+				serifless     SERIFS-NONE
+				motionSerifed SERIFS-MOTION
+				serifed     : match body
+					[Just 'straightAsymmetric']  SERIFS-ASYMMETRIC-ALL
+					[Just 'straightDoubleV']     SERIFS-DOUBLE-V-ALL
+					[Just 'cursive']             SERIFS-MOTION
+					__                           SERIFS-ALL
+
+	foreach { suffix { {implT hookTopImplT bodyType} slabType } } [pairs-of WConfig] : do
 		create-glyph "W.\(suffix)" : glyph-proc
 			local df : DivFrame para.diversityM 3
 			set-width df.width
