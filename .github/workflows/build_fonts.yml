@@ -22,8 +22,6 @@ jobs:
       matrix:
         font_family:
           - iosevka-rltb-mono
-          - iosevka-rltb-mono-alt
-          - iosevka-rltb-proportional-sans
 
     steps:
       - name: Checkout
