@@ -72,7 +72,7 @@ glyph-block Letter-Latin-Upper-G : begin
 		x     -- RightSB
 		bot   -- 0
 		top   -- (CAP / 2)
-		space -- { (SB + Stroke * HVContrast) Width }
+		space -- { (SB + [HSwToV Stroke]) Width }
 
 	define GConfig : SuffixCfg.weave
 		object
@@ -111,7 +111,6 @@ glyph-block Letter-Latin-Upper-G : begin
 	select-variant 'smcpG' 0x262 (follow -- 'G')
 	select-variant 'GHookTop' 0x193
 	select-variant 'smcpGHookTop' 0x29B (follow -- 'GHookTop')
-	turned 'turnSansSerifG' 0x2141 'G/sansSerif' Middle (CAP / 2)
 	turned 'turnSmcpG' 0x1DF02 'smcpG' Middle (XH / 2)
 
 	derive-composites 'Gbar' 0x1E4 'G' 'GBarOverlay'
@@ -137,7 +136,7 @@ glyph-block Letter-Latin-Upper-G : begin
 					local sf2 : SerifFrame.fromDf [DivFrame 1] (XH / 2) 0
 					include sf2.rt.full
 
-		select-variant 'cyrl/SjeKomi' 0x50C (follow -- 'cTopSerifOnly')
+		select-variant 'cyrl/SjeKomi' 0x50C (follow -- 'CTopSerifOnly')
 		select-variant 'cyrl/sjeKomi' 0x50D (follow -- 'cTopSerifOnly')
 
 	glyph-block-import Letter-Blackboard : BBS BBD BBBarRight
