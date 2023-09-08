@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         font_family:
-          - iosevka-rltb-mono
+          - iosevka-rltb-proportional-sans
 
     steps:
       - name: Checkout
@@ -55,9 +55,9 @@ jobs:
         # Iosevka generates the CSS for us
         run: npm run build -- webfont-unhinted::${{ matrix.font_family }}
 
-      - name: Generate subsetted WOFF2
-        # This overwrites the existing WOFF2 files
-        run: python make_woff2.py ${{ matrix.font_family }}
+      # - name: Generate subsetted WOFF2
+      #   # This overwrites the existing WOFF2 files
+      #   run: python make_woff2.py ${{ matrix.font_family }}
 
       - name: Rename local CSS file
         run: "mv \
