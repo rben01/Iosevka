@@ -240,28 +240,6 @@
 	spacing = "quasi-proportional"
 	webfont-formats = ["woff2", "ttf"]
 
-	[buildPlans.iosevka-rltb-proportional-sans.variants.italic]
-		# Capital letters
-		capital-u = "tailed"
-
-		# Lowercase letters
-		a = "double-storey-serifless"
-		d = "toothed-serifless"
-		e = "rounded"
-		f = "flat-hook-serifless"
-		g = "double-storey"
-		h = "tailed"
-		i = "serifless"
-		l = "flat-tailed"
-		m = "tailed"
-		n = "tailed"
-		q = "tailed"
-		r = "hookless-serifless"
-		t = "flat-hook"
-		u = "tailed"
-		y = "straight-turn-serifless"
-
-
 	[buildPlans.iosevka-rltb-proportional-sans.variants.design]
 		# Capital letters
 		capital-a = "straight-serifless"
