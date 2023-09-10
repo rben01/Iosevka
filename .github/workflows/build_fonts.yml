@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         font_family:
-          - iosevka-rltb-proportional-sans
+          - iosevka-rltb-sans
 
     steps:
       - name: Checkout
