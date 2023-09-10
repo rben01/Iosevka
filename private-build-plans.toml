@@ -348,7 +348,7 @@
 
 	[buildPlans.iosevka-rltb-sans.variants.italic]
 		# lowercase overrides
-		a = "single-storey-serifed"
+		a = "single-storey-tailed"
 		d = "tailed-serifless"
 		e = "rounded"
 		f = "flat-hook-tailed"
