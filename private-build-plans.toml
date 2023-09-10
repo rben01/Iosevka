@@ -2,7 +2,7 @@
 	family = "Iosevka RLTB"
 	serifs = "sans"
 	spacing = "term"
-	webfont-formats = ["woff2", "ttf"]
+	webfont-formats = ["ttf"]
 	# no-ligation = true
 
 	[buildPlans.iosevka-rltb-mono.ligations]
@@ -114,7 +114,7 @@
 	family = "Iosevka RLTB Alt"
 	serifs = "sans"
 	spacing = "term"
-	webfont-formats = ["woff2", "ttf"]
+	webfont-formats = ["ttf"]
 	# no-ligation = true
 
 	[buildPlans.iosevka-rltb-mono-alt.ligations]
@@ -239,7 +239,7 @@
 	no-ligation = true
 	serifs = "sans"
 	spacing = "quasi-proportional"
-	webfont-formats = ["woff2", "ttf"]
+	webfont-formats = ["ttf"]
 
 	[buildPlans.iosevka-rltb-sans.variants.design]
 		# Capital letters
