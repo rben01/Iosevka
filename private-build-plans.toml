@@ -233,14 +233,15 @@
 		lower-xi = "flat-top"
 		turn-v = "straight"
 
-[buildPlans.iosevka-rltb-proportional-sans]
+[buildPlans.iosevka-rltb-sans]
+	export-glyph-names = false
 	family = "Iosevka RLTB Sans"
 	no-ligation = true
 	serifs = "sans"
 	spacing = "quasi-proportional"
 	webfont-formats = ["woff2", "ttf"]
 
-	[buildPlans.iosevka-rltb-proportional-sans.variants.design]
+	[buildPlans.iosevka-rltb-sans.variants.design]
 		# Capital letters
 		capital-a = "straight-serifless"
 		capital-b = "standard-serifless"
@@ -248,7 +249,7 @@
 		capital-d = "more-rounded-serifless"
 		capital-e = "serifless"
 		capital-f = "serifless"
-		capital-g = "toothless-corner-serifless-hooked"
+		capital-g = "toothed-serifless-hooked"
 		capital-h = "serifless"
 		capital-i = "serifed"
 		capital-j = "serifed"
@@ -277,7 +278,7 @@
 		f = "flat-hook-serifless"
 		g = "double-storey"
 		h = "straight-serifless"
-		i = "hooky"
+		i = "serifless"
 		j = "flat-hook-serifless"
 		k = "straight-serifless"
 		l = "flat-tailed"
@@ -285,7 +286,7 @@
 		n = "straight-serifless"
 		p = "eared-serifless"
 		q = "tailed-serifless"
-		r = "compact-serifless"
+		r = "hookless-serifless"
 		s = "serifless"
 		t = "flat-hook-short-neck"
 		u = "toothed-serifless"
@@ -300,7 +301,7 @@
 		five = "oblique-upper-left-bar"
 		four = "semi-open"
 		nine = "open-contour"
-		one = "no-base"
+		one = "base"
 		seven = "bend-serifless"
 		six = "open-contour"
 		three = "two-arcs"
@@ -321,6 +322,7 @@
 		dollar = "open"
 		guillemet = "curly"
 		lig-ltgteq = "flat"
+		micro-sign = "tailed-serifless"
 		number-sign = "slanted"
 		paren = "normal"
 		partial-derivative = "curly-bar"
@@ -330,9 +332,6 @@
 		question = "smooth"
 		tilde = "low"
 		underscore = "high"
-
-		# Symbols
-		micro-sign = "tailed-serifless"
 
 		# Other alphabets
 		capital-gamma = "top-right-serifed"
@@ -346,3 +345,22 @@
 		lower-pi = "tailed"
 		lower-tau = "tailed"
 		lower-xi = "flat-top"
+
+	[buildPlans.iosevka-rltb-sans.variants.italic]
+		# lowercase overrides
+		a = "single-storey-serifed"
+		d = "tailed-serifless"
+		e = "rounded"
+		f = "flat-hook-tailed"
+		g = "single-storey-flat-hook-serifless"
+		h = "tailed-serifless"
+		i = "flat-tailed"
+		k = "straight-serifless"
+		l = "flat-tailed"
+		m = "tailed-serifless"
+		n = "tailed-serifless"
+		q = "tailed-serifless"
+		u = "toothed-bottom-right-serifed"
+		v = "straight-serifless"
+		w = "straight-serifless"
+		y = "straight-turn-serifless"
