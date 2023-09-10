@@ -362,3 +362,17 @@
 		q = "tailed-serifless"
 		u = "toothed-bottom-right-serifed"
 		y = "straight-turn-serifless"
+
+	# including these two prevents oblique from being built
+	[buildPlans.iosevka-rltb-sans.slopes.upright]
+		angle = 0
+		css = "normal"
+		menu = "upright"
+		shape = "upright"
+
+	[buildPlans.iosevka-rltb-sans.slopes.italic]
+		# 9.4 comes straight from [Iosevka Customizer](https://typeof.net/Iosevka/customizer)
+		angle = 9.4
+		css = "italic"
+		menu = "italic"
+		shape = "italic"
