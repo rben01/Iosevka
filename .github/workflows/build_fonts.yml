@@ -21,6 +21,7 @@ jobs:
     strategy:
       matrix:
         font_family:
+          - iosevka-rltb-mono
           - iosevka-rltb-sans
 
     steps:
