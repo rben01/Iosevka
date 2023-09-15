@@ -80,7 +80,7 @@
 		# Digits
 		eight = "crossing-asymmetric"
 		five = "oblique-upper-left-bar"
-		four = "closed"
+		four = "semi-open"
 		nine = "open-contour"
 		one = "base"
 		seven = "bend-serifless"
@@ -344,7 +344,7 @@
 		# Digits
 		eight = "crossing-asymmetric"
 		five = "oblique-upper-left-bar"
-		four = "closed"
+		four = "semi-open"
 		nine = "open-contour"
 		one = "base"
 		seven = "bend-serifless"
