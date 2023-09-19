@@ -87,7 +87,7 @@
 		six = "open-contour"
 		three = "two-arcs"
 		two = "curly-neck"
-		zero = "oval-unslashed"
+		zero = "oval-tall-slashed"
 
 		# Puncutation
 		ampersand = "closed"

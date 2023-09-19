@@ -22,7 +22,7 @@ jobs:
       matrix:
         font_family:
           - iosevka-rltb-mono
-          - iosevka-rltb-sans
+          # - iosevka-rltb-sans
 
     steps:
       - name: Checkout
