@@ -1,160 +1,238 @@
 ## Modifications since last major version
 
-### 26.3.2
+### 33.2.7
 
-* Remove duplicate serifed variant for LATIN SMALL LETTER N WITH LEFT HOOK (`U+0272`).
-* Add special k-dot shape (#1978).
-
-
-### 26.3.1
-
-* Fix TTFA control generator to fix broken superscript letters (#1976).
-
-
-### 26.3.0
-
-* Add earless variants for `m` and `n` with motion serifs at bottom-right (#1974).
-* Add characters:
-  - COMBINING LONG VERTICAL LINE OVERLAY (`U+20D2`).
-  - COMBINING SHORT VERTICAL LINE OVERLAY (`U+20D3`).
-  - COMBINING REVERSE SOLIDUS OVERLAY (`U+20E5`).
-  - COMBINING DOUBLE VERTICAL STROKE OVERLAY (`U+20E6`).
-  - COMBINING LONG DOUBLE SOLIDUS OVERLAY (`U+20EB`).
-* Generate TTFAutohint control files for better glyph display for variant glyphs (#1963).
-* Make the shape of motion-serifed and serifed variants of toothed/tailed `u` no longer identical under Italic. Now "serifed" `u` will always preserve all serifs (#1967).
-* Make the fully-serifed form of cursive lower `y` match the serifs of lower `u`.
-* Make MICRO SIGN (`µ`) tailed under italics by default, to match `u`.
-* Improve glyphs for COLON SIGN (`U+20A1`), GUARANI SIGN (`U+20B2`), and CEDI SIGN (`U+20B5`).
-* Fix `cv33`, `cv38`, `cv39`, and `cv42` for `ss01`, `ss02`, `ss04`, `ss05`, `ss06`, `ss07`, `ss13`, and `ss16` under italic slab.
-* Fix `cv43` and `cv75` for `ss16` under slab.
-* Fix `cv61` for `ss10`, `ss14`, `ss15`, `ss16`, and `ss17` under italics.
+* Make certain characters slightly wider under Quasi-Proportional. Affected characters:
+  - CYRILLIC CAPITAL LETTER IOTIFIED YAT (`U+A652`).
+  - CYRILLIC SMALL LETTER IOTIFIED YAT (`U+A653`).
+  - CYRILLIC LETTER MULTIOCULAR O (`U+A66E`).
+* Refine shape of the following characters:
+  - CYRILLIC SMALL LETTER TALL YAT (`U+1C87`).
+  - MATHEMATICAL DOUBLE-STRUCK SMALL A (`U+1D552`) (#2769).
 
 
-### 26.2.2
+### 33.2.6
 
-* Add characters:
-  - BLACK DIAMOND MINUS WHITE X (`U+2756`) (#1960).
-  - WHITE CONCAVE-SIDED DIAMOND (`U+27E1`) (#1960).
-  - LEFT BARB UP RIGHT BARB UP HARPOON (`U+294E`) ... UP BARB LEFT DOWN BARB LEFT HARPOON (`U+2951`).
-  - LIGHT FOUR POINTED BLACK CUSP (`U+2BCC`) (#1960).
-  - WHITE FOUR POINTED CUSP (`U+2BCE`) (#1960).
-* Add support for specialized Vietnamese dual diacritics (#1935).
-* Make bowl height of Cyrillic Yat and Tall Yat (`U+0463`, `U+1C67`) consistent (#1945).
-* Make Guillemets (`«`, `»`) curly for Default Slab.
-* Remove duplicate lower-right serif variants of `H` with descender (#1953).
-* Fix toothless variants of LATIN SMALL LETTER B WITH HOOK (`U+0253`) (#1952).
-* Always use closed variants for LATIN CAPITAL LETTER R WITH STROKE (`U+024C`).
-* Optimize shape of LATIN {SMALL CAPITAL|MODIFIER LETTER CAPITAL} BARRED B (`U+1D03`,`U+1D2F`).
-* Fix variant selection for `cv34` and `cv37` under `ss01`, `ss03`, `ss09`, `ss10`, and `ss13`.
-* Fix variant selection for `cv36` under `ss03`, `ss08`, `ss09`, `ss10`, `ss12`, and `ss14`.
-* Fix variant selection for `cv42` under `ss09` and `ss12`.
-* Fix variant selection for `cv59` and `vxAB` under `ss01`, `ss05`, `ss08`, and `ss13`.
-* Fix variant selection for `vxAC` under `ss11` and `ss13`.
-* Fix variant selection for `cv46`, `cv47`, `cv48`, and `cv49` under `ss10`.
-* Fix variant selection for `cv26`, `cv61`, `cv62`, `vxAA`, `cv81`, and `vsAL` under `ss13`.
+* Make certain characters slightly wider under Quasi-Proportional. Affected characters:
+  - CYRILLIC CAPITAL LETTER ZHE (`U+0416`).
+  - CYRILLIC CAPITAL LETTER ZHE WITH DESCENDER (`U+0496`).
+  - CYRILLIC CAPITAL LETTER ZHE WITH BREVE (`U+04C1`).
+  - CYRILLIC CAPITAL LETTER ZHE WITH DIAERESIS (`U+04DC`).
+  - CYRILLIC CAPITAL LETTER DZZHE (`U+052A`).
+  - CYRILLIC CAPITAL LETTER ZHWE (`U+A684`).
 
 
-### 26.2.1
+### 33.2.5
 
-* Fix leaning marks of LATIN SMALL LETTER T WITH CEDILLA (`U+0163`) (#1914).
-* Fix the dimensions of wide geometric shapes in quasi-proportional (#1941).
-* Fix `cv76`'s application on CYRILLIC SMALL LETTER CHE WITH VERTICAL STROKE (`U+04B9`) (#1942).
-
-
-### 26.2.0
-
-* Add variant selectors for lowercase Greek Pi (`π`) and Tau (`τ`) (#1924).
-* Add characters:
-  - CYRILLIC SMALL LETTER ROUNDED VE (`U+1C80`).
-  - CYRILLIC SMALL LETTER TALL TE (`U+1C84`) (#1911).
-  - CYRILLIC SMALL LETTER TALL HARD SIGN (`U+1C86`) (#1911).
-  - CYRILLIC SMALL LETTER TALL YAT (`U+1C87`) (#1911).
-  - LEFTWARDS OPEN-HEADED ARROW (`U+21FD`) ... LEFT RIGHT OPEN-HEADED ARROW (`U+21FF`) (#1912).
-  - DIAMETER SIGN (`U+2300`) (#1923).
-  - CIRCLE WITH SUPERIMPOSED X (`U+29BB`).
-  - LEFTWARDS TWO-HEADED ARROW WITH TRIANGLE ARROWHEADS (`U+2BEC`) ... DOWNWARDS TWO-HEADED ARROW WITH TRIANGLE ARROWHEADS (`U+2BEF`).
-  - CLOCK FACE ONE OCLOCK (`U+1F550`) ... CLOCK FACE TWELVE-THIRTY (`U+1F567`) (#1850).
-* Make below marks to avoid bottom-right Ogoneks (#1789).
-* Use oval shape for Empty Set symbols to distinguish with O-Slash (#1822).
-* Implement leaning mark mechanism for `F`, `L`, `P`, `b`, `d`, `h`, `k`, `p`, `q`, `r` to get better mark placement. Now, "narrow" marks will align to these letters' extension parts (#1851).
-* Add variant selection for Guillemets (#1899).
-* Fix detached cedilla in Hookless asymmetric LATIN SMALL LETTER T WITH CEDILLA (`U+0163`) (#1914).
-* Fix broken hookless/tailless/asymmetric `t` variants in `ﬅ` ligature (`U+FB05`) (#1915).
-* Remove unnecessary tailed variants for Cyrillic Shha with Descender (`U+0527`) (#1916).
-* Remove unnecessary lower-right serif variants for Latin Lower K with Descender (`U+2C6A`) (#1917).
-* Add italic form of CYRILLIC SMALL LETTER KOMI TJE (`U+050F`) (#1920).
-* Remove unnecessary serifed/tailed variants of italic Cyrillic Te with descender (`U+04AD`) and `m` with palatal hook (`U+1D86`) (#1926).
-* Remove unnecessary bottom-right serifed variants of Cyrillic Ka with descender (`U+049A`..`U+049B`) (#1927).
-* Fix two off-center APL Quad characters in Quasi-proportional (#1930).
-* Refine shape of `U+0184`, `U+0185` (#1938).
-* Determine serifs of Bulgarian/Serbian De automatically when `g` is double-storey.
-* Fix variant assignment of `cv51` for `ss03` under italic slab.
-* Fix variant assignment of `cv31`, `cv36`, `cv46`, `cv47`, `cv48`, `cv49`, and `cv51` for `ss18` under italic slab.
+* Refine shape of the following characters:
+  - LATIN SMALL LETTER RAMS HORN (`U+0264`).
+  - GREEK SMALL LETTER PSI (`U+03C8`).
+  - GREEK LETTER STIGMA (`U+03DA`).
+  - CYRILLIC SMALL LETTER PSI (`U+0471`).
+  - CYRILLIC CAPITAL LETTER OMEGA WITH TITLO (`U+047C`).
+  - CYRILLIC SMALL LETTER OMEGA WITH TITLO (`U+047D`).
+  - LATIN LETTER AIN (`U+1D25`).
+  - MODIFIER LETTER SMALL AIN (`U+1D5C`).
+  - TURKISH LIRA SIGN (`U+20BA`).
+  - MANAT SIGN (`U+20BC`).
+  - CYRILLIC CAPITAL LETTER BROAD OMEGA (`U+A64C`).
+  - CYRILLIC SMALL LETTER BROAD OMEGA (`U+A64D`).
+  - LATIN CAPITAL LETTER RAMS HORN (`U+A7CB`).
+  - MODIFIER LETTER SMALL RAMS HORN (`U+10791`).
 
 
-### 26.1.0
+### 33.2.4
 
-* Add characters:
-  - RIGHT ARROW WITH SMALL CIRCLE (`U+21F4`) (#1900).
-  - LEFT RIGHT ARROW THROUGH SMALL CIRCLE (`U+2948`) (#1900).
-  - LEFT ARROW WITH SMALL CIRCLE (`U+2B30`) (#1900).
-* Make Cyrillic Abkhasian Che respond to C's serifs (#1898).
-* Make lowercase Wynn respond to thorn's serifs.
-* Drop APL form for `U+220D` as it is not used by any APL languages (#1901).
-* Add XH-height middle-serifed and dual-serifed variants for Eszet (#1904).
-* Remove duplicate variant glyphs for `U+0272` (#1905).
-* Make the top serif of Yogh (`U+021C`, `U+021D`) to follow Cyrillic Ze's variant selector (#1908).
-* Merge duplicate variants of t with retroflex hook (`U+0288`, `U+1DF09`) (#1909).
-* Fix detached palatal hook on `U+01AB`` when t is both hookless/tailless and asymmetric (#1910).
-* Fix `cv36`, `cv46`, `cv47`, `cv48`, `cv49`, `cv50`, `cv61`, and `cv74` under Curly Slab.
-* Fix serifs of `w` under Etoile Italic.
-
-
-### 26.0.2
-
-* Fix incorrect code assignment for `U+2B6E`, `U+2B6F`, `U+2B71`, `U+2B72` (#1895).
-* Fix CYRILLIC CAPITAL LETTER KOMI SJE (`U+050C`) to follow serifs of `C` instead of `c` (#1896).
-
-
-### 26.0.1
-
-* Fix shape of `ij` in Aile under NWID.
-
-
-### 26.0.0
-
-* \[**Breaking**\] Add asymmetric variant to all `t` styles (#1836).
-* \[**Breaking**\] Add separate variant selector for lowercase Thorn (#1854).
-* \[**Breaking**\] Drop `tailed-top-left-serifed` variant of `n` as it duplicates with `tailed-motion-serifed` (#1859).
-* \[**Breaking**\] Disunified the variant selector for Greek Delta and Greek Lambda, and added selectable serif variants for Lambda (#1866).
-* \[**Breaking**\] Add serif variant selection for Eszet (#1881).
-* \[**Breaking**\] Add a separate variant selector for lowercase Greek Chi.
+* Refine shape of the following characters:
+  - GREEK CAPITAL LETTER ARCHAIC SAMPI (`U+0372`) ... GREEK SMALL LETTER ARCHAIC SAMPI (`U+0373`).
+  - GREEK CAPITAL LETTER GAMMA (`U+0393`).
+  - GREEK LETTER DIGAMMA (`U+03DC`) ... GREEK SMALL LETTER DIGAMMA (`U+03DD`).
+  - CYRILLIC CAPITAL LETTER GHE (`U+0413`).
+  - CYRILLIC SMALL LETTER GHE (`U+0433`).
+  - CYRILLIC CAPITAL LETTER GHE WITH UPTURN (`U+0490`) ... CYRILLIC SMALL LETTER GHE WITH MIDDLE HOOK (`U+0495`).
+  - CYRILLIC CAPITAL LETTER GHE WITH DESCENDER (`U+04F6`) ... CYRILLIC SMALL LETTER GHE WITH DESCENDER (`U+04F7`).
+  - CYRILLIC CAPITAL LETTER GHE WITH STROKE AND HOOK (`U+04FA`) ... CYRILLIC SMALL LETTER GHE WITH STROKE AND HOOK (`U+04FB`).
+  - CYRILLIC SMALL LETTER TALL TE (`U+1C84`).
+  - GREEK LETTER SMALL CAPITAL GAMMA (`U+1D26`).
+  - TENGE SIGN (`U+20B8`).
+  - TURKISH LIRA SIGN (`U+20BA`).
+  - MANAT SIGN (`U+20BC`).
+  - NUMERO SIGN (`U+2116`).
+  - DOUBLE STRUCK CAPITAL GAMMA (`U+213E`).
+  - TILDE WITH RING ABOVE (`U+2E18`).
+  - TILDE WITH DOT ABOVE (`U+2E1E`) ... TILDE WITH DOT BELOW (`U+2E1F`).
+  - LATIN CAPITAL LETTER LAMBDA WITH STROKE (`U+A7DC`).
+  - LATIN SMALL LETTER SCRIPT R (`U+AB4B`) ... LATIN SMALL LETTER SCRIPT R WITH RING (`U+AB4C`).
+  - LEFTWARDS ARROW WITH STROKE (`U+219A`).
+  - RIGHTWARDS ARROW WITH STROKE (`U+219B`).
+  - LEFTWARDS TWO HEADED ARROW (`U+219E`) ... DOWNWARDS TWO HEADED ARROW (`U+21A1`).
+  - LEFT RIGHT ARROW WITH STROKE (`U+21AE`).
+  - LEFTWARDS DOUBLE ARROW WITH STROKE (`U+21CD`).
+  - LEFT RIGHT DOUBLE ARROW WITH STROKE (`U+21CE`).
+  - RIGHTWARDS DOUBLE ARROW WITH STROKE (`U+21CF`).
+  - UPWARDS ARROW WITH DOUBLE STROKE (`U+21DE`).
+  - DOWNWARDS ARROW WITH DOUBLE STROKE (`U+21DF`).
+  - RIGHT ARROW WITH SMALL CIRCLE (`U+21F4`).
+  - LEFTWARDS ARROW WITH VERTICAL STROKE (`U+21F7`) ... LEFT RIGHT ARROW WITH DOUBLE VERTICAL STROKE (`U+21FC`).
+  - LEFTWARDS DOUBLE ARROW WITH VERTICAL STROKE (`U+2902`).
+  - RIGHTWARDS DOUBLE ARROW WITH VERTICAL STROKE (`U+2903`).
+  - LEFT RIGHT DOUBLE ARROW WITH VERTICAL STROKE (`U+2904`).
+  - DOWNWARDS ARROW WITH HORIZONTAL STROKE (`U+2908`).
+  - UPWARDS ARROW WITH HORIZONTAL STROKE (`U+2909`).
+  - LEFTWARDS DOUBLE ARROW-TAIL (`U+291B`).
+  - RIGHTWARDS DOUBLE ARROW-TAIL (`U+291C`).
+  - LEFT RIGHT ARROW THROUGH SMALL CIRCLE (`U+2948`).
+  - LEFT ARROW WITH SMALL CIRCLE (`U+2B30`).
+  - LEFTWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE (`U+2B7A`) ... DOWNWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE (`U+2B7D`).
 * Add Characters:
-  - COMBINING DOUBLED CIRCUMFLEX ACCENT (`U+1AB0`) (#1879).
-  - COMBINING DOUBLE PLUS SIGN ABOVE (`U+1AC9`) (#1879).
-  - COMBINING DOUBLE PLUS SIGN BELOW (`U+1ACA`) (#1879).
-  - ANTICLOCKWISE GAPPED CIRCLE ARROW (`U+27F2`).
-  - CLOCKWISE GAPPED CIRCLE ARROW (`U+27F3`).
-  - ANTICLOCKWISE CLOSED CIRCLE ARROW (`U+2940`).
-  - CLOCKWISE CLOSED CIRCLE ARROW (`U+2941`).
-  - LEFTWARDS TRIANGLE-HEADED ARROW (`U+2B60`) ... DOWNWARDS TRIANGLE-HEADED ARROW TO BAR (`U+2B73`).
-  - LEFTWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE (`U+2B7A`) ... DOWNWARDS TRIANGLE-HEADED PAIRED ARROWS (`U+2B87`).
-  - LATIN CAPITAL LETTER K WITH DIAGONAL STROKE (`U+A742`).
-  - LATIN SMALL LETTER K WITH DIAGONAL STROKE (`U+A743`).
-  - LATIN CAPITAL LETTER K WITH STROKE AND DIAGONAL STROKE (`U+A744`).
-  - LATIN SMALL LETTER K WITH STROKE AND DIAGONAL STROKE (`U+A745`).
-  - LATIN CAPITAL LETTER VOLAPUK AE (`U+A79A`) ... LATIN SMALL LETTER VOLAPUK UE (`U+A79F`) (#1865).
-  - CIRCLED ANTICLOCKWISE ARROW (`U+1F10E`).
-  - CIRCLED HUMAN FIGURE (`U+1F16F`).
-* Drop `<=` and `>=` as inequality for Verilog (#1864).
-* Support variant selection for INCREMENT and NABLA (#1873).
-* Add APL-specific form for `U+220A` (#1876).
-* Enable `<>` ligation as diamond for C-like (#1878).
-* Fix support for serifs in Rounded Schwa (#1883).
-* Add script-cut corner to `U+0261` (#1887).
-* Make Lowercase Schwa to respond to `c`'s serif variants (#1892).
-* Fix variant selection for `cv27`, `cv33`, `cv36`, and `cv49` for `ss17` under italics.
-* Make Greek Kappa respond to top-left serifed variants of `k`.
-* Fix slabs for `U+019C`, `U+0257`, `U+026F`, and `U+0270`.
-* Add single-storey variants support for `U+A657`.
+  - RIGHT ARROW WITH CIRCLED PLUS (`U+27F4`).
+  - RIGHTWARDS TWO-HEADED ARROW WITH VERTICAL STROKE (`U+2900`).
+  - RIGHTWARDS TWO-HEADED ARROW WITH DOUBLE VERTICAL STROKE (`U+2901`).
+  - RIGHTWARDS TWO-HEADED ARROW FROM BAR (`U+2905`).
+  - RIGHTWARDS TWO-HEADED TRIPLE DASH ARROW (`U+2910`).
+  - RIGHTWARDS ARROW WITH DOTTED STEM (`U+2911`).
+  - RIGHTWARDS ARROW WITH TAIL WITH VERTICAL STROKE (`U+2914`) ... RIGHTWARDS TWO-HEADED ARROW WITH TAIL WITH DOUBLE VERTICAL STROKE (`U+2918`).
+  - LEFTWARDS ARROW TO BLACK DIAMOND (`U+291D`) ... RIGHTWARDS ARROW FROM BAR TO BLACK DIAMOND (`U+2920`).
+  - RIGHTWARDS ARROW THROUGH X (`U+2947`).
+  - LEFT ARROW WITH CIRCLED PLUS (`U+2B32`).
+  - LEFTWARDS TWO-HEADED ARROW WITH VERTICAL STROKE (`U+2B34`) ... LEFTWARDS ARROW THROUGH X (`U+2B3E`).
+
+
+### 33.2.3
+
+* Refine shape of the following characters:
+  - ARMENIAN SMALL LETTER CHA (`U+0579`).
+  - INFORMATION SOURCE (`U+2139`).
+  - TRIANGLE-HEADED RIGHTWARDS ARROW (`U+279D`).
+  - HEAVY TRIANGLE-HEADED RIGHTWARDS ARROW (`U+279E`).
+  - DASH WITH UPTURN (`U+2E43`).
+  - LATIN SMALL LETTER SCRIPT R WITH RING (`U+AB4C`).
+  - MATHEMATICAL DOUBLE-STRUCK CAPITAL B (`U+1D539`).
+* Add Characters:
+  - LEFTWARDS DOUBLE DASH ARROW (`U+290C`) ... RIGHTWARDS TRIPLE DASH ARROW (`U+290F`).
+
+
+### 33.2.2
+
+* Refine shape of the following characters:
+  - LATIN CAPITAL LETTER G WITH HOOK (`U+0193`).
+  - LATIN LETTER SMALL CAPITAL G WITH HOOK (`U+029B`).
+  - CYRILLIC CAPITAL LETTER KOMI DZJE (`U+0506`).
+  - CYRILLIC SMALL LETTER KOMI DZJE (`U+0507`).
+  - THERE DOES NOT EXIST (`U+2204`).
+  - CYRILLIC CAPITAL LETTER IOTIFIED A (`U+A656`).
+  - CYRILLIC CAPITAL LETTER IOTIFIED CLOSED LITTLE YUS (`U+A65C`).
+  - CYRILLIC SMALL LETTER IOTIFIED CLOSED LITTLE YUS (`U+A65D`).
+  - LATIN CAPITAL LETTER VOLAPUK UE (`U+A79E`).
+  - LATIN SMALL LETTER VOLAPUK UE (`U+A79F`).
+  - MODIFIER LETTER SMALL CAPITAL G WITH HOOK (`U+10794`).
+  - MUSICAL SYMBOL DOUBLE SHARP (`U+1D12A`).
+* Add Characters:
+  - MUSICAL SYMBOL FERMATA (`U+1D110`).
+  - MUSICAL SYMBOL FERMATA BELOW (`U+1D111`).
+
+
+### 33.2.1
+
+* Refine shape of the following characters:
+  - ARMENIAN CAPITAL LETTER TO (`U+0539`).
+  - ARMENIAN SMALL LETTER TO (`U+0569`).
+  - MATHEMATICAL DOUBLE-STRUCK DIGIT TWO (`U+1D7DA`) (#2728).
+
+
+### 33.2.0
+
+* Add `flat-top` variants for `curly`, `straight-vertical-sides`, and `rounded-vertical-sides` forms of `W` and `w` (#2146).
+* Add `almost-flat-top` variants for `curly` forms of `W` and `w`.
+* Refine shape of the following characters:
+  - GREEK CAPITAL LETTER HETA (`U+0370`).
+  - GREEK SMALL LETTER HETA (`U+0371`).
+  - LATIN CAPITAL LETTER HALF H (`U+2C75`).
+  - LATIN SMALL LETTER HALF H (`U+2C76`).
+  - LATIN CAPITAL LETTER AU (`U+A736`).
+  - LATIN CAPITAL LETTER REVERSED HALF H (`U+A7F5`).
+  - LATIN SMALL LETTER REVERSED HALF H (`U+A7F6`).
+  - LATIN SMALL LIGATURE FFI (`U+FB03`).
+* Make certain characters slightly wider under Quasi-Proportional. Affected characters:
+  - ARMENIAN CAPITAL LETTER TO (`U+0539`).
+  - ARMENIAN SMALL LETTER TO (`U+0569`).
+  - ARMENIAN SMALL LIGATURE ECH YIWN (`U+0587`).
+* Fix variant application of `cv38` on `U+1DF0F`.
+
+
+### 33.1.0
+
+* Add `full-serifed` variants for `K` and `k`, and related letters (#2696).
+* Add `top-right-serifed` and `tri-serifed` variants for `K` and `k`, and related letters.
+* Add `cursive` variant for Greek Lower Theta (`θ`).
+* Add `closed-swash` variant for `Q` (#2392).
+* Add IPA localization form for Latin Lower `a` and `g`.
+* Add IPA localization form for Latin Lower G with Stroke (`ǥ`) (#2632).
+* Add variant selectors for Greek Lower Eta (`η`) and Kappa (`κ`).
+* Add Characters:
+  - LATIN SMALL LETTER TURNED T WITH CURL (`U+1DF0D`) (#1931).
+  - LATIN LETTER INVERTED GLOTTAL STOP WITH CURL (`U+1DF0E`) (#1931).
+  - LATIN LETTER STRETCHED C WITH CURL (`U+1DF0F`) (#1931).
+
+
+### 33.0.1
+
+* Make certain characters slightly wider under Quasi-Proportional. Affected characters:
+  - LATIN SMALL LETTER TH WITH STRIKETHROUGH (`U+1D7A`).
+* Allow Latin Alpha (`ɑ`) and Script G (`ɡ`) to use eared/earless variants of `a` (`cv36`) and `g` (`cv42`) respectively.
+
+
+### 33.0.0
+
+* \[**Breaking**\] Adjusted width of spaces in quasi-porportional
+  - Slightly narrower by default
+  - Adjustable via metric override
+* \[**Breaking**\] Reordered variants for `W`, `a`, `b`, `g`, `q`, `w`, `α`, Cyrillic `а`, Cyrillic `ф`, and `$`.
+* \[**Breaking**\] Add variants for Capital Thorn (`Þ`) with symmetric/asymmetric bowl position.
+* \[**Breaking**\] Add variant selector for Greek Lower Theta (#2630).
+  - As a result, character variant feature tags are reordered.
+* Add almost-flat-top variant for `W` and `w` (#2693).
+* Add `closed-contour` variant for Partial derivative symbol (#2148).
+* Refine shape of the following characters:
+  - GREEK CAPITAL LETTER HETA (`U+0370`).
+  - GREEK SMALL LETTER HETA (`U+0371`).
+  - GREEK CAPITAL LETTER SHO (`U+03F7`).
+  - CYRILLIC CAPITAL LETTER SHHA (`U+04BA`).
+  - CYRILLIC CAPITAL LETTER KOMI DJE (`U+0502`) ... CYRILLIC SMALL LETTER KOMI ZJE (`U+0505`).
+  - CYRILLIC CAPITAL LETTER KOMI LJE (`U+0508`) ... CYRILLIC SMALL LETTER KOMI TJE (`U+050F`).
+  - CYRILLIC CAPITAL LETTER SHHA WITH DESCENDER (`U+0526`).
+  - ARMENIAN CAPITAL LETTER EH (`U+0537`).
+  - ARMENIAN CAPITAL LETTER INI (`U+053B`).
+  - ARMENIAN CAPITAL LETTER XEH (`U+053D`).
+  - ARMENIAN CAPITAL LETTER CA (`U+053E`).
+  - ARMENIAN CAPITAL LETTER HO (`U+0540`).
+  - ARMENIAN CAPITAL LETTER CO (`U+0551`).
+  - ARMENIAN CAPITAL LETTER FEH (`U+0556`).
+  - ARMENIAN SMALL LETTER BEN (`U+0562`).
+  - ARMENIAN SMALL LETTER ECH (`U+0565`).
+  - ARMENIAN SMALL LETTER EH (`U+0567`).
+  - ARMENIAN SMALL LETTER ZHE (`U+056A`).
+  - ARMENIAN SMALL LETTER XEH (`U+056D`).
+  - ARMENIAN SMALL LETTER CHA (`U+0579`).
+  - ARMENIAN SMALL LETTER TIWN (`U+057F`).
+  - ARMENIAN SMALL LETTER PIWR (`U+0583`).
+  - ARMENIAN SMALL LETTER FEH (`U+0586`).
+  - ARMENIAN SMALL LIGATURE ECH YIWN (`U+0587`).
+  - LATIN CAPITAL LETTER HALF H (`U+2C75`).
+  - LATIN SMALL LETTER HALF H (`U+2C76`).
+  - CYRILLIC CAPITAL LETTER HWE (`U+A694`).
+  - LATIN CAPITAL LETTER REVERSED HALF H (`U+A7F5`).
+  - LATIN SMALL LETTER REVERSED HALF H (`U+A7F6`).
+* Make certain characters slightly wider under Quasi-Proportional. Affected characters:
+  - CYRILLIC CAPITAL LETTER UK (`U+0478`).
+  - LATIN SMALL LIGATURE FF (`U+FB00`) ... LATIN SMALL LIGATURE FFL (`U+FB04`).
+* Add Characters:
+  - OBSERVER EYE SYMBOL (`U+23FF`).
+  - LATIN SMALL LETTER SCRIPT R (`U+AB4B`).
+  - LATIN SMALL LETTER SCRIPT R WITH RING (`U+AB4C`).
+  - KEYHOLE (`U+1CEB1`). 
+  - BLACK RIGHT TRIANGLE CARET (`U+1CEB3`). 
+  - RIGHTWARDS ARROW WITH LOWER HOOK (`U+1F8B2`). 
+  - LEFTWARDS ARROW FROM DOWNWARDS ARROW (`U+1F8C0`). 
+  - RIGHTWARDS ARROW FROM DOWNWARDS ARROW (`U+1F8C1`).
 
