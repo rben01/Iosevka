@@ -1,73 +1,73 @@
 name: Build Fonts
 
 on:
-  push:
-    branches:
-      - add-font-files
-  workflow_dispatch: {}
+    push:
+        branches:
+            - add-font-files
+    workflow_dispatch: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 env:
-  DIST_DIR: dist
+    DIST_DIR: dist
 
 jobs:
-  build:
-    name: Build Fonts
-    runs-on: ubuntu-latest
+    build:
+        name: Build Fonts
+        runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        font_family:
-          - iosevka-rltb-mono
-          # - iosevka-rltb-sans
+        strategy:
+            matrix:
+                font_family:
+                    - iosevka-rltb-mono
+                    # - iosevka-rltb-sans
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: Remove ./dist
-        run: rm -rf dist
+            - name: Remove ./dist
+              run: rm -rf dist
 
-      - name: Install ttfautohint
-        run: sudo apt-get install -y ttfautohint
+            - name: Install ttfautohint
+              run: sudo apt-get install -y ttfautohint
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: npm
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+                  cache: npm
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10"
 
-      - name: Install Python packages
-        run: pip install fonttools brotli
+            - name: Install Python packages
+              run: pip install fonttools brotli
 
-      - run: npm ci
+            - run: npm ci
 
-      - name: Build fonts
-        # Built fonts end up in ./dist, i.e., in env.DIST_DIR. \
-        # The WOFF2 fonts will be overwritten later, but we generate them anyway so that
-        # Iosevka generates the CSS for us
-        run: npm run build -- webfont-unhinted::${{ matrix.font_family }}
+            - name: Build fonts
+              # Built fonts end up in ./dist, i.e., in env.DIST_DIR. \
+              # The WOFF2 fonts will be overwritten later, but we generate them anyway so that
+              # Iosevka generates the CSS for us
+              run: npm run build -- webfont-unhinted::${{ matrix.font_family }}
 
-      # - name: Generate subsetted WOFF2
-      #   # This overwrites the existing WOFF2 files
-      #   run: python make_woff2.py ${{ matrix.font_family }}
+            # - name: Generate subsetted WOFF2
+            #   # This overwrites the existing WOFF2 files
+            #   run: python make_woff2.py ${{ matrix.font_family }}
 
-      - name: Rename local CSS file
-        run: "mv \
-          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
-          ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka.css\
-          "
+            - name: Rename local CSS file
+              run: "mv \
+                  ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
+                  ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka.css\
+                  "
 
-      - name: Make artifact
-        uses: actions/upload-artifact@v3
-        with:
-          path: ${{ env.DIST_DIR }}/${{ matrix.font_family }}
-          name: ${{ matrix.font_family }}
+            - name: Make artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  path: ${{ env.DIST_DIR }}/${{ matrix.font_family }}
+                  name: ${{ matrix.font_family }}
