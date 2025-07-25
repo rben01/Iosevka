@@ -57,16 +57,16 @@
 		d = "toothed-serifless"
 		e = "flat-crossbar"
 		f = "flat-hook-serifless-crossbar-at-x-height"
-		g = "double-storey"
+		g = "double-storey-open"
 		h = "straight-serifless"
-		i = "serifed"
+		i = "hooky"
 		j = "serifed"
 		k = "straight-serifless"
 		l = "serifed-flat-tailed"
 		m = "serifless"
 		n = "straight-serifless"
 		p = "eared-serifless"
-		q = "straight-serifless"
+		q = "tailed-serifless"
 		r = "hookless-serifless"
 		s = "serifless"
 		t = "flat-hook-short-neck"
@@ -77,17 +77,27 @@
 		y = "straight-turn-serifless"
 		z = "straight-serifless"
 
-		# Digits
-		eight = "crossing-asymmetric"
-		five = "oblique-arched-serifless"
-		four = "semi-open-serifless"
-		nine = "open-contour"
-		one = "base"
-		seven = "bend-serifless"
-		six = "open-contour"
-		three = "two-arcs"
-		two = "curly-neck-serifless"
+		# Digits (comments prevent sorting of lines alphabetically)
+		# 0
 		zero = "oval-tall-slashed"
+		# 1
+		one = "base"
+		# 2
+		two = "curly-neck-serifless"
+		# 3
+		three = "two-arcs"
+		# 4
+		four = "semi-open-serifless"
+		# 5
+		five = "oblique-arched-serifless"
+		# 6
+		six = "open-contour"
+		# 7
+		seven = "bend-serifless"
+		# 8
+		eight = "crossing-asymmetric"
+		# 9
+		nine = "open-contour"
 
 		# Puncutation
 		ampersand = "closed"
@@ -96,13 +106,14 @@
 		asterisk = "penta-high"
 		at = "compact"
 		bar = "natural-slope"
-		brace = "straight"
+		brace = "curly"
+		braille-dot = "round"
 		caret = "medium"
 		cent = "through"
+		decorative-angle-brackets = "middle"
 		diacritic-dot = "round"
 		dollar = "through"
 		guillemet = "curly"
-		lig-ltgteq = "flat"
 		micro-sign = "tailed-serifless"
 		number-sign = "slanted"
 		paren = "normal"
@@ -111,20 +122,48 @@
 		punctuation-dot = "round"
 		question = "smooth"
 		tilde = "low"
+		tittle = "round"
 		underscore = "high"
 
+		# ligatures
+		lig-double-arrow-bar = "with-notch"
+		lig-equal-chain = "with-notch"
+		lig-hyphen-chain = "with-notch"
+		lig-ltgteq = "flat"
+		lig-neq = "slightly-slanted-dotted"
+		lig-plus-chain = "with-notch"
+		lig-single-arrow-bar = "with-notch"
+
 		# Other alphabets
+		capital-delta = "straight"
+		capital-eszet = "rounded-serifed"
 		capital-gamma = "top-right-serifed"
 		capital-lambda = "straight-top-serifed"
-		eszet = "sulzbacher-descending-serifless"
-		long-s = "bent-hook-serifless"
+		capital-thorn = "serifless"
+		eszet = "traditional-bottom-serifed"
+		long-s = "flat-hook-diagonal-tailed-middle-serifed"
 		lower-alpha = "crossing"
+		lower-beta = "standard"
+		lower-chi = "semi-chancery-curly-serifless"
 		lower-delta = "rounded"
-		lower-iota = "serifed-flat-tailed"
-		lower-lambda = "straight-turn"
+		lower-eta = "serifless"
+		lower-eth = "curly-bar"
+		lower-gamma = "casual"
+		lower-iota = "tailed-serifed"
+		lower-kappa = "curly-serifless"
+		lower-lambda = "tailed-turn"
 		lower-mu = "tailed-serifless"
+		lower-nu = "casual"
+		lower-phi = "cursive"
 		lower-pi = "tailed"
+		lower-psi = "serifless"
+		lower-tau = "semi-tailed"
+		lower-theta = "oval"
+		lower-thorn = "serifless"
+		lower-upsilon = "casual-serifed"
 		lower-xi = "flat-top"
+		partial-derivative = "curly-bar"
+
 
 	[buildPlans.iosevka-rltb-mono.variants.italic]
 		# lowercase overrides
