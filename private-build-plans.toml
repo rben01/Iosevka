@@ -80,7 +80,7 @@
 		# Digits
 		eight = "crossing-asymmetric"
 		five = "oblique-arched-serifless"
-		four = "semi-open"
+		four = "semi-open-serifless"
 		nine = "open-contour"
 		one = "base"
 		seven = "bend-serifless"
