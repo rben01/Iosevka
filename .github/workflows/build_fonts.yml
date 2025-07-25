@@ -65,7 +65,7 @@ jobs:
 
             - name: Rename local CSS file
               run: "mv \
-                  ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
+                  ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-Unhinted.css \
                   ${{ env.DIST_DIR }}/${{ matrix.font_family }}/iosevka.css\
                   "
 
