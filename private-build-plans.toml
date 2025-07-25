@@ -143,9 +143,9 @@
 		u = "tailed-serifless"
 
 [buildPlans.iosevka-rltb-sans]
+	buildTextureFeature = true
 	export-glyph-names = false
 	family = "Iosevka RLTB Sans"
-	no-ligation = true
 	serifs = "sans"
 	spacing = "quasi-proportional"
 	webfont-formats = ["ttf"]
