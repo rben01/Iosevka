@@ -1,12 +1,12 @@
 [buildPlans.iosevka-rltb-mono]
+	buildTextureFeature = true
 	family = "Iosevka RLTB"
-	# no-ligation = true
 	serifs = "sans"
 	spacing = "term"
 	webfont-formats = ["ttf"]
 
 	[buildPlans.iosevka-rltb-mono.ligations]
-		enables = ["kern-dotty", "kern-bars", "center-ops"]
+		enables = ["kern-dotty", "kern-bars", "center-ops", "slash-asterisk"]
 
 	# including these two prevents oblique from being built
 	[buildPlans.iosevka-rltb-mono.slopes.upright]
@@ -39,7 +39,7 @@
 		capital-m = "hanging-serifless"
 		capital-n = "standard-serifless"
 		capital-p = "closed-serifless"
-		capital-q = "crossing"
+		capital-q = "crossing-baseline"
 		capital-r = "straight-serifless"
 		capital-s = "serifless"
 		capital-t = "serifless"
@@ -79,14 +79,14 @@
 
 		# Digits
 		eight = "crossing-asymmetric"
-		five = "oblique-upper-left-bar"
+		five = "oblique-arched-serifless"
 		four = "semi-open"
 		nine = "open-contour"
 		one = "base"
 		seven = "bend-serifless"
 		six = "open-contour"
 		three = "two-arcs"
-		two = "curly-neck"
+		two = "curly-neck-serifless"
 		zero = "oval-tall-slashed"
 
 		# Puncutation
@@ -134,136 +134,13 @@
 		f = "flat-hook-tailed"
 		g = "single-storey-flat-hook-serifless"
 		h = "tailed-serifless"
-		i = "flat-tailed"
+		i = "serifed-flat-tailed"
 		k = "straight-serifless"
 		l = "flat-tailed"
 		m = "tailed-serifless"
 		n = "tailed-serifless"
 		q = "tailed-serifless"
 		u = "tailed-serifless"
-
-[buildPlans.iosevka-rltb-mono-alt]
-	family = "Iosevka RLTB Alt"
-	serifs = "sans"
-	spacing = "term"
-	webfont-formats = ["ttf"]
-	# no-ligation = true
-
-	[buildPlans.iosevka-rltb-mono-alt.ligations]
-		enables = ["kern-dotty", "kern-bars", "center-ops"]
-
-	[buildPlans.iosevka-rltb-mono-alt.variants.design]
-		# Capital letters
-		capital-a = "straight-serifless"
-		capital-b = "standard-serifless"
-		capital-c = "serifless"
-		capital-d = "more-rounded-serifless"
-		capital-e = "serifless"
-		capital-f = "serifless"
-		capital-g = "toothless-rounded-serifless-hooked"
-		capital-h = "serifless"
-		capital-i = "serifed"
-		capital-j = "serifless"
-		capital-k = "straight-serifless"
-		capital-l = "serifless"
-		capital-m = "hanging"
-		capital-n = "standard"
-		capital-p = "closed"
-		capital-q = "crossing"
-		capital-r = "straight"
-		capital-s = "serifless"
-		capital-t = "serifless"
-		capital-u = "toothless-rounded"
-		capital-v = "straight"
-		capital-w = "straight"
-		capital-x = "straight-serifless"
-		capital-y = "straight-serifless"
-		capital-z = "straight-serifless"
-
-		# Lowercase letters
-		a = "double-storey-serifless"
-		b = "toothed"
-		c = "serifless"
-		d = "toothed-serifless"
-		e = "flat-crossbar"
-		f = "flat-hook"
-		g = "double-storey"
-		h = "straight"
-		i = "hooky"
-		j = "serifed"
-		k = "straight-serifless"
-		l = "serifed-flat-tailed"
-		m = "normal"
-		n = "straight"
-		p = "eared"
-		q = "tailed"
-		r = "compact"
-		s = "serifless"
-		t = "flat-hook"
-		u = "toothed"
-		v = "straight"
-		w = "straight"
-		x = "straight-serifless"
-		y = "straight-turn"
-		z = "straight-serifless"
-
-		# Digits
-		eight = "two-circles"
-		five = "oblique-upper-left-bar"
-		four = "semi-open"
-		nine = "open-contour"
-		one = "base"
-		seven = "straight-serifless"
-		six = "open-contour"
-		three = "two-arcs"
-		two = "curly-neck"
-		zero = "dotted-oval"
-
-		# Puncutation
-		ampersand = "closed"
-		ascii-grave = "straight"
-		ascii-single-quote = "straight"
-		asterisk = "penta-high"
-		at = "short"
-		bar = "natural-slope"
-		brace = "straight"
-		caret = "high"
-		cent = "through"
-		diacritic-dot = "round"
-		dollar = "through"
-		lig-ltgteq = "flat"
-		number-sign = "slanted"
-		paren = "normal"
-		percent = "rings-continuous-slash"
-		pilcrow = "high"
-		punctuation-dot = "round"
-		question = "smooth"
-		tilde = "low"
-		underscore = "above-baseline"
-
-
-		# Other alphabets
-		capital-gamma = "top-right-serifed"
-		cyrl-capital-ka = "curly-serifed"
-		cyrl-capital-u = "cursive"
-		cyrl-capital-ya = "curly"
-		cyrl-capital-ze = "bilateral-serifed"
-		cyrl-che = "tailed"
-		cyrl-ef = "cursive"
-		cyrl-en = "tailed-top-left-serifed"
-		cyrl-ka = "curly-serifed"
-		cyrl-ya = "curly"
-		cyrl-yeri = "round"
-		cyrl-yery = "round-tailed"
-		cyrl-ze = "bilateral-serifed"
-		eszet = "sulzbacher-descending"
-		lower-alpha = "crossing"
-		lower-delta = "rounded"
-		lower-iota = "tailed"
-		lower-lambda = "straight-turn"
-		lower-mu = "tailless"
-		lower-xi = "flat-top"
-		turn-v = "straight"
 
 [buildPlans.iosevka-rltb-sans]
 	export-glyph-names = false
