@@ -60,6 +60,9 @@ jobs:
             #   # This overwrites the existing WOFF2 files
             #   run: python make_woff2.py ${{ matrix.font_family }}
 
+            - name: ls
+              run: "find ." # for debugging
+
             - name: Rename local CSS file
               run: "mv \
                   ${{ env.DIST_DIR }}/${{ matrix.font_family }}/${{ matrix.font_family }}-unhinted.css \
