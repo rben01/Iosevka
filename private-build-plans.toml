@@ -6,7 +6,17 @@
 	webfont-formats = ["ttf"]
 
 	[buildPlans.iosevka-rltb-mono.ligations]
-		enables = ["kern-dotty", "kern-bars", "center-ops", "slash-asterisk"]
+		enables = [
+			"kern-dotty",
+			"kern-bars",
+			"center-ops",
+			"center-op-trigger-plus-minus-l",
+			"center-op-trigger-plus-minus-r",
+			"center-op-influence-colon",
+			"slash-asterisk",
+			"llgg",
+			"llggeq",
+		]
 
 	# including these two prevents oblique from being built
 	[buildPlans.iosevka-rltb-mono.slopes.upright]
