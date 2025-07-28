@@ -22,7 +22,7 @@ jobs:
             matrix:
                 font_family:
                     - iosevka-rltb-mono
-                    # - iosevka-rltb-sans
+                    - iosevka-rltb-sans
 
         steps:
             - name: Checkout
@@ -60,8 +60,8 @@ jobs:
             #   # This overwrites the existing WOFF2 files
             #   run: python make_woff2.py ${{ matrix.font_family }}
 
-            - name: ls
-              run: "find ." # for debugging
+            # - name: ls
+            #   run: "find ." # for debugging
 
             - name: Rename local CSS file
               run: "mv \
